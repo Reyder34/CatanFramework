@@ -1,0 +1,46 @@
+[gd_scene load_steps=2 format=3 uid="uid://5eh2qmojrwum"]
+
+[ext_resource type="Script" path="res://modules/classic_catan/panels_scripts/bank_trade_panel.gd" id="1_04io4"]
+
+[node name="BankTradePanel" type="PanelContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_04io4")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Échange 4:1 avec la banque"
+
+[node name="GiveSection" type="VBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="GiveLabel" type="Label" parent="Content/GiveSection"]
+layout_mode = 2
+text = "Donne 4 de:"
+
+[node name="GiveButtons" type="HBoxContainer" parent="Content/GiveSection"]
+layout_mode = 2
+
+[node name="ReceiveSection" type="VBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="ReceiveLabel" type="Label" parent="Content/ReceiveSection"]
+layout_mode = 2
+text = "Reçois 1 de:"
+
+[node name="ReceiveButtons" type="HBoxContainer" parent="Content/ReceiveSection"]
+layout_mode = 2
+
+[node name="ActionRow" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="ConfirmButton" type="Button" parent="Content/ActionRow"]
+layout_mode = 2
+text = "Confirmer"
+
+[node name="CancelButton" type="Button" parent="Content/ActionRow"]
+layout_mode = 2
+text = "Annuler"

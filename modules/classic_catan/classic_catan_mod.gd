@@ -5,6 +5,11 @@ var _state: GameState
 var _board: Board
 var _registry: GameRegistry
 
+const DEV_CARD_COST := {"wheat": 1, "sheep": 1, "ore": 1}
+
+# Cartes développement
+var _dev_deck: Array = []  # Array[DevelopmentCard]
+
 func _init() -> void:
 	mod_id = "classic_catan"
 	mod_name = "Catan classique"
@@ -19,9 +24,12 @@ func register(reg: GameRegistry) -> void:
 	_declare_parameters(reg)
 	_subscribe_hooks(reg)
 	_register_actions(reg)
-	reg.register_panel("hello", preload("res://modules/classic_catan/hello_panel.tscn"))
-	reg.register_panel("trade_proposal", preload("res://modules/classic_catan/trade_proposal_panel.tscn"))
-	reg.register_panel("trade_response", preload("res://modules/classic_catan/trade_response_panel.tscn"))
+	reg.register_panel("dev_cards", preload("res://modules/classic_catan/panels/dev_cards_panel.tscn"))
+	reg.on_game_start(_init_dev_deck, 0)
+	reg.register_panel("hello", preload("res://modules/classic_catan/panels/hello_panel.tscn"))
+	reg.register_panel("trade_proposal", preload("res://modules/classic_catan/panels/trade_proposal_panel.tscn"))
+	reg.register_panel("trade_response", preload("res://modules/classic_catan/panels/trade_response_panel.tscn"))
+	reg.register_panel("bank_trade", preload("res://modules/classic_catan/panels/bank_trade_panel.tscn"))
 
 # === DONNÉES ===
 
@@ -219,7 +227,7 @@ func _try_place(ctx: ClickContext, expected_target: String) -> void:
 			return
 	# Payer et placer
 	for res in pctx.cost:
-		p.resources[res] -= pctx.cost[res]
+		p.add_resource(res, -pctx.cost[res])
 	building.on_placed(board, p.id, key)
 	# after_place (mods peuvent réagir: bonus, etc.)
 	state.registry.events.emit("after_place", pctx)
@@ -244,7 +252,12 @@ func _on_compute_victory_points(ctx: VictoryContext) -> void:
 		var b: BuildingType = ctx.state.registry.get_building(info.get("type", "road"))
 		if b != null:
 			pts += b.victory_points
-	ctx.points += pts  # += pour permettre à d'autres mods d'ajouter (longue route, etc.)
+	# Cartes Point de victoire
+	var p: Player = ctx.state.players[ctx.player_id]
+	var cards: Array = p.get_data(_CARDS_KEY, [])
+	for c in cards:
+		pts += c.victory_points
+	ctx.points += pts
 
 func _check_victory(state: GameState, board: Board) -> void:
 	var p := state.current_player()
@@ -328,6 +341,46 @@ func _register_actions(reg: GameRegistry) -> void:
 			and _state.phase == GameState.Phase.PLAY \
 			and _state.sub_phase == GameState.SubPhase.NONE
 	reg.register_action(trade)
+	
+	# === Action: Échanger 4:1 avec la banque ===
+	var bank := GameAction.new()
+	bank.id = "bank_trade"
+	bank.label = "Échange 4:1 banque"
+	bank.hotkey = KEY_B
+	bank.category = "trade"
+	bank.callback = _action_bank_trade
+	bank.is_available = func() -> bool:
+		return _state != null \
+			and _state.phase == GameState.Phase.PLAY \
+			and _state.sub_phase == GameState.SubPhase.NONE
+	reg.register_action(bank)
+	
+	# === Action: Acheter une carte développement ===
+	var buy := GameAction.new()
+	buy.id = "buy_dev_card"
+	buy.label = "Acheter carte (-1 blé/mouton/minerai)"
+	buy.hotkey = KEY_D
+	buy.category = "build"
+	buy.callback = _action_buy_dev_card
+	buy.is_available = func() -> bool:
+		return _state != null \
+			and _state.phase == GameState.Phase.PLAY \
+			and _state.sub_phase == GameState.SubPhase.NONE \
+			and _dev_deck.size() > 0
+	reg.register_action(buy)
+
+	# === Action: Voir / jouer mes cartes ===
+	var show := GameAction.new()
+	show.id = "show_dev_cards"
+	show.label = "Mes cartes"
+	show.hotkey = KEY_J
+	show.category = "build"
+	show.callback = _action_show_dev_cards
+	show.is_available = func() -> bool:
+		return _state != null \
+			and _state.phase == GameState.Phase.PLAY \
+			and _state.sub_phase == GameState.SubPhase.NONE
+	reg.register_action(show)
 
 func _register_building_action(reg: GameRegistry, building_id: String, key: int) -> void:
 	var b: BuildingType = reg.get_building(building_id)
@@ -363,6 +416,8 @@ func _action_roll_dice() -> void:
 			_flash_tile(coords)
 
 func _action_next_player() -> void:
+	var p := _state.current_player()
+	p.set_data(_CARDS_BOUGHT_KEY, [])
 	_state.next_player()
 
 func _action_cancel_build() -> void:
@@ -419,3 +474,92 @@ func _execute_trade(proposer: Player, responder: Player, offer: Dictionary, dema
 		"offer": offer,
 		"demand": demand,
 	})
+
+func _action_bank_trade() -> void:
+	var p := _state.current_player()
+	var result = await _registry.ui.show_panel("bank_trade", {
+		"registry": _registry,
+		"player": p,
+	})
+	if result == null or result.get("action") != "trade":
+		return
+	var give: String = result["give"]
+	var receive: String = result["receive"]
+	# Validation finale (sécurité)
+	if p.resources.get(give, 0) < 4:
+		print("Pas assez de ressources pour l'échange")
+		return
+	p.add_resource(give, -4)
+	p.add_resource(receive, 1)
+	print("Échange banque J%d: -4 %s, +1 %s" % [p.id, give, receive])
+	# Événement pour les mods qui veulent réagir (taxe, taux modifié...)
+	_registry.events.emit("bank_trade_completed", {
+		"player": p,
+		"give": give,
+		"receive": receive,
+	})
+
+
+func _init_dev_deck(_ctx) -> void:
+	_dev_deck.clear()
+	# Composition officielle Catan
+	for i in 14: _dev_deck.append(KnightCard.new())
+	for i in 5:  _dev_deck.append(VictoryPointCard.new())
+	for i in 2:  _dev_deck.append(RoadBuildingCard.new())
+	for i in 2:  _dev_deck.append(MonopolyCard.new())
+	for i in 2:  _dev_deck.append(YearOfPlentyCard.new())
+	_dev_deck.shuffle()
+	print("Deck cartes développement initialisé: %d cartes" % _dev_deck.size())
+
+
+# === CARTES DÉVELOPPEMENT ===
+
+const _CARDS_KEY := "catan:dev_cards"
+const _CARDS_BOUGHT_KEY := "catan:dev_cards_bought_this_turn"
+
+func _get_cards(player: Player) -> Array:
+	return player.get_data(_CARDS_KEY, [])
+
+func _get_bought_this_turn(player: Player) -> Array:
+	return player.get_data(_CARDS_BOUGHT_KEY, [])
+
+func _action_buy_dev_card() -> void:
+	var p := _state.current_player()
+	# Vérifier coût
+	for res in DEV_CARD_COST:
+		if p.resources.get(res, 0) < DEV_CARD_COST[res]:
+			print("Pas assez de ressources pour une carte")
+			return
+	if _dev_deck.is_empty():
+		print("Le deck est vide")
+		return
+	# Payer
+	for res in DEV_CARD_COST:
+		p.add_resource(res, -DEV_CARD_COST[res])
+	# Piocher
+	var card: DevelopmentCard = _dev_deck.pop_back()
+	var hand: Array = _get_cards(p)
+	hand.append(card)
+	p.set_data(_CARDS_KEY, hand)
+	var bought: Array = _get_bought_this_turn(p)
+	bought.append(card)
+	p.set_data(_CARDS_BOUGHT_KEY, bought)
+	print("J%d a pioché: %s (deck restant: %d)" % [p.id, card.display_name, _dev_deck.size()])
+
+func _action_show_dev_cards() -> void:
+	var p := _state.current_player()
+	var result = await _registry.ui.show_panel("dev_cards", {
+		"registry": _registry,
+		"player": p,
+		"cards": _get_cards(p),
+		"bought_this_turn": _get_bought_this_turn(p),
+		"state": _state,
+	})
+	if result == null or result.get("action") != "play":
+		return
+	var card: DevelopmentCard = result["card"]
+	var consumed: bool = await card.on_play(_state, _board, _registry, p)
+	if consumed:
+		var hand: Array = _get_cards(p)
+		hand.erase(card)
+		p.set_data(_CARDS_KEY, hand)

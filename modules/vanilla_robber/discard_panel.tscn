@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://sqdgu5eemmvo"]
+
+[ext_resource type="Script" path="res://modules/vanilla_robber/discard_panel.gd" id="1_67as2"]
+
+[node name="DiscardPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(500, 200)
+offset_right = 500.0
+offset_bottom = 200.0
+script = ExtResource("1_67as2")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Défausse"
+
+[node name="ResourceButtons" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="RemainingLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Reste:0"
+
+[node name="ConfirmButton" type="Button" parent="Content"]
+layout_mode = 2
+text = "Confirmer"

@@ -1,7 +1,6 @@
-class_name StealPanel
 extends PanelContainer
 
-signal target_chosen(target_id: int)
+signal closed(result: Variant)
 
 var title_label: Label
 var target_buttons: HBoxContainer
@@ -9,9 +8,10 @@ var target_buttons: HBoxContainer
 func _ready() -> void:
 	title_label = get_node("Content/TitleLabel")
 	target_buttons = get_node("Content/TargetButtons")
-	visible = false
 
-func show_targets(players: Array, target_ids: Array) -> void:
+func show_panel(params: Dictionary) -> void:
+	var players: Array = params["players"]
+	var target_ids: Array = params["target_ids"]
 	for child in target_buttons.get_children():
 		child.queue_free()
 	for tid in target_ids:
@@ -24,8 +24,6 @@ func show_targets(players: Array, target_ids: Array) -> void:
 		btn.modulate = p.color
 		btn.pressed.connect(_on_target_clicked.bind(tid))
 		target_buttons.add_child(btn)
-	visible = true
 
 func _on_target_clicked(target_id: int) -> void:
-	visible = false
-	target_chosen.emit(target_id)
+	closed.emit({"target_id": target_id})
