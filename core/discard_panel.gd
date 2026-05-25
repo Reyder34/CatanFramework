@@ -8,7 +8,7 @@ signal discard_confirmed(player_id: int, to_discard: Dictionary)
 @onready var remaining_label: Label = $Content/RemainingLabel
 @onready var confirm_button: Button = $Content/ConfirmButton
 
-var module: GameModule
+var registry: GameRegistry
 var player: Player
 var to_discard: Dictionary = {}  # res_id -> count
 var target_amount: int = 0
@@ -17,22 +17,21 @@ func _ready() -> void:
 	visible = false
 	confirm_button.pressed.connect(_on_confirm)
 
-func show_for(p_module: GameModule, p_player: Player, p_target: int) -> void:
-	module = p_module
+func show_for(p_registry: GameRegistry, p_player: Player, p_target: int) -> void:
+	registry = p_registry
 	player = p_player
 	target_amount = p_target
 	to_discard.clear()
 	title_label.text = "Joueur %d défausse %d ressources" % [player.id, target_amount]
-	# Reconstruire les boutons
 	for child in resource_buttons.get_children():
 		child.queue_free()
-	for res_id in module.resources:
-		if module.resources[res_id].get("is_desert", false):
+	for res_id in registry.resources:
+		if registry.resources[res_id].get("is_desert", false):
 			continue
 		if player.resources[res_id] <= 0:
 			continue
 		var btn := Button.new()
-		btn.text = "%s: %d" % [module.resources[res_id]["name"], player.resources[res_id]]
+		btn.text = "%s: %d" % [registry.resources[res_id]["name"], player.resources[res_id]]
 		btn.pressed.connect(_on_resource_clicked.bind(res_id))
 		resource_buttons.add_child(btn)
 		to_discard[res_id] = 0
@@ -64,7 +63,7 @@ func _update_labels() -> void:
 			continue
 		var orig: int = player.resources[res_id]
 		var selected: int = to_discard[res_id]
-		btn.text = "%s: %d (-%d)" % [module.resources[res_id]["name"], orig, selected]
+		btn.text = "%s: %d (-%d)" % [registry.resources[res_id]["name"], orig, selected]
 	confirm_button.disabled = current_total < target_amount
 
 func _on_confirm() -> void:

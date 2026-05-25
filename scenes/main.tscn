@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://dmk0op4230sum"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_20qpi"]
-[ext_resource type="Script" path="res://scripts/discard_panel.gd" id="2_kuq11"]
-[ext_resource type="Script" path="res://scripts/steal_panel.gd" id="3_1fx0j"]
+[ext_resource type="Script" path="res://core/discard_panel.gd" id="2_kuq11"]
+[ext_resource type="Script" path="res://core/steal_panel.gd" id="3_1fx0j"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_20qpi")

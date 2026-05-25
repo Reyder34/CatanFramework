@@ -1,0 +1,34 @@
+[gd_scene load_steps=2 format=3 uid="uid://dshqucvpriu5n"]
+
+[ext_resource type="Script" path="res://modules/classic_catan/trade_response_panel.gd" id="1_ywh00"]
+
+[node name="TradeResponsePanel" type="PanelContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_ywh00")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Joueur X te propose:"
+
+[node name="OfferLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Il offre: ..."
+
+[node name="DemandLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Il demande: ..."
+
+[node name="ActionRow" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="AcceptButton" type="Button" parent="Content/ActionRow"]
+layout_mode = 2
+text = "Accepter"
+
+[node name="RefuseButton" type="Button" parent="Content/ActionRow"]
+layout_mode = 2
+text = "Refuser"

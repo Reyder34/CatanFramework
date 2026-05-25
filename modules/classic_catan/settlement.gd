@@ -1,7 +1,6 @@
 class_name Settlement
 extends BuildingType
 
-# Si require_road=false, on peut placer sans route adjacente (phase initiale)
 var require_road: bool = true
 
 func _init() -> void:
@@ -17,11 +16,9 @@ func _init() -> void:
 func can_place(board: Board, player_id: int, key: String) -> bool:
 	if board.is_vertex_occupied(key):
 		return false
-	# Règle de distance: aucun voisin direct occupé
 	for n in board.vertex_neighbors.get(key, []):
 		if board.is_vertex_occupied(n):
 			return false
-	# Règle de connexion à une route propre
 	if require_road:
 		for e in board.vertex_edges.get(key, []):
 			if board.get_edge_owner(e) == player_id:
@@ -30,7 +27,7 @@ func can_place(board: Board, player_id: int, key: String) -> bool:
 	return true
 
 func on_placed(board: Board, player_id: int, key: String) -> void:
-	board.place_settlement(key, player_id)
+	board.place_on_vertex(key, player_id, id)
 
 func get_production_amount() -> int:
 	return 1

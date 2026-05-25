@@ -12,13 +12,12 @@ func _init() -> void:
 	mesh_height = 0.6
 
 func can_place(board: Board, player_id: int, key: String) -> bool:
-	# Doit être une colonie du joueur
 	if board.get_vertex_owner(key) != player_id:
 		return false
 	return board.get_vertex_type(key) == "settlement"
 
 func on_placed(board: Board, player_id: int, key: String) -> void:
-	board.upgrade_to_city(key)
+	board.place_on_vertex(key, player_id, id)
 
 func get_production_amount() -> int:
 	return 2

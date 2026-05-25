@@ -4,34 +4,31 @@ extends RefCounted
 const WATER_RADIUS := 4
 const WATER_COLOR := Color(0.15, 0.4, 0.7)
 
-var module: GameModule
+var registry: GameRegistry
 var board: Board
 
-# Maps des Nodes visuels (pour pouvoir les retrouver et les mettre à jour)
-var tile_nodes: Dictionary = {}    # Vector2(q,r) -> StaticBody3D
-var vertex_nodes: Dictionary = {}  # key -> StaticBody3D
-var edge_nodes: Dictionary = {}    # key -> StaticBody3D
+var tile_nodes: Dictionary = {}
+var vertex_nodes: Dictionary = {}
+var edge_nodes: Dictionary = {}
+var marker_nodes: Dictionary = {}
 
 var on_tile_click: Callable
 var on_vertex_click: Callable
 var on_edge_click: Callable
 
-var robber_node: MeshInstance3D
-
-func _init(p_module: GameModule, p_board: Board) -> void:
-	module = p_module
+func _init(p_registry: GameRegistry, p_board: Board) -> void:
+	registry = p_registry
 	board = p_board
 	board.vertex_changed.connect(_refresh_vertex)
 	board.edge_changed.connect(_refresh_edge)
-	board.tile_changed.connect(_on_tile_changed)
 
 func generate(parent: Node3D) -> void:
-	var pool := module.tile_pool.duplicate()
+	var pool := registry.tile_pool.duplicate()
 	pool.shuffle()
-	var numbers := module.number_pool.duplicate()
+	var numbers := registry.number_pool.duplicate()
 	numbers.shuffle()
 	
-	var radius := module.board_radius
+	var radius := registry.board_radius
 	var index := 0
 	var num_index := 0
 	for r in range(-radius, radius + 1):
@@ -40,16 +37,14 @@ func generate(parent: Node3D) -> void:
 		for q in range(q_start, q_end + 1):
 			var resource: String = pool[index]
 			var number := 0
-			if module.is_producing_resource(resource):
+			if registry.is_producing_resource(resource):
 				number = numbers[num_index]
 				num_index += 1
-			# Stocke dans le Board
 			board.tile_data[Vector2(q, r)] = {"resource": resource, "number": number}
 			if number > 0:
 				if not board.tiles_by_number.has(number):
 					board.tiles_by_number[number] = []
 				board.tiles_by_number[number].append(Vector2(q, r))
-			# Crée le visuel
 			_create_tile(parent, q, r, resource, number)
 			_register_vertices(parent, q, r)
 			_register_edges(parent, q, r)
@@ -57,7 +52,6 @@ func generate(parent: Node3D) -> void:
 	
 	_generate_water(parent)
 	_build_graph()
-	_create_robber(parent)
 
 func _create_tile(parent: Node3D, q: int, r: int, resource: String, number: int) -> void:
 	var body := StaticBody3D.new()
@@ -73,7 +67,7 @@ func _create_tile(parent: Node3D, q: int, r: int, resource: String, number: int)
 	mesh.radial_segments = 6
 	mesh_inst.mesh = mesh
 	var mat := StandardMaterial3D.new()
-	mat.albedo_color = module.get_resource_color(resource)
+	mat.albedo_color = registry.get_resource_color(resource)
 	mesh_inst.material_override = mat
 	body.add_child(mesh_inst)
 	
@@ -108,7 +102,6 @@ func _register_vertices(parent: Node3D, q: int, r: int) -> void:
 			Vector2(q + n2.x, r + n2.y)
 		]
 		var key := HexMath.vertex_key(trio)
-		# Lien tile -> vertex (pour la production)
 		var coords := Vector2(q, r)
 		if not board.tile_vertices.has(coords):
 			board.tile_vertices[coords] = []
@@ -184,7 +177,7 @@ func _create_edge(parent: Node3D, pos: Vector3, angle_y: float, key: String) -> 
 	parent.add_child(body)
 
 func _generate_water(parent: Node3D) -> void:
-	var land_radius := module.board_radius
+	var land_radius := registry.board_radius
 	for r in range(-WATER_RADIUS, WATER_RADIUS + 1):
 		var q_start: int = max(-WATER_RADIUS, -WATER_RADIUS - r)
 		var q_end: int = min(WATER_RADIUS, WATER_RADIUS - r)
@@ -217,7 +210,7 @@ func _create_water_tile(parent: Node3D, q: int, r: int) -> void:
 	parent.add_child(mesh_inst)
 
 func _build_graph() -> void:
-	var radius := module.board_radius
+	var radius := registry.board_radius
 	for r in range(-radius, radius + 1):
 		var q_start: int = max(-radius, -radius - r)
 		var q_end: int = min(radius, radius - r)
@@ -265,7 +258,6 @@ func _link(v1: String, v2: String, e: String) -> void:
 	if not board.vertex_edges[v2].has(e):
 		board.vertex_edges[v2].append(e)
 
-# === MISE À JOUR VISUELLE QUAND LE BOARD CHANGE ===
 
 func _refresh_vertex(key: String) -> void:
 	var node: StaticBody3D = vertex_nodes.get(key)
@@ -281,7 +273,7 @@ func _refresh_vertex(key: String) -> void:
 		mesh.height = 0.2
 		return
 	var building_id := board.get_vertex_type(key)
-	var building: BuildingType = module.get_building(building_id)
+	var building: BuildingType = registry.get_building(building_id)
 	var player_color: Color = GameState.PLAYER_COLORS[owner_id]
 	if building != null:
 		mat.albedo_color = building.get_color(player_color)
@@ -302,41 +294,10 @@ func _refresh_edge(key: String) -> void:
 	if owner_id < 0:
 		mat.albedo_color = Color(0.4, 0.4, 0.4)
 		return
-	var building_id := board.get_edge_type(key) if board.has_method("get_edge_type") else "road"
-	var building: BuildingType = module.get_building(building_id)
+	var building_id := board.get_edge_type(key)
+	var building: BuildingType = registry.get_building(building_id)
 	var player_color: Color = GameState.PLAYER_COLORS[owner_id]
 	if building != null:
 		mat.albedo_color = building.get_color(player_color)
 	else:
 		mat.albedo_color = player_color
-
-
-func _create_robber(parent: Node3D) -> void:
-	robber_node = MeshInstance3D.new()
-	robber_node.name = "Robber"
-	var mesh := CylinderMesh.new()
-	mesh.top_radius = 0.15
-	mesh.bottom_radius = 0.25
-	mesh.height = 0.6
-	mesh.radial_segments = 12
-	robber_node.mesh = mesh
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.1, 0.1, 0.1)
-	robber_node.material_override = mat
-	parent.add_child(robber_node)
-	# Place sur la tuile actuelle du Board
-	_refresh_robber()
-
-func _refresh_robber() -> void:
-	if robber_node == null:
-		return
-	if board.robber_position == Vector2.INF:
-		robber_node.visible = false
-		return
-	robber_node.visible = true
-	var world := HexMath.hex_to_world(int(board.robber_position.x), int(board.robber_position.y))
-	world.y = HexMath.TILE_HEIGHT / 2 + 0.3
-	robber_node.position = world
-
-func _on_tile_changed(_coords: Vector2) -> void:
-	_refresh_robber()

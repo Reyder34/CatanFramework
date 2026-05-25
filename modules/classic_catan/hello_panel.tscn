@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://dispdlwewa3ab"]
+
+[ext_resource type="Script" path="res://modules/classic_catan/hello_panel.gd" id="1_umr6m"]
+
+[node name="HelloPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(300, 120)
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_umr6m")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="MessageLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Hello World"
+
+[node name="OkButton" type="Button" parent="Content"]
+layout_mode = 2
+text = "Ok"

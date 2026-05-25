@@ -1,0 +1,46 @@
+class_name UIManager
+extends RefCounted
+
+var info_label: Label
+var state: GameState
+var board: Board
+
+func _init(p_label: Label, p_state: GameState, p_board: Board) -> void:
+	info_label = p_label
+	state = p_state
+	board = p_board
+
+func update() -> void:
+	var p := state.current_player()
+	var text := "Joueur %d  |  %s\n" % [p.id, state.phase_label()]
+	text += "Mode: %s\n" % state.mode_label()
+	# Ressources
+	for res_id in state.registry.resources:
+		if state.registry.resources[res_id].get("is_desert", false):
+			continue
+		var res_name: String = state.registry.resources[res_id]["name"]
+		text += "%s:%d  " % [res_name, p.resources[res_id]]
+	# Points de tous les joueurs
+	text += "\nPoints:\n"
+	for pl in state.players:
+		var pts := _compute_points(pl.id)
+		text += "  J%d: %d/%d\n" % [pl.id, pts, state.registry.victory_threshold]
+	# Raccourcis
+	text += "\n"
+	for action in state.registry.actions.values():
+		if action.hotkey >= 0:
+			var key_name := OS.get_keycode_string(action.hotkey)
+			text += "[%s]%s  " % [key_name, action.label]
+	text += "[ENTRÉE]Joueur suivant  [ESPACE]Dés"
+	info_label.text = text
+	info_label.modulate = p.color
+
+func _compute_points(player_id: int) -> int:
+	# Émet l'événement compute_victory_points pour laisser les mods calculer
+	var ctx := VictoryContext.new()
+	ctx.state = state
+	ctx.board = board
+	ctx.player_id = player_id
+	ctx.points = 0
+	state.registry.events.emit("compute_victory_points", ctx)
+	return ctx.points

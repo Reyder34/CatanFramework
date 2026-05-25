@@ -4,80 +4,81 @@ extends Node3D
 @onready var discard_panel: DiscardPanel = $UI/HUD/DiscardPanel
 @onready var steal_panel: StealPanel = $UI/HUD/StealPanel
 
-var module: GameModule
+var registry: GameRegistry
 var state: GameState
 var board: Board
 var board_view: BoardView
 var ui: UIManager
 
+var loaded_mods: Array[GameMod] = []
 
 func _ready() -> void:
-	module = ClassicCatan.new()
-	state = GameState.new(module, 4)
-	state.build_mode_id = "settlement"
+	registry = GameRegistry.new()
+	registry.setup_ui($UI/HUD)
+	registry.events.subscribe("flash_tile", _flash_tile_handler, 0, "core")
 	
+	# Chargement des mods (sera remplacé par un ModLoader plus tard)
+	_load_mods()
+	
+	# Création de l'état après chargement (le registry est rempli)
 	board = Board.new()
-	board_view = BoardView.new(module, board)
+	board_view = BoardView.new(registry, board)
 	board_view.on_tile_click = _on_tile_clicked
 	board_view.on_vertex_click = _on_vertex_clicked
 	board_view.on_edge_click = _on_edge_clicked
 	board_view.generate(self)
-	board.move_robber(board.find_desert_tile())
+	
+	state = GameState.new(registry, 4)
+	state.build_mode_id = "settlement"  # commence en mode colonie pour la phase initiale
 	
 	for p in state.players:
-		for res_id in p.resources:
-			p.resources[res_id] = 100
-	
-	discard_panel.discard_confirmed.connect(_on_discard_confirmed)
-	steal_panel.target_chosen.connect(_on_target_chosen)
+		for res_id in registry.resources:
+			if not registry.resources[res_id].get("is_desert", false):
+				p.resources[res_id] = 10	
 	
 	ui = UIManager.new(info_label, state, board)
 	ui.update()
-	print("Prêt. ESPACE=dés, ENTRÉE=joueur suivant")
+	
+	registry.events.emit("game_start", {
+		"state": state,
+		"board": board,
+		"registry": registry,
+		"board_view": board_view,
+	})
+	
+	print("Jeu prêt. Mods chargés: ", registry._origin.size(), " entrées dans le registry")
+
+func _load_mods() -> void:
+	var robber_mod := VanillaRobberMod.new()
+	loaded_mods = [
+		ClassicCatanMod.new(),
+		robber_mod,
+	]
+	for mod in loaded_mods:
+		registry._set_current_mod(mod.mod_id)
+		mod.register(registry)
+	registry._set_current_mod("core")
+	# Injection UI pour le voleur (sera remplacé par l'API UI du registry plus tard)
+	robber_mod.setup_ui(discard_panel, steal_panel)
+
+# === ENTRÉES UTILISATEUR ===
 
 func _input(event: InputEvent) -> void:
 	if not (event is InputEventKey and event.pressed):
 		return
 	if state.phase == GameState.Phase.GAME_OVER:
 		return
-	# Touches universelles
-	match event.keycode:
-		KEY_SPACE:
-			_roll_dice()
-			ui.update()
-			return
-		KEY_ENTER:
-			state.next_player()
-			ui.update()
-			return
-		KEY_ESCAPE:
-			state.build_mode_id = ""
-			ui.update()
-			return
-	# Touches définies par le module (bâtiments)
-	for b in module.get_build_modes():
-		if b.hotkey == event.keycode:
-			state.build_mode_id = b.id
-			ui.update()
-			return
-
-func _roll_dice() -> void:
-	if state.phase != GameState.Phase.PLAY:
-		print("Pas le moment de lancer les dés")
+	# Bloquer les actions globales tant qu'un panneau est ouvert
+	if registry.ui != null and registry.ui.is_any_panel_open():
 		return
-	if state.sub_phase != GameState.SubPhase.NONE:
-		print("Termine d'abord l'action en cours")
+	var action: GameAction = registry.find_action_by_hotkey(event.keycode)
+	if action == null:
 		return
-	var total := module.roll_dice()
-	print("Dés: %d" % total)
-	module.on_dice_rolled(total, state, board)
-	if board.tiles_by_number.has(total):
-		for coords in board.tiles_by_number[total]:
-			_flash_tile(coords)
-	# Si on est entré en sous-phase de défausse, ouvrir le panneau
-	if state.sub_phase == GameState.SubPhase.ROBBER_DISCARD:
-		_show_next_discard()
+	if not action.can_trigger():
+		return
+	action.callback.call()
 	ui.update()
+
 
 func _flash_tile(coords: Vector2) -> void:
 	var tile: StaticBody3D = board_view.tile_nodes.get(coords)
@@ -90,60 +91,61 @@ func _flash_tile(coords: Vector2) -> void:
 	await get_tree().create_timer(0.4).timeout
 	mat.albedo_color = original
 
+# === CLICS ===
+
 func _on_tile_clicked(_cam, event, _pos, _norm, _idx, tile: StaticBody3D) -> void:
-	if state.phase == GameState.Phase.GAME_OVER:
-		return
 	if not (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
 		return
-	var coords: Vector2 = tile.get_meta("coords")
-	module.on_tile_clicked(coords, state, board)
-	# Si on vient d'entrer en phase de vol, ouvrir le panneau
-	if state.sub_phase == GameState.SubPhase.ROBBER_STEAL:
-		var targets: Array = module.get_current_steal_targets(state, board)
-		steal_panel.show_targets(state.players, targets)
+	if state.phase == GameState.Phase.GAME_OVER:
+		return
+	var ctx := ClickContext.new()
+	ctx.state = state
+	ctx.board = board
+	ctx.player_id = state.current_player_index
+	ctx.target_coords = tile.get_meta("coords")
+	registry.events.emit("tile_clicked", ctx)
 	ui.update()
 
 func _on_vertex_clicked(_cam, event, _pos, _norm, _idx, body: StaticBody3D) -> void:
-	if state.phase == GameState.Phase.GAME_OVER:
-		return
 	if not (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
 		return
-	var key: String = body.get_meta("key")
-	module.on_vertex_clicked(key, state, board)
+	if state.phase == GameState.Phase.GAME_OVER:
+		return
+	var ctx := ClickContext.new()
+	ctx.state = state
+	ctx.board = board
+	ctx.player_id = state.current_player_index
+	ctx.target_key = body.get_meta("key")
+	registry.events.emit("vertex_clicked", ctx)
 	ui.update()
 
 func _on_edge_clicked(_cam, event, _pos, _norm, _idx, body: StaticBody3D) -> void:
-	if state.phase == GameState.Phase.GAME_OVER:
-		return
 	if not (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
 		return
-	var key: String = body.get_meta("key")
-	module.on_edge_clicked(key, state, board)
-	ui.update()
-
-func _show_next_discard() -> void:
-	if state.discard_queue.is_empty():
-		# Tout le monde a défaussé, on passe au déplacement
-		state.sub_phase = GameState.SubPhase.ROBBER_MOVE
-		print("Voleur: déplace-le (clique une tuile)")
-		ui.update()
+	if state.phase == GameState.Phase.GAME_OVER:
 		return
-	var player_id: int = state.discard_queue[0]
-	var p: Player = state.players[player_id]
-	var total: int = 0
-	for v in p.resources.values():
-		total += v
-	var to_discard: int = total / 2  # arrondi au plus petit
-	discard_panel.show_for(module, p, to_discard)
-
-func _on_discard_confirmed(player_id: int, to_discard: Dictionary) -> void:
-	var p: Player = state.players[player_id]
-	for res_id in to_discard:
-		p.resources[res_id] -= to_discard[res_id]
-	state.discard_queue.pop_front()
+	var ctx := ClickContext.new()
+	ctx.state = state
+	ctx.board = board
+	ctx.player_id = state.current_player_index
+	ctx.target_key = body.get_meta("key")
+	registry.events.emit("edge_clicked", ctx)
 	ui.update()
-	_show_next_discard()
 
-func _on_target_chosen(target_id: int) -> void:
-	module.steal_from(target_id, state)
-	ui.update()
+# === UTILITAIRES ===
+	
+func _test_hello_panel() -> void:
+	var result = await registry.ui.show_panel("hello", {"message": "Salut! Test API UI."})
+	print("Panneau fermé avec: ", result)
+
+func _flash_tile_handler(ctx: Dictionary) -> void:
+	var coords: Vector2 = ctx.get("coords", Vector2.ZERO)
+	var tile: StaticBody3D = board_view.tile_nodes.get(coords)
+	if tile == null:
+		return
+	var mesh_inst: MeshInstance3D = tile.get_child(0)
+	var mat: StandardMaterial3D = mesh_inst.material_override
+	var original := mat.albedo_color
+	mat.albedo_color = Color.WHITE
+	await get_tree().create_timer(0.4).timeout
+	mat.albedo_color = original

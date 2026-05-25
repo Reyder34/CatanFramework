@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3 uid="uid://ckc2jmnegy2jy"]
+
+[ext_resource type="Script" path="res://modules/classic_catan/trade_proposal_panel.gd" id="1_mvi50"]
+
+[node name="TradeProposalPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(600, 400)
+offset_right = 600.0
+offset_bottom = 400.0
+script = ExtResource("1_mvi50")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Trade"
+
+[node name="OfferSection" type="VBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="OfferLabel" type="Label" parent="Content/OfferSection"]
+layout_mode = 2
+text = "Tu offres :"
+
+[node name="OfferButtons" type="HBoxContainer" parent="Content/OfferSection"]
+layout_mode = 2
+
+[node name="DemandSection" type="VBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="DemandLabel" type="Label" parent="Content/DemandSection"]
+layout_mode = 2
+text = "Tu demandes :"
+
+[node name="DemandButtons" type="HBoxContainer" parent="Content/DemandSection"]
+layout_mode = 2
+
+[node name="ActionRow" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="ProposeButton" type="Button" parent="Content/ActionRow"]
+layout_mode = 2
+text = "Proposer"
+
+[node name="CancelButton" type="Button" parent="Content/ActionRow"]
+layout_mode = 2
+text = "Annuler"
