@@ -9,6 +9,20 @@ func _init(p_label: Label, p_state: GameState, p_board: Board) -> void:
 	info_label = p_label
 	state = p_state
 	board = p_board
+	# Rafraîchir à chaque changement de ressource
+	for pl in state.players:
+		pl.resources_changed.connect(_on_resources_changed)
+		pl.custom_data_changed.connect(_on_custom_data_changed)
+	# Et aussi aux changements de plateau (pour les points)
+	board.vertex_changed.connect(_on_board_changed)
+	board.edge_changed.connect(_on_board_changed)
+
+
+func _on_resources_changed(_player_id: int) -> void:
+	update()
+
+func _on_board_changed(_key: String) -> void:
+	update()
 
 func update() -> void:
 	var p := state.current_player()
@@ -20,6 +34,11 @@ func update() -> void:
 			continue
 		var res_name: String = state.registry.resources[res_id]["name"]
 		text += "%s:%d  " % [res_name, p.resources[res_id]]
+	
+	# Cartes développement (générique: lit le custom_data du mod Catan)
+	var cards: Array = p.get_data("catan:dev_cards", [])
+	if not cards.is_empty():
+		text += "\nCartes: %d" % cards.size()
 	# Points de tous les joueurs
 	text += "\nPoints:\n"
 	for pl in state.players:
@@ -31,7 +50,6 @@ func update() -> void:
 		if action.hotkey >= 0:
 			var key_name := OS.get_keycode_string(action.hotkey)
 			text += "[%s]%s  " % [key_name, action.label]
-	text += "[ENTRÉE]Joueur suivant  [ESPACE]Dés"
 	info_label.text = text
 	info_label.modulate = p.color
 
@@ -44,3 +62,6 @@ func _compute_points(player_id: int) -> int:
 	ctx.points = 0
 	state.registry.events.emit("compute_victory_points", ctx)
 	return ctx.points
+
+func _on_custom_data_changed(_player_id: int, _key: String) -> void:
+	update()

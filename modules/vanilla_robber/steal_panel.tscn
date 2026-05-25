@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://cv4hca081uu8x"]
+
+[ext_resource type="Script" path="res://modules/vanilla_robber/steal_panel.gd" id="1_5n3k8"]
+
+[node name="StealPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(400, 150)
+offset_right = 400.0
+offset_bottom = 150.0
+script = ExtResource("1_5n3k8")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Choisir une cible"
+
+[node name="TargetButtons" type="HBoxContainer" parent="Content"]
+layout_mode = 2

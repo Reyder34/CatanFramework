@@ -1,8 +1,6 @@
 extends Node3D
 
 @onready var info_label: Label = $UI/HUD/InfoLabel
-@onready var discard_panel: DiscardPanel = $UI/HUD/DiscardPanel
-@onready var steal_panel: StealPanel = $UI/HUD/StealPanel
 
 var registry: GameRegistry
 var state: GameState
@@ -58,8 +56,7 @@ func _load_mods() -> void:
 		registry._set_current_mod(mod.mod_id)
 		mod.register(registry)
 	registry._set_current_mod("core")
-	# Injection UI pour le voleur (sera remplacé par l'API UI du registry plus tard)
-	robber_mod.setup_ui(discard_panel, steal_panel)
+
 
 # === ENTRÉES UTILISATEUR ===
 
@@ -79,17 +76,6 @@ func _input(event: InputEvent) -> void:
 	action.callback.call()
 	ui.update()
 
-
-func _flash_tile(coords: Vector2) -> void:
-	var tile: StaticBody3D = board_view.tile_nodes.get(coords)
-	if tile == null:
-		return
-	var mesh_inst: MeshInstance3D = tile.get_child(0)
-	var mat: StandardMaterial3D = mesh_inst.material_override
-	var original := mat.albedo_color
-	mat.albedo_color = Color.WHITE
-	await get_tree().create_timer(0.4).timeout
-	mat.albedo_color = original
 
 # === CLICS ===
 
@@ -131,12 +117,6 @@ func _on_edge_clicked(_cam, event, _pos, _norm, _idx, body: StaticBody3D) -> voi
 	ctx.target_key = body.get_meta("key")
 	registry.events.emit("edge_clicked", ctx)
 	ui.update()
-
-# === UTILITAIRES ===
-	
-func _test_hello_panel() -> void:
-	var result = await registry.ui.show_panel("hello", {"message": "Salut! Test API UI."})
-	print("Panneau fermé avec: ", result)
 
 func _flash_tile_handler(ctx: Dictionary) -> void:
 	var coords: Vector2 = ctx.get("coords", Vector2.ZERO)

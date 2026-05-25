@@ -35,7 +35,15 @@ func show_panel(panel_id: String, params: Dictionary = {}) -> Variant:
 		return null
 	_open_count += 1
 	var instance: Node = panel_scenes[panel_id].instantiate()
+	print("[UI] instance créée: ", instance, " script=", instance.get_script())
+	print("[UI] has show_panel: ", instance.has_method("show_panel"))
+	print("[UI] has signal closed: ", instance.has_signal("closed"))
+	if instance is CanvasItem:
+		instance.visible = true
 	ui_root.add_child(instance)
+	await ui_root.get_tree().process_frame
+	print("[UI] taille panneau: ", instance.size, " position: ", instance.position)
+	print("[UI] visible: ", instance.visible, " modulate alpha: ", instance.modulate.a)
 	if instance.has_method("show_panel"):
 		instance.show_panel(params)
 	else:

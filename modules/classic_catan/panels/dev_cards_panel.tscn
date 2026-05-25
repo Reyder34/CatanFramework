@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://elar1qbbdl21"]
+
+[ext_resource type="Script" path="res://modules/classic_catan/panels_scripts/dev_cards_panel.gd" id="1_3gdwy"]
+
+[node name="DevCardsPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(600, 400)
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_3gdwy")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Tes cartes"
+
+[node name="CardsList" type="VBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="ActionRow" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="Content/ActionRow"]
+layout_mode = 2
+text = "Fermer"
