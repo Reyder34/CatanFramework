@@ -31,3 +31,26 @@ func on_placed(board: Board, player_id: int, key: String) -> void:
 
 func get_production_amount() -> int:
 	return 1
+
+# Modèle: petite maison (corps + toit). Gabarit — assigner model_scene pour remplacer.
+func create_visual(player_color: Color) -> Node3D:
+	var custom := super.create_visual(player_color)  # model_scene si assigné
+	if custom != null:
+		return custom
+	var color := get_color(player_color)
+	var root := Node3D.new()
+	var body := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = Vector3(0.26, 0.22, 0.26)
+	body.mesh = bm
+	body.position = Vector3(0, 0.11, 0)
+	body.material_override = _colored_mat(color)
+	root.add_child(body)
+	var roof := MeshInstance3D.new()
+	var rm := PrismMesh.new()
+	rm.size = Vector3(0.3, 0.16, 0.3)
+	roof.mesh = rm
+	roof.position = Vector3(0, 0.3, 0)
+	roof.material_override = _colored_mat(color.darkened(0.25))
+	root.add_child(roof)
+	return root

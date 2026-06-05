@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://catan2mainmenu"]
+[gd_scene load_steps=2 format=3 uid="uid://c4cu1nm716iru"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_menu"]
 
@@ -7,63 +7,4 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 script = ExtResource("1_menu")
-
-[node name="Panel" type="PanelContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Margin" type="MarginContainer" parent="Panel"]
-layout_mode = 2
-theme_override_constants/margin_left = 60
-theme_override_constants/margin_top = 40
-theme_override_constants/margin_right = 60
-theme_override_constants/margin_bottom = 40
-
-[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="Title" type="Label" parent="Panel/Margin/VBox"]
-layout_mode = 2
-text = "CATAN 2"
-theme_override_font_sizes/font_size = 48
-
-[node name="PlayerRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="PlayerLabel" type="Label" parent="Panel/Margin/VBox/PlayerRow"]
-layout_mode = 2
-text = "Nombre de joueurs :"
-
-[node name="PlayerSpin" type="SpinBox" parent="Panel/Margin/VBox/PlayerRow"]
-layout_mode = 2
-min_value = 2.0
-max_value = 4.0
-value = 4.0
-
-[node name="ModLabel" type="Label" parent="Panel/Margin/VBox"]
-layout_mode = 2
-text = "Mods activés :"
-
-[node name="ModList" type="VBoxContainer" parent="Panel/Margin/VBox"]
-layout_mode = 2
-
-[node name="Buttons" type="HBoxContainer" parent="Panel/Margin/VBox"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="StartButton" type="Button" parent="Panel/Margin/VBox/Buttons"]
-layout_mode = 2
-text = "Lancer la partie"
-
-[node name="QuitButton" type="Button" parent="Panel/Margin/VBox/Buttons"]
-layout_mode = 2
-text = "Quitter"

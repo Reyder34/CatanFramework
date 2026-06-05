@@ -18,9 +18,13 @@ const EVT_TRADE_COMPLETED := "classic_catan:trade_completed"
 const EVT_BANK_TRADE_COMPLETED := "classic_catan:bank_trade_completed"
 const EVT_KNIGHT_PLAYED := "classic_catan:knight_played"
 const EVT_ROAD_BUILDING_PLAYED := "classic_catan:road_building_played"
+const EVT_REQUEST_TRADE_WITH := "classic_catan:request_trade_with"
+const EVT_REQUEST_PLAY_CARD := "classic_catan:request_play_card"
 
 # Sous-phase: pose de routes gratuites (carte Construction de routes)
 const SP_FREE_ROAD := "classic_catan:free_road"
+# "Dés lancés ce tour" (par joueur, dans custom_data): empêche relance/skip du tour.
+const ROLLED_KEY := "classic_catan:rolled_dice"
 
 var _free_roads_remaining: int = 0
 
@@ -31,6 +35,10 @@ var _dev_deck: Array = []  # Array[DevelopmentCard]
 var _initial_placements: Array = []
 var _initial_direction: int = 1
 var _last_initial_settlement_key: String = ""
+
+# Ports: vertex_key -> {"ratio": int, "resource": String}  (resource "" = générique 3:1)
+var _port_at_vertex: Dictionary = {}
+var _ports_info: Array = []  # pour le visuel: [{"pos": Vector3, "label": String}]
 
 func _init() -> void:
 	mod_id = "classic_catan"
@@ -89,6 +97,8 @@ func _subscribe_hooks(reg: GameRegistry) -> void:
 	reg.on("edge_clicked", _on_edge_clicked, 0)
 	reg.on("game_start", _on_game_start_for_actions, 0)
 	reg.on(EVT_ROAD_BUILDING_PLAYED, _on_road_building_played, 0)
+	reg.on(EVT_REQUEST_TRADE_WITH, _on_request_trade_with, 0)
+	reg.on(EVT_REQUEST_PLAY_CARD, _on_request_play_card, 0)
 
 # Lancer 2d6 si personne n'a fourni de résultat
 func _on_dice_roll(ctx: RollContext) -> void:
@@ -259,6 +269,10 @@ func _try_place(ctx: ClickContext, expected_target: String) -> void:
 	if building == null or building.target != expected_target:
 		return
 	var p := state.current_player()
+	# En phase de jeu, il faut avoir lancé les dés avant de construire.
+	if state.phase == GameState.Phase.PLAY and not p.get_data(ROLLED_KEY, false):
+		print("Lance les dés avant de construire")
+		return
 	if not building.can_place(board, p.id, key):
 		print("Placement de %s invalide" % building.display_name)
 		return
@@ -285,6 +299,7 @@ func _try_place(ctx: ClickContext, expected_target: String) -> void:
 	building.on_placed(board, p.id, key)
 	_register_building_for_player(p, building, key)
 	state.registry.emit(EVT_AFTER_PLACE, pctx)
+	state.registry.emit("game_log", {"text": "%s a construit : %s" % [p.label(), building.display_name]})
 	_update_longest_road(state, board)
 	state.registry.check_victory(state)
 
@@ -403,6 +418,121 @@ func _on_game_start_for_actions(ctx) -> void:
 	_initial_direction = 1
 	_last_initial_settlement_key = ""
 	_state.build_mode_id = "settlement"  # on démarre en pose de colonie
+	_compute_ports()
+	_create_port_visuals(ctx["board_view"])
+
+# === PORTS (commerce réduit si on a une colonie/ville sur un sommet de port) ===
+
+func _compute_ports() -> void:
+	_port_at_vertex.clear()
+	_ports_info.clear()
+	# Arêtes côtières: la tuile voisine de l'autre côté est de l'eau (hors plateau).
+	var coastal: Array = []
+	for e in _board.edge_data:
+		var d: Dictionary = _board.edge_data[e]
+		var n: Vector2 = HexMath.NEIGHBOR_OFFSETS[d["side"]]
+		var neighbor := Vector2(d["q"] + n.x, d["r"] + n.y)
+		if _board.tile_data.has(neighbor):
+			continue  # arête intérieure
+		coastal.append({"edge": e, "q": d["q"], "r": d["r"], "side": d["side"]})
+	if coastal.is_empty():
+		return
+	# Indexées par angle autour du centre (pour mesurer l'espacement sur le pourtour).
+	coastal.sort_custom(func(a, b): return _edge_angle(a) < _edge_angle(b))
+	var count := coastal.size()
+	# Sélection ALÉATOIRE mais espacée: on tire les arêtes dans un ordre mélangé et
+	# on n'en garde une que si elle est à >= 2 arêtes des ports déjà posés.
+	var order: Array = []
+	for i in count:
+		order.append(i)
+	order.shuffle()
+	var picked: Array = []
+	for idx in order:
+		if picked.size() >= 9:
+			break
+		var ok := true
+		for pidx in picked:
+			var diff: int = abs(idx - pidx)
+			if min(diff, count - diff) < 2:
+				ok = false
+				break
+		if ok:
+			picked.append(idx)
+	# Types mélangés (4 génériques 3:1 + 5 spécifiques 2:1).
+	var port_types: Array = [
+		{"ratio": 3, "resource": ""}, {"ratio": 3, "resource": ""},
+		{"ratio": 3, "resource": ""}, {"ratio": 3, "resource": ""},
+		{"ratio": 2, "resource": "wood"}, {"ratio": 2, "resource": "brick"},
+		{"ratio": 2, "resource": "sheep"}, {"ratio": 2, "resource": "wheat"},
+		{"ratio": 2, "resource": "ore"},
+	]
+	port_types.shuffle()
+	for k in picked.size():
+		var c: Dictionary = coastal[picked[k]]
+		var pt: Dictionary = port_types[k]
+		var eps: Array = _board.edge_endpoints.get(c["edge"], [])
+		for v in eps:
+			_port_at_vertex[v] = {"ratio": pt["ratio"], "resource": pt["resource"]}
+		# Position: ancrée sur le sommet côtier le plus au large (MÊME fonction que les
+		# colonies: vertex_position), avec un léger retrait vers l'eau pour ne pas
+		# masquer le spot de construction. Bas pour éviter la parallaxe.
+		var anchor := HexMath.edge_position(c["q"], c["r"], c["side"])
+		var best_d := -1.0
+		for v in eps:
+			var vd: Dictionary = _board.vertex_data.get(v, {})
+			if vd.is_empty():
+				continue
+			var vpos := HexMath.vertex_position(vd["q"], vd["r"], vd["corner"])
+			var d := Vector2(vpos.x, vpos.z).length()
+			if d > best_d:
+				best_d = d
+				anchor = vpos
+		var outward := Vector3(anchor.x, 0, anchor.z)
+		if outward.length() > 0.001:
+			outward = outward.normalized()
+		var pos := anchor + outward * 0.1
+		pos.y = 0.14
+		_ports_info.append({"pos": pos, "ratio": pt["ratio"], "resource": pt["resource"]})
+
+func _edge_angle(c: Dictionary) -> float:
+	var pos := HexMath.edge_position(c["q"], c["r"], c["side"])
+	return atan2(pos.z, pos.x)
+
+func _res_name(res_id: String) -> String:
+	return _registry.resources[res_id]["name"] if _registry.resources.has(res_id) else res_id
+
+# Meilleur ratio d'échange banque du joueur pour une ressource (4 par défaut).
+func _best_bank_ratio(player: Player, resource: String) -> int:
+	var best := 4
+	for placed in player.buildings:
+		if placed.target != "vertex":
+			continue
+		if not _port_at_vertex.has(placed.key):
+			continue
+		var port: Dictionary = _port_at_vertex[placed.key]
+		if port["resource"] == "" or port["resource"] == resource:
+			best = min(best, int(port["ratio"]))
+	return best
+
+func _create_port_visuals(board_view) -> void:
+	if board_view == null or board_view.tile_nodes.is_empty():
+		return
+	var parent: Node = board_view.tile_nodes.values()[0].get_parent()
+	for info in _ports_info:
+		var res: String = info["resource"]
+		# Juste le ratio, coloré par la ressource (blanc pour le port générique 3:1),
+		# gardé au premier plan pour rester lisible même avec un bâtiment dessus.
+		var label := Label3D.new()
+		label.text = "%d:1" % int(info["ratio"])
+		label.font_size = 48
+		label.outline_size = 12
+		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		label.no_depth_test = true
+		label.modulate = _registry.get_resource_color(res) if res != "" else Color.WHITE
+		var pos: Vector3 = info["pos"]
+		pos.y = 0.32
+		label.position = pos
+		parent.add_child(label)
 
 func _register_actions(reg: GameRegistry) -> void:
 	# === Action: Lancer les dés ===
@@ -415,7 +545,8 @@ func _register_actions(reg: GameRegistry) -> void:
 	roll.is_available = func() -> bool:
 		return _state != null \
 			and _state.phase == GameState.Phase.PLAY \
-			and not _state.is_busy()
+			and not _state.is_busy() \
+			and not _state.current_player().get_data(ROLLED_KEY, false)
 	reg.register_action(roll)
 	
 	# === Action: Joueur suivant ===
@@ -428,7 +559,8 @@ func _register_actions(reg: GameRegistry) -> void:
 	next_turn.is_available = func() -> bool:
 		return _state != null \
 			and _state.phase == GameState.Phase.PLAY \
-			and _state.sub_phase == ""
+			and _state.sub_phase == "" \
+			and _state.current_player().get_data(ROLLED_KEY, false)
 	reg.register_action(next_turn)
 	
 	# === Action: Annuler build mode ===
@@ -539,14 +671,17 @@ func _action_roll_dice() -> void:
 	if roll_ctx.result == -1:
 		roll_ctx.result = randi_range(1, 6) + randi_range(1, 6)
 	print("Dés: %d" % roll_ctx.result)
+	_registry.emit("game_log", {"text": "🎲 %s a lancé les dés : %d" % [_state.current_player().label(), roll_ctx.result]})
 	_registry.emit(EVT_AFTER_DICE, roll_ctx)
 	if _board.tiles_by_number.has(roll_ctx.result):
 		for coords in _board.tiles_by_number[roll_ctx.result]:
 			_flash_tile(coords)
+	_state.current_player().set_data(ROLLED_KEY, true)
 
 func _action_next_player() -> void:
 	var p := _state.current_player()
 	p.set_data(_CARDS_BOUGHT_KEY, [])
+	p.set_data(ROLLED_KEY, false)  # le prochain joueur devra relancer
 	_state.next_player()
 	
 func _action_cancel_build() -> void:
@@ -610,21 +745,26 @@ func _execute_trade(proposer: Player, responder: Player, offer: Dictionary, dema
 
 func _action_bank_trade() -> void:
 	var p := _state.current_player()
-	var result = await _registry.ui.show_panel("bank_trade", {
-		"registry": _registry,
-		"player": p,
+	var ratios: Dictionary = {}
+	for res_id in _registry.resources:
+		if _registry.resources[res_id].get("is_desert", false):
+			continue
+		ratios[res_id] = _best_bank_ratio(p, res_id)
+	var result = await Net.show_panel_for(_state.current_player_index, "bank_trade", {
+		"ratios": ratios,
 	})
 	if result == null or result.get("action") != "trade":
 		return
 	var give: String = result["give"]
 	var receive: String = result["receive"]
+	var ratio: int = _best_bank_ratio(p, give)
 	# Validation finale (sécurité)
-	if p.resources.get(give, 0) < 4:
+	if p.resources.get(give, 0) < ratio:
 		print("Pas assez de ressources pour l'échange")
 		return
-	p.add_resource(give, -4)
+	p.add_resource(give, -ratio)
 	p.add_resource(receive, 1)
-	print("Échange banque J%d: -4 %s, +1 %s" % [p.id, give, receive])
+	print("Échange banque J%d: -%d %s, +1 %s" % [p.id, ratio, give, receive])
 	# Événement pour les mods qui veulent réagir (taxe, taux modifié...)
 	_registry.emit(EVT_BANK_TRADE_COMPLETED, {
 		"player": p,
@@ -632,6 +772,45 @@ func _action_bank_trade() -> void:
 		"receive": receive,
 	})
 
+
+# Échange ciblé vers un joueur précis (déclenché par le HUD au clic sur un joueur).
+func _on_request_trade_with(ctx) -> void:
+	var target_id: int = ctx["target_id"]
+	var proposer := _state.current_player()
+	if target_id == proposer.id:
+		return
+	if _state.phase != GameState.Phase.PLAY or _state.is_busy():
+		return
+	var result = await Net.show_panel_for(proposer.id, "trade_proposal", {})
+	if result == null or result.get("action") != "propose":
+		return
+	var offer: Dictionary = result["offer"]
+	var demand: Dictionary = result["demand"]
+	var responder: Player = _state.players[target_id]
+	var response = await Net.show_panel_for(target_id, "trade_response", {
+		"proposer_index": proposer.id,
+		"offer": offer,
+		"demand": demand,
+	})
+	if response != null and response.get("action") == "accept":
+		_execute_trade(proposer, responder, offer, demand)
+	else:
+		print("J%d a refusé l'échange" % target_id)
+
+# Joue une carte précise de la main (déclenché par le HUD).
+func _on_request_play_card(ctx) -> void:
+	var card: DevelopmentCard = ctx["card"]
+	var p := _state.current_player()
+	if not p.cards.has(card):
+		return
+	var bought := _get_bought_this_turn(p)
+	if not card.is_playable(_state, p, card in bought):
+		print("Carte non jouable maintenant")
+		return
+	var consumed: bool = await card.on_play(_state, _board, _registry, p)
+	if consumed:
+		p.remove_card(card)
+	_registry.emit("game_log", {"text": "%s a joué : %s" % [p.label(), card.display_name]})
 
 func _init_dev_deck(_ctx) -> void:
 	_dev_deck.clear()
@@ -686,6 +865,7 @@ func _action_show_dev_cards() -> void:
 	var consumed: bool = await card.on_play(_state, _board, _registry, p)
 	if consumed:
 		p.remove_card(card)
+	_registry.emit("game_log", {"text": "%s a joué : %s" % [p.label(), card.display_name]})
 
 # Maintient player.buildings cohérent avec le board.
 # - Pour les villes: retire d'abord l'ancienne colonie qu'on upgrade

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://dmk0op4230sum"]
+[gd_scene load_steps=3 format=3 uid="uid://dmk0op4230sum"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_20qpi"]
+[ext_resource type="Script" path="res://scripts/camera_3d.gd" id="2_qih3o"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_20qpi")
@@ -9,6 +10,7 @@ script = ExtResource("1_20qpi")
 transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 10, 10, 10)
 projection = 1
 size = 10.0
+script = ExtResource("2_qih3o")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.707107, 0.5, -0.5, 0, 0.707107, 0.707107, 0.707107, -0.5, 0.5, 0, 0, 0)
@@ -17,13 +19,9 @@ transform = Transform3D(0.707107, 0.5, -0.5, 0, 0.707107, 0.707107, 0.707107, -0
 
 [node name="HUD" type="Control" parent="UI"]
 layout_mode = 3
-anchors_preset = 0
-
-[node name="InfoLabel" type="Label" parent="UI/HUD"]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 420.0
-offset_bottom = 220.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

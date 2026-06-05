@@ -102,20 +102,22 @@ func _on_after_dice_rolled(ctx: RollContext) -> void:
 func _run_robber_sequence(state: GameState) -> void:
 	_roller_index = state.current_player_index
 	state.sub_phase = SP_DISCARD
+	# Tous les joueurs concernés défaussent EN MÊME TEMPS (panneaux ouverts en parallèle).
+	var requests: Array = []
+	var discarders: Array = []
 	for i in state.players.size():
-		var p: Player = state.players[i]
 		var total: int = 0
-		for v in p.resources.values():
+		for v in state.players[i].resources.values():
 			total += v
 		if total <= 7:
 			continue
-		var to_discard_count: int = total / 2
-		var result = await _registry.ui.show_panel("robber_discard", {
-			"registry": _registry,
-			"player": p,
-			"target_amount": to_discard_count,
-		})
+		requests.append({"player_index": i, "panel_id": "robber_discard", "raw": {"target_amount": total / 2}})
+		discarders.append(i)
+	var results: Array = await Net.show_panels_parallel(requests)
+	for k in results.size():
+		var result = results[k]
 		if result != null:
+			var p: Player = state.players[discarders[k]]
 			var discarded: Dictionary = result["to_discard"]
 			for res_id in discarded:
 				p.add_resource(res_id, -discarded[res_id])
@@ -143,8 +145,7 @@ func _on_tile_clicked(ctx: ClickContext) -> void:
 	_run_steal_choice(ctx.state, targets)
 
 func _run_steal_choice(state: GameState, targets: Array) -> void:
-	var result = await _registry.ui.show_panel("robber_steal", {
-		"players": state.players,
+	var result = await Net.show_panel_for(_roller_index, "robber_steal", {
 		"target_ids": targets,
 	})
 	if result != null:
