@@ -7,8 +7,30 @@ var _registry: GameRegistry
 
 const DEV_CARD_COST := {"wheat": 1, "sheep": 1, "ore": 1}
 
+# === ÉVÉNEMENTS POSSÉDÉS PAR CE MOD (ids namespacés) ===
+# Les mods dépendants (ex: vanilla_robber) s'y abonnent via ces constantes.
+const EVT_DICE_ROLL := "classic_catan:dice_roll"
+const EVT_AFTER_DICE := "classic_catan:after_dice_rolled"
+const EVT_BEFORE_PRODUCE := "classic_catan:before_produce"
+const EVT_BEFORE_PLACE := "classic_catan:before_place"
+const EVT_AFTER_PLACE := "classic_catan:after_place"
+const EVT_TRADE_COMPLETED := "classic_catan:trade_completed"
+const EVT_BANK_TRADE_COMPLETED := "classic_catan:bank_trade_completed"
+const EVT_KNIGHT_PLAYED := "classic_catan:knight_played"
+const EVT_ROAD_BUILDING_PLAYED := "classic_catan:road_building_played"
+
+# Sous-phase: pose de routes gratuites (carte Construction de routes)
+const SP_FREE_ROAD := "classic_catan:free_road"
+
+var _free_roads_remaining: int = 0
+
 # Cartes développement
 var _dev_deck: Array = []  # Array[DevelopmentCard]
+
+# Placement initial (règle de setup Catan, pilotée par ce mod)
+var _initial_placements: Array = []
+var _initial_direction: int = 1
+var _last_initial_settlement_key: String = ""
 
 func _init() -> void:
 	mod_id = "classic_catan"
@@ -25,11 +47,13 @@ func register(reg: GameRegistry) -> void:
 	_subscribe_hooks(reg)
 	_register_actions(reg)
 	reg.register_panel("dev_cards", preload("res://modules/classic_catan/panels/dev_cards_panel.tscn"))
-	reg.on_game_start(_init_dev_deck, 0)
+	reg.on("game_start", _init_dev_deck, 0)
 	reg.register_panel("hello", preload("res://modules/classic_catan/panels/hello_panel.tscn"))
 	reg.register_panel("trade_proposal", preload("res://modules/classic_catan/panels/trade_proposal_panel.tscn"))
 	reg.register_panel("trade_response", preload("res://modules/classic_catan/panels/trade_response_panel.tscn"))
 	reg.register_panel("bank_trade", preload("res://modules/classic_catan/panels/bank_trade_panel.tscn"))
+	reg.register_panel("resource_picker", preload("res://modules/classic_catan/panels/resource_picker_panel.tscn"))
+	reg.register_sub_phase_label(SP_FREE_ROAD, "Pose 2 routes gratuites")
 
 # === DONNÉES ===
 
@@ -59,12 +83,12 @@ func _declare_parameters(reg: GameRegistry) -> void:
 # === HOOKS ===
 
 func _subscribe_hooks(reg: GameRegistry) -> void:
-	reg.on_dice_roll(_on_dice_roll, 0)
-	reg.on_after_dice_rolled(_on_after_dice_rolled, 0)
-	reg.on_vertex_clicked(_on_vertex_clicked, 0)
-	reg.on_edge_clicked(_on_edge_clicked, 0)
-	reg.on_compute_victory_points(_on_compute_victory_points, 0)
-	reg.on_game_start(_on_game_start_for_actions, 0)
+	reg.on(EVT_DICE_ROLL, _on_dice_roll, 0)
+	reg.on(EVT_AFTER_DICE, _on_after_dice_rolled, 0)
+	reg.on("vertex_clicked", _on_vertex_clicked, 0)
+	reg.on("edge_clicked", _on_edge_clicked, 0)
+	reg.on("game_start", _on_game_start_for_actions, 0)
+	reg.on(EVT_ROAD_BUILDING_PLAYED, _on_road_building_played, 0)
 
 # Lancer 2d6 si personne n'a fourni de résultat
 func _on_dice_roll(ctx: RollContext) -> void:
@@ -87,7 +111,7 @@ func _distribute_resource(state: GameState, board: Board, coords: Vector2) -> vo
 	pctx.board = board
 	pctx.tile_coords = coords
 	pctx.resource_id = board.tile_data[coords]["resource"]
-	state.registry.events.emit("before_produce", pctx)
+	state.registry.emit(EVT_BEFORE_PRODUCE, pctx)
 	if pctx.cancelled:
 		return
 	
@@ -106,18 +130,23 @@ func _distribute_resource(state: GameState, board: Board, coords: Vector2) -> vo
 func _on_vertex_clicked(ctx: ClickContext) -> void:
 	if ctx.handled:
 		return
-	if ctx.state.phase == GameState.Phase.INITIAL_PLACEMENT:
+	if ctx.state.phase == GameState.Phase.SETUP:
 		_handle_initial_settlement(ctx)
 	elif ctx.state.phase == GameState.Phase.PLAY:
+		if ctx.state.sub_phase == SP_FREE_ROAD:
+			return  # pendant la pose de routes gratuites, ignorer les sommets
 		_handle_normal_vertex_click(ctx)
 
 func _on_edge_clicked(ctx: ClickContext) -> void:
 	if ctx.handled:
 		return
-	if ctx.state.phase == GameState.Phase.INITIAL_PLACEMENT:
+	if ctx.state.phase == GameState.Phase.SETUP:
 		_handle_initial_road(ctx)
 	elif ctx.state.phase == GameState.Phase.PLAY:
-		_handle_normal_edge_click(ctx)
+		if ctx.state.sub_phase == SP_FREE_ROAD:
+			_handle_free_road(ctx)
+		else:
+			_handle_normal_edge_click(ctx)
 
 # === PHASE INITIALE ===
 
@@ -128,7 +157,7 @@ func _handle_initial_settlement(ctx: ClickContext) -> void:
 	if state.build_mode_id != "settlement":
 		print("Pose d'abord une colonie (touche 1)")
 		return
-	if state.last_initial_settlement_key != "":
+	if _last_initial_settlement_key != "":
 		print("Tu as déjà posé ta colonie, pose maintenant la route adjacente")
 		return
 	var settlement: Settlement = state.registry.get_building("settlement")
@@ -139,9 +168,10 @@ func _handle_initial_settlement(ctx: ClickContext) -> void:
 		print("Placement invalide (règle de distance)")
 		return
 	settlement.on_placed(board, state.current_player().id, key)
-	state.last_initial_settlement_key = key
+	_register_building_for_player(state.current_player(), settlement, key)
+	_last_initial_settlement_key = key
 	# Sur la 2e colonie: ressources adjacentes
-	var placement_index: int = state.initial_placements[state.current_player_index]
+	var placement_index: int = _initial_placements[state.current_player_index]
 	if placement_index == 1:
 		_distribute_initial_resources(state, board, key)
 
@@ -152,11 +182,11 @@ func _handle_initial_road(ctx: ClickContext) -> void:
 	if state.build_mode_id != "road":
 		print("Pose maintenant ta route (touche 2)")
 		return
-	if state.last_initial_settlement_key == "":
+	if _last_initial_settlement_key == "":
 		print("Pose d'abord ta colonie")
 		return
 	var endpoints: Array = board.edge_endpoints.get(key, [])
-	if not endpoints.has(state.last_initial_settlement_key):
+	if not endpoints.has(_last_initial_settlement_key):
 		print("La route doit être adjacente à ta colonie")
 		return
 	if board.is_edge_occupied(key):
@@ -164,7 +194,8 @@ func _handle_initial_road(ctx: ClickContext) -> void:
 		return
 	var road: Road = state.registry.get_building("road")
 	road.on_placed(board, state.current_player().id, key)
-	state.advance_initial_placement()
+	_register_building_for_player(state.current_player(), road, key)
+	_advance_initial_placement()
 	state.build_mode_id = "settlement"
 
 func _distribute_initial_resources(state: GameState, board: Board, vertex_key: String) -> void:
@@ -188,6 +219,29 @@ func _distribute_initial_resources(state: GameState, board: Board, vertex_key: S
 		if not state.registry.is_producing_resource(resource):
 			continue
 		state.players[state.current_player_index].add_resource(resource, 1)
+
+# Avance le placement initial (snake-draft): chaque joueur pose 2 colonies+routes.
+# Pilote directement current_player_index/phase du core (le core ne connaît pas cette règle).
+func _advance_initial_placement() -> void:
+	_initial_placements[_state.current_player_index] += 1
+	_last_initial_settlement_key = ""
+	var all_done := true
+	for count in _initial_placements:
+		if count < 2:
+			all_done = false
+			break
+	if all_done:
+		_state.phase = GameState.Phase.PLAY
+		_state.current_player_index = 0
+		_state.build_mode_id = ""
+		return
+	if _initial_direction == 1 and _state.current_player_index == _state.players.size() - 1:
+		_initial_direction = -1
+	elif _initial_direction == -1 and _state.current_player_index == 0:
+		pass
+	else:
+		_state.current_player_index += _initial_direction
+	_state.build_mode_id = ""
 
 # === PHASE NORMALE ===
 
@@ -216,7 +270,7 @@ func _try_place(ctx: ClickContext, expected_target: String) -> void:
 	pctx.building_id = building.id
 	pctx.target_key = key
 	pctx.cost = building.cost.duplicate()
-	state.registry.events.emit("before_place", pctx)
+	state.registry.emit(EVT_BEFORE_PLACE, pctx)
 	if pctx.cancelled:
 		print("Placement annulé: %s" % pctx.cancel_reason)
 		return
@@ -229,53 +283,126 @@ func _try_place(ctx: ClickContext, expected_target: String) -> void:
 	for res in pctx.cost:
 		p.add_resource(res, -pctx.cost[res])
 	building.on_placed(board, p.id, key)
-	# after_place (mods peuvent réagir: bonus, etc.)
-	state.registry.events.emit("after_place", pctx)
-	# Vérifier victoire
-	_check_victory(state, board)
+	_register_building_for_player(p, building, key)
+	state.registry.emit(EVT_AFTER_PLACE, pctx)
+	_update_longest_road(state, board)
+	state.registry.check_victory(state)
 
-# === VICTOIRE ===
 
-func _on_compute_victory_points(ctx: VictoryContext) -> void:
-	var pts := 0
-	for v_key in ctx.board.vertex_state:
-		var info: Dictionary = ctx.board.vertex_state[v_key]
-		if info.get("owner", -1) != ctx.player_id:
-			continue
-		var b: BuildingType = ctx.state.registry.get_building(info.get("type", ""))
-		if b != null:
-			pts += b.victory_points
-	for e_key in ctx.board.edge_state:
-		var info: Dictionary = ctx.board.edge_state[e_key]
-		if info.get("owner", -1) != ctx.player_id:
-			continue
-		var b: BuildingType = ctx.state.registry.get_building(info.get("type", "road"))
-		if b != null:
-			pts += b.victory_points
-	# Cartes Point de victoire
-	var p: Player = ctx.state.players[ctx.player_id]
-	var cards: Array = p.get_data(_CARDS_KEY, [])
-	for c in cards:
-		pts += c.victory_points
-	ctx.points += pts
+# === ROUTES GRATUITES (carte Construction de routes) ===
 
-func _check_victory(state: GameState, board: Board) -> void:
+func _on_road_building_played(_ctx) -> void:
+	if not _has_placeable_road(_state.current_player_index):
+		print("[Construction de routes] aucune route posable")
+		return
+	_free_roads_remaining = 2
+	_state.sub_phase = SP_FREE_ROAD
+
+func _handle_free_road(ctx: ClickContext) -> void:
+	var state := ctx.state
+	var board := ctx.board
 	var p := state.current_player()
-	var vctx := VictoryContext.new()
-	vctx.state = state
-	vctx.board = board
-	vctx.player_id = p.id
-	vctx.threshold = state.registry.victory_threshold
-	state.registry.events.emit("compute_victory_points", vctx)
-	if vctx.points >= vctx.threshold:
-		state.phase = GameState.Phase.GAME_OVER
-		state.winner_index = p.id
-		print("Joueur %d a gagné avec %d points!" % [p.id, vctx.points])
+	var road: BuildingType = state.registry.get_building("road")
+	if not road.can_place(board, p.id, ctx.target_key):
+		print("Route gratuite: placement invalide")
+		return
+	road.on_placed(board, p.id, ctx.target_key)
+	_register_building_for_player(p, road, ctx.target_key)
+	_free_roads_remaining -= 1
+	_update_longest_road(state, board)
+	if _free_roads_remaining <= 0 or not _has_placeable_road(p.id):
+		_free_roads_remaining = 0
+		state.sub_phase = ""
+	state.registry.check_victory(state)
+
+func _has_placeable_road(player_id: int) -> bool:
+	var road: BuildingType = _registry.get_building("road")
+	for key in _board.edge_data:
+		if road.can_place(_board, player_id, key):
+			return true
+	return false
+
+# === PLUS LONGUE ROUTE ===
+
+# Recalcule l'effet longest_road pour tous les joueurs (détenteur gardé en cas d'égalité).
+func _update_longest_road(state: GameState, board: Board) -> void:
+	var lengths: Dictionary = {}
+	for p in state.players:
+		lengths[p.id] = _compute_longest_road(board, p.id)
+	var holder_id := -1
+	for p in state.players:
+		if p.has_effect("longest_road"):
+			holder_id = p.id
+	# Le détenteur perd l'effet si sa route est tombée sous 5 (coupée).
+	if holder_id >= 0 and int(lengths[holder_id]) < 5:
+		state.players[holder_id].remove_effect_by_id("longest_road")
+		holder_id = -1
+	var target_id := holder_id
+	var target_len: int = int(lengths[holder_id]) if holder_id >= 0 else 4
+	for p in state.players:
+		var l: int = int(lengths[p.id])
+		if l >= 5 and l > target_len:
+			target_len = l
+			target_id = p.id
+	if target_id != holder_id and target_id >= 0:
+		if holder_id >= 0:
+			state.players[holder_id].remove_effect_by_id("longest_road")
+		var eff := PlayerEffect.new()
+		eff.id = "longest_road"
+		eff.source_mod = mod_id
+		eff.display_name = "Route la plus longue"
+		eff.description = "Au moins 5 segments de route contigus"
+		eff.victory_points = 2
+		eff.data = {"length": target_len}
+		state.players[target_id].add_effect(eff)
+		print("Route la plus longue -> Joueur %d (%d segments)" % [target_id, target_len])
+
+# Longueur du plus long chemin de routes du joueur (coupé par un bâtiment adverse).
+func _compute_longest_road(board: Board, player_id: int) -> int:
+	var best := 0
+	for e in board.edge_state:
+		if board.get_edge_owner(e) != player_id:
+			continue
+		for start in board.edge_endpoints.get(e, []):
+			var other: String = _other_endpoint(board, e, start)
+			var used: Dictionary = {e: true}
+			best = max(best, 1 + _road_dfs(board, player_id, other, used))
+	return best
+
+func _road_dfs(board: Board, player_id: int, vertex: String, used: Dictionary) -> int:
+	# Un bâtiment adverse sur ce sommet coupe la route: interdit de le traverser.
+	var owner := board.get_vertex_owner(vertex)
+	if owner >= 0 and owner != player_id:
+		return 0
+	var best := 0
+	for e in board.vertex_edges.get(vertex, []):
+		if used.has(e):
+			continue
+		if board.get_edge_owner(e) != player_id:
+			continue
+		var other: String = _other_endpoint(board, e, vertex)
+		used[e] = true
+		best = max(best, 1 + _road_dfs(board, player_id, other, used))
+		used.erase(e)
+	return best
+
+func _other_endpoint(board: Board, edge_key: String, vertex: String) -> String:
+	for v in board.edge_endpoints.get(edge_key, []):
+		if v != vertex:
+			return v
+	return ""
 
 func _on_game_start_for_actions(ctx) -> void:
 	_state = ctx["state"]
 	_board = ctx["board"]
 	_registry = ctx["registry"]
+	# Initialise le setup Catan: chaque joueur posera 2 colonies + 2 routes.
+	_initial_placements.clear()
+	for i in _state.players.size():
+		_initial_placements.append(0)
+	_initial_direction = 1
+	_last_initial_settlement_key = ""
+	_state.build_mode_id = "settlement"  # on démarre en pose de colonie
 
 func _register_actions(reg: GameRegistry) -> void:
 	# === Action: Lancer les dés ===
@@ -288,7 +415,7 @@ func _register_actions(reg: GameRegistry) -> void:
 	roll.is_available = func() -> bool:
 		return _state != null \
 			and _state.phase == GameState.Phase.PLAY \
-			and _state.sub_phase == GameState.SubPhase.NONE
+			and not _state.is_busy()
 	reg.register_action(roll)
 	
 	# === Action: Joueur suivant ===
@@ -299,7 +426,9 @@ func _register_actions(reg: GameRegistry) -> void:
 	next_turn.category = "game"
 	next_turn.callback = _action_next_player
 	next_turn.is_available = func() -> bool:
-		return _state != null and _state.sub_phase == GameState.SubPhase.NONE
+		return _state != null \
+			and _state.phase == GameState.Phase.PLAY \
+			and _state.sub_phase == ""
 	reg.register_action(next_turn)
 	
 	# === Action: Annuler build mode ===
@@ -339,7 +468,7 @@ func _register_actions(reg: GameRegistry) -> void:
 	trade.is_available = func() -> bool:
 		return _state != null \
 			and _state.phase == GameState.Phase.PLAY \
-			and _state.sub_phase == GameState.SubPhase.NONE
+			and _state.sub_phase == ""
 	reg.register_action(trade)
 	
 	# === Action: Échanger 4:1 avec la banque ===
@@ -352,7 +481,7 @@ func _register_actions(reg: GameRegistry) -> void:
 	bank.is_available = func() -> bool:
 		return _state != null \
 			and _state.phase == GameState.Phase.PLAY \
-			and _state.sub_phase == GameState.SubPhase.NONE
+			and _state.sub_phase == ""
 	reg.register_action(bank)
 	
 	# === Action: Acheter une carte développement ===
@@ -365,7 +494,7 @@ func _register_actions(reg: GameRegistry) -> void:
 	buy.is_available = func() -> bool:
 		return _state != null \
 			and _state.phase == GameState.Phase.PLAY \
-			and _state.sub_phase == GameState.SubPhase.NONE \
+			and _state.sub_phase == "" \
 			and _dev_deck.size() > 0
 	reg.register_action(buy)
 
@@ -379,7 +508,7 @@ func _register_actions(reg: GameRegistry) -> void:
 	show.is_available = func() -> bool:
 		return _state != null \
 			and _state.phase == GameState.Phase.PLAY \
-			and _state.sub_phase == GameState.SubPhase.NONE
+			and _state.sub_phase == ""
 	reg.register_action(show)
 
 func _register_building_action(reg: GameRegistry, building_id: String, key: int) -> void:
@@ -396,7 +525,7 @@ func _register_building_action(reg: GameRegistry, building_id: String, key: int)
 	action.is_available = func() -> bool:
 		return _state != null \
 			and _state.phase != GameState.Phase.GAME_OVER \
-			and _state.sub_phase == GameState.SubPhase.NONE
+			and _state.sub_phase == ""
 	reg.register_action(action)
 
 # === IMPLÉMENTATIONS DES ACTIONS ===
@@ -406,11 +535,11 @@ func _action_roll_dice() -> void:
 	roll_ctx.state = _state
 	roll_ctx.board = _board
 	roll_ctx.roller_id = _state.current_player_index
-	_registry.events.emit("dice_roll", roll_ctx)
+	_registry.emit(EVT_DICE_ROLL, roll_ctx)
 	if roll_ctx.result == -1:
 		roll_ctx.result = randi_range(1, 6) + randi_range(1, 6)
 	print("Dés: %d" % roll_ctx.result)
-	_registry.events.emit("after_dice_rolled", roll_ctx)
+	_registry.emit(EVT_AFTER_DICE, roll_ctx)
 	if _board.tiles_by_number.has(roll_ctx.result):
 		for coords in _board.tiles_by_number[roll_ctx.result]:
 			_flash_tile(coords)
@@ -419,12 +548,16 @@ func _action_next_player() -> void:
 	var p := _state.current_player()
 	p.set_data(_CARDS_BOUGHT_KEY, [])
 	_state.next_player()
-
+	
 func _action_cancel_build() -> void:
+	if _state.sub_phase == SP_FREE_ROAD:
+		_free_roads_remaining = 0
+		_state.sub_phase = ""
+		return
 	_state.build_mode_id = ""
 
 func _flash_tile(coords: Vector2) -> void:
-	_registry.events.emit("flash_tile", {"coords": coords})
+	_registry.emit("flash_tile", {"coords": coords})
 
 func _action_propose_trade() -> void:
 	var proposer := _state.current_player()
@@ -468,7 +601,7 @@ func _execute_trade(proposer: Player, responder: Player, offer: Dictionary, dema
 		proposer.add_resource(res_id, demand[res_id])
 	print("Échange J%d <-> J%d effectué" % [proposer.id, responder.id])
 	# Événement pour les mods qui veulent réagir (taxe, etc.)
-	_registry.events.emit("trade_completed", {
+	_registry.emit(EVT_TRADE_COMPLETED, {
 		"proposer": proposer,
 		"responder": responder,
 		"offer": offer,
@@ -493,7 +626,7 @@ func _action_bank_trade() -> void:
 	p.add_resource(receive, 1)
 	print("Échange banque J%d: -4 %s, +1 %s" % [p.id, give, receive])
 	# Événement pour les mods qui veulent réagir (taxe, taux modifié...)
-	_registry.events.emit("bank_trade_completed", {
+	_registry.emit(EVT_BANK_TRADE_COMPLETED, {
 		"player": p,
 		"give": give,
 		"receive": receive,
@@ -514,18 +647,13 @@ func _init_dev_deck(_ctx) -> void:
 
 # === CARTES DÉVELOPPEMENT ===
 
-const _CARDS_KEY := "catan:dev_cards"
 const _CARDS_BOUGHT_KEY := "catan:dev_cards_bought_this_turn"
-
-func _get_cards(player: Player) -> Array:
-	return player.get_data(_CARDS_KEY, [])
 
 func _get_bought_this_turn(player: Player) -> Array:
 	return player.get_data(_CARDS_BOUGHT_KEY, [])
 
 func _action_buy_dev_card() -> void:
 	var p := _state.current_player()
-	# Vérifier coût
 	for res in DEV_CARD_COST:
 		if p.resources.get(res, 0) < DEV_CARD_COST[res]:
 			print("Pas assez de ressources pour une carte")
@@ -533,25 +661,22 @@ func _action_buy_dev_card() -> void:
 	if _dev_deck.is_empty():
 		print("Le deck est vide")
 		return
-	# Payer
 	for res in DEV_CARD_COST:
 		p.add_resource(res, -DEV_CARD_COST[res])
-	# Piocher
 	var card: DevelopmentCard = _dev_deck.pop_back()
-	var hand: Array = _get_cards(p)
-	hand.append(card)
-	p.set_data(_CARDS_KEY, hand)
+	p.add_card(card)
 	var bought: Array = _get_bought_this_turn(p)
 	bought.append(card)
 	p.set_data(_CARDS_BOUGHT_KEY, bought)
 	print("J%d a pioché: %s (deck restant: %d)" % [p.id, card.display_name, _dev_deck.size()])
+	_registry.check_victory(_state)
 
 func _action_show_dev_cards() -> void:
 	var p := _state.current_player()
 	var result = await _registry.ui.show_panel("dev_cards", {
 		"registry": _registry,
 		"player": p,
-		"cards": _get_cards(p),
+		"cards": p.cards,
 		"bought_this_turn": _get_bought_this_turn(p),
 		"state": _state,
 	})
@@ -560,6 +685,14 @@ func _action_show_dev_cards() -> void:
 	var card: DevelopmentCard = result["card"]
 	var consumed: bool = await card.on_play(_state, _board, _registry, p)
 	if consumed:
-		var hand: Array = _get_cards(p)
-		hand.erase(card)
-		p.set_data(_CARDS_KEY, hand)
+		p.remove_card(card)
+
+# Maintient player.buildings cohérent avec le board.
+# - Pour les villes: retire d'abord l'ancienne colonie qu'on upgrade
+# - Pour le reste: ajoute simplement la nouvelle entrée
+func _register_building_for_player(p: Player, building: BuildingType, key: String) -> void:
+	if building.id == "city":
+		# Retire la colonie qui était sur ce vertex
+		p.remove_building_at(key)
+	var placed := PlacedBuilding.new(building, key, building.target)
+	p.add_building(placed)

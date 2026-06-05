@@ -1,10 +1,22 @@
 class_name VanillaRobberMod
 extends GameMod
 
+# Ids des sous-phases (constantes pour éviter les fautes de frappe)
+const SP_DISCARD := "vanilla_robber:discard"
+const SP_MOVE := "vanilla_robber:move"
+const SP_STEAL := "vanilla_robber:steal"
+
+# Plus grande armée
+const EFF_LARGEST_ARMY := "largest_army"
+const KNIGHTS_KEY := "vanilla_robber:knights"
+
 var _robber_node: MeshInstance3D
 var _board: Board
 var _registry: GameRegistry
 var _state: GameState
+
+# Joueur qui a déclenché le voleur (état local au mod, plus dans GameState)
+var _roller_index: int = 0
 
 func _init() -> void:
 	mod_id = "vanilla_robber"
@@ -17,11 +29,16 @@ func register(reg: GameRegistry) -> void:
 	# Panneaux UI
 	reg.register_panel("robber_discard", preload("res://modules/vanilla_robber/discard_panel.tscn"))
 	reg.register_panel("robber_steal", preload("res://modules/vanilla_robber/steal_panel.tscn"))
+	# Labels de sous-phases
+	reg.register_sub_phase_label(SP_DISCARD, "Défausse en cours")
+	reg.register_sub_phase_label(SP_MOVE, "Déplace le voleur (clique une tuile)")
+	reg.register_sub_phase_label(SP_STEAL, "Choisis une cible à voler")
 	# Hooks
-	reg.on_game_start(_on_game_start, 0)
-	reg.on_after_dice_rolled(_on_after_dice_rolled, 10)
-	reg.on_before_produce(_on_before_produce, 0)
-	reg.on_tile_clicked(_on_tile_clicked, 0)
+	reg.on("game_start", _on_game_start, 0)
+	reg.on(ClassicCatanMod.EVT_AFTER_DICE, _on_after_dice_rolled, 10)
+	reg.on(ClassicCatanMod.EVT_BEFORE_PRODUCE, _on_before_produce, 0)
+	reg.on("tile_clicked", _on_tile_clicked, 0)
+	reg.on(ClassicCatanMod.EVT_KNIGHT_PLAYED, _on_knight_played, 0)
 
 # === DÉMARRAGE ===
 
@@ -79,41 +96,35 @@ func _on_before_produce(ctx: ProductionContext) -> void:
 func _on_after_dice_rolled(ctx: RollContext) -> void:
 	if ctx.result != 7:
 		return
-	print("[voleur] 7 détecté")
 	ctx.cancel_production = true
 	_run_robber_sequence(ctx.state)
 
 func _run_robber_sequence(state: GameState) -> void:
-	print("[voleur] démarrage séquence")
-	state.roller_index = state.current_player_index
-	state.sub_phase = GameState.SubPhase.ROBBER_DISCARD
+	_roller_index = state.current_player_index
+	state.sub_phase = SP_DISCARD
 	for i in state.players.size():
 		var p: Player = state.players[i]
 		var total: int = 0
 		for v in p.resources.values():
 			total += v
-		print("[voleur] joueur %d a %d cartes" % [i, total])
 		if total <= 7:
 			continue
 		var to_discard_count: int = total / 2
-		print("[voleur] ouverture défausse pour J%d (-%d)" % [i, to_discard_count])
 		var result = await _registry.ui.show_panel("robber_discard", {
 			"registry": _registry,
 			"player": p,
 			"target_amount": to_discard_count,
 		})
-		print("[voleur] défausse fermée, result=%s" % str(result))
 		if result != null:
 			var discarded: Dictionary = result["to_discard"]
 			for res_id in discarded:
 				p.add_resource(res_id, -discarded[res_id])
-	print("[voleur] passage à ROBBER_MOVE")
-	state.sub_phase = GameState.SubPhase.ROBBER_MOVE
+	state.sub_phase = SP_MOVE
 
 # === DÉPLACEMENT (via clic tuile) ===
 
 func _on_tile_clicked(ctx: ClickContext) -> void:
-	if ctx.state.sub_phase != GameState.SubPhase.ROBBER_MOVE:
+	if ctx.state.sub_phase != SP_MOVE:
 		return
 	var coords := ctx.target_coords
 	var board := ctx.board
@@ -124,14 +135,11 @@ func _on_tile_clicked(ctx: ClickContext) -> void:
 		return
 	board.set_marker("robber", coords)
 	ctx.handled = true
-	# Identifier les cibles
 	var targets := _get_steal_targets(board, ctx.state, coords)
 	if targets.is_empty():
-		print("Personne à voler ici")
-		ctx.state.sub_phase = GameState.SubPhase.NONE
+		ctx.state.sub_phase = ""
 		return
-	# Phase 3: choix de la cible via panneau
-	ctx.state.sub_phase = GameState.SubPhase.ROBBER_STEAL
+	ctx.state.sub_phase = SP_STEAL
 	_run_steal_choice(ctx.state, targets)
 
 func _run_steal_choice(state: GameState, targets: Array) -> void:
@@ -142,13 +150,13 @@ func _run_steal_choice(state: GameState, targets: Array) -> void:
 	if result != null:
 		var target_id: int = result["target_id"]
 		_perform_steal(state, target_id)
-	state.sub_phase = GameState.SubPhase.NONE
+	state.sub_phase = ""
 
 func _get_steal_targets(board: Board, state: GameState, coords: Vector2) -> Array:
 	var targets: Array = []
 	for v_key in board.tile_vertices.get(coords, []):
 		var owner_id := board.get_vertex_owner(v_key)
-		if owner_id < 0 or owner_id == state.roller_index:
+		if owner_id < 0 or owner_id == _roller_index:
 			continue
 		if targets.has(owner_id):
 			continue
@@ -163,7 +171,7 @@ func _get_steal_targets(board: Board, state: GameState, coords: Vector2) -> Arra
 
 func _perform_steal(state: GameState, target_id: int) -> void:
 	var target: Player = state.players[target_id]
-	var thief: Player = state.players[state.roller_index]
+	var thief: Player = state.players[_roller_index]
 	var pool: Array = []
 	for res_id in target.resources:
 		for i in target.resources[res_id]:
@@ -174,3 +182,45 @@ func _perform_steal(state: GameState, target_id: int) -> void:
 	target.add_resource(stolen, -1)
 	thief.add_resource(stolen, 1)
 	print("Joueur %d vole %s à Joueur %d" % [thief.id, stolen, target.id])
+
+# === CARTE CHEVALIER / PLUS GRANDE ARMÉE ===
+
+func _on_knight_played(ctx) -> void:
+	var player: Player = ctx["player"]
+	var count: int = int(player.get_data(KNIGHTS_KEY, 0)) + 1
+	player.set_data(KNIGHTS_KEY, count)
+	_update_largest_army()
+	# Déplace le voleur comme sur un 7, mais sans défausse préalable.
+	_roller_index = _state.current_player_index
+	_state.sub_phase = SP_MOVE
+
+# Attribue l'effet largest_army au joueur ayant le plus de chevaliers (>=3),
+# pris à l'ancien détenteur seulement si strictement plus (égalité = détenteur garde).
+func _update_largest_army() -> void:
+	var holder_id := -1
+	for p in _state.players:
+		if p.has_effect(EFF_LARGEST_ARMY):
+			holder_id = p.id
+	var holder_count := 0
+	if holder_id >= 0:
+		holder_count = int(_state.players[holder_id].get_data(KNIGHTS_KEY, 0))
+	var best_id := holder_id
+	var best_count: int = max(holder_count, 2)  # il faut au moins 3 chevaliers
+	for p in _state.players:
+		var c: int = int(p.get_data(KNIGHTS_KEY, 0))
+		if c >= 3 and c > best_count:
+			best_count = c
+			best_id = p.id
+	if best_id != holder_id and best_id >= 0:
+		if holder_id >= 0:
+			_state.players[holder_id].remove_effect_by_id(EFF_LARGEST_ARMY)
+		var eff := PlayerEffect.new()
+		eff.id = EFF_LARGEST_ARMY
+		eff.source_mod = mod_id
+		eff.display_name = "Plus grande armée"
+		eff.description = "Au moins 3 chevaliers joués"
+		eff.victory_points = 2
+		eff.data = {"knights": best_count}
+		_state.players[best_id].add_effect(eff)
+		print("Plus grande armée -> Joueur %d (%d chevaliers)" % [best_id, best_count])
+	_registry.check_victory(_state)

@@ -8,7 +8,7 @@ var board: Board
 var board_view: BoardView
 var ui: UIManager
 
-var loaded_mods: Array[GameMod] = []
+var loaded_mods: Array = []
 
 func _ready() -> void:
 	registry = GameRegistry.new()
@@ -26,18 +26,17 @@ func _ready() -> void:
 	board_view.on_edge_click = _on_edge_clicked
 	board_view.generate(self)
 	
-	state = GameState.new(registry, 4)
-	state.build_mode_id = "settlement"  # commence en mode colonie pour la phase initiale
-	
+	state = GameState.new(registry, GameConfig.player_count)
+
 	for p in state.players:
 		for res_id in registry.resources:
 			if not registry.resources[res_id].get("is_desert", false):
-				p.resources[res_id] = 10	
+				p.resources[res_id] = 100	
 	
 	ui = UIManager.new(info_label, state, board)
 	ui.update()
 	
-	registry.events.emit("game_start", {
+	registry.emit("game_start", {
 		"state": state,
 		"board": board,
 		"registry": registry,
@@ -47,21 +46,37 @@ func _ready() -> void:
 	print("Jeu prêt. Mods chargés: ", registry._origin.size(), " entrées dans le registry")
 
 func _load_mods() -> void:
-	var robber_mod := VanillaRobberMod.new()
-	loaded_mods = [
-		ClassicCatanMod.new(),
-		robber_mod,
-	]
-	for mod in loaded_mods:
-		registry._set_current_mod(mod.mod_id)
-		mod.register(registry)
-	registry._set_current_mod("core")
+	# Mods choisis dans le menu (GameConfig), + expansion des dépendances par sécurité.
+	var catalog: Array = ModCatalog.create_all()
+	var by_id: Dictionary = {}
+	for m in catalog:
+		by_id[m.mod_id] = m
+	var enabled: Dictionary = {}
+	for id in GameConfig.enabled_mod_ids:
+		_mark_with_deps(id, by_id, enabled)
+	var to_load: Array = []
+	for m in catalog:
+		if enabled.has(m.mod_id):
+			to_load.append(m)
+	# Le ModLoader résout l'ordre (depends_on) et vérifie les conflits.
+	loaded_mods = ModLoader.load_mods(registry, to_load)
+
+func _mark_with_deps(id: String, by_id: Dictionary, enabled: Dictionary) -> void:
+	if not by_id.has(id) or enabled.has(id):
+		return
+	enabled[id] = true
+	for dep in by_id[id].depends_on:
+		_mark_with_deps(dep, by_id, enabled)
+	
 
 
 # === ENTRÉES UTILISATEUR ===
 
 func _input(event: InputEvent) -> void:
 	if not (event is InputEventKey and event.pressed):
+		return
+	if event.keycode == KEY_M:
+		get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 		return
 	if state.phase == GameState.Phase.GAME_OVER:
 		return
@@ -89,7 +104,7 @@ func _on_tile_clicked(_cam, event, _pos, _norm, _idx, tile: StaticBody3D) -> voi
 	ctx.board = board
 	ctx.player_id = state.current_player_index
 	ctx.target_coords = tile.get_meta("coords")
-	registry.events.emit("tile_clicked", ctx)
+	registry.emit("tile_clicked", ctx)
 	ui.update()
 
 func _on_vertex_clicked(_cam, event, _pos, _norm, _idx, body: StaticBody3D) -> void:
@@ -102,7 +117,7 @@ func _on_vertex_clicked(_cam, event, _pos, _norm, _idx, body: StaticBody3D) -> v
 	ctx.board = board
 	ctx.player_id = state.current_player_index
 	ctx.target_key = body.get_meta("key")
-	registry.events.emit("vertex_clicked", ctx)
+	registry.emit("vertex_clicked", ctx)
 	ui.update()
 
 func _on_edge_clicked(_cam, event, _pos, _norm, _idx, body: StaticBody3D) -> void:
@@ -115,7 +130,7 @@ func _on_edge_clicked(_cam, event, _pos, _norm, _idx, body: StaticBody3D) -> voi
 	ctx.board = board
 	ctx.player_id = state.current_player_index
 	ctx.target_key = body.get_meta("key")
-	registry.events.emit("edge_clicked", ctx)
+	registry.emit("edge_clicked", ctx)
 	ui.update()
 
 func _flash_tile_handler(ctx: Dictionary) -> void:
