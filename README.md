@@ -211,6 +211,7 @@ Modèle **hôte autoritaire** : les clients envoient leurs actions, l'hôte appl
 - Un mod basé sur des **clics plateau + événements standards** est compatible réseau **sans rien faire** (la pose, la production, les PV se synchronisent tout seuls).
 - Un mod qui ouvre un **panneau** (UI interactive) doit utiliser **`await Net.show_panel_for(player_index, "mon_panneau", params_sérialisables)`** au lieu de `registry.ui.show_panel(...)` : le panneau s'affiche sur l'écran du **bon joueur** et le résultat revient à l'hôte. Pour plusieurs panneaux simultanés (ex. défausse), `await Net.show_panels_parallel([...])`.
 - Le plateau est identique chez tous via une **seed** partagée diffusée au lancement.
+- port 24545 
 
 ### Sous-phases
 Pour un déroulé multi-étapes (ex. « pose 2 routes gratuites »), pose `state.sub_phase = "mon_mod:ma_phase"` (et `register_sub_phase_label`). Tant que `sub_phase != ""`, `state.is_busy()` est vrai et les actions globales sont bloquées. Remets `""` quand c'est fini.
