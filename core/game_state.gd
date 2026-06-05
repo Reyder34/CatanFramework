@@ -9,34 +9,23 @@ const PLAYER_COLORS := [
 ]
 
 enum Phase {
-	INITIAL_PLACEMENT,
+	SETUP,
 	PLAY,
 	GAME_OVER,
 }
 
-enum SubPhase {
-	NONE,
-	ROBBER_DISCARD,
-	ROBBER_MOVE,
-	ROBBER_STEAL,
-}
-
-var registry: GameRegistry  # remplace l'ancien "module"
+var registry: GameRegistry
 var players: Array = []
 var current_player_index: int = 0
 var build_mode_id: String = ""
-var phase: int = Phase.INITIAL_PLACEMENT
-var sub_phase: int = SubPhase.NONE
+var phase: int = Phase.SETUP
+
+# Sous-phase libre, gérée par les mods.
+# Convention: ids préfixés par mod_id (ex: "vanilla_robber:move", "classic_catan:free_road_building")
+# "" = aucune sous-phase active
+var sub_phase: String = ""
+
 var winner_index: int = -1
-
-# Phase initiale
-var initial_placements: Array = []
-var initial_direction: int = 1
-var last_initial_settlement_key: String = ""
-
-# Voleur (pour les mods futurs qui géreront ces sous-phases)
-var discard_queue: Array = []
-var roller_index: int = 0
 
 func _init(p_registry: GameRegistry, player_count: int = 4) -> void:
 	registry = p_registry
@@ -44,7 +33,6 @@ func _init(p_registry: GameRegistry, player_count: int = 4) -> void:
 		var p := Player.new(i, PLAYER_COLORS[i])
 		_init_player_resources(p)
 		players.append(p)
-		initial_placements.append(0)
 
 func _init_player_resources(player: Player) -> void:
 	player.resources = {}
@@ -54,34 +42,15 @@ func _init_player_resources(player: Player) -> void:
 func current_player() -> Player:
 	return players[current_player_index]
 
+# Tour suivant: round-robin pur. Les règles de setup (ordre snake, etc.)
+# sont gérées par le mod qui pilote current_player_index pendant SETUP.
 func next_player() -> void:
-	if phase == Phase.INITIAL_PLACEMENT:
-		return
 	current_player_index = (current_player_index + 1) % players.size()
 	build_mode_id = ""
 
-func advance_initial_placement() -> void:
-	initial_placements[current_player_index] += 1
-	last_initial_settlement_key = ""
-	
-	var all_done := true
-	for count in initial_placements:
-		if count < 2:
-			all_done = false
-			break
-	if all_done:
-		phase = Phase.PLAY
-		current_player_index = 0
-		build_mode_id = ""
-		return
-	
-	if initial_direction == 1 and current_player_index == players.size() - 1:
-		initial_direction = -1
-	elif initial_direction == -1 and current_player_index == 0:
-		pass
-	else:
-		current_player_index += initial_direction
-	build_mode_id = ""
+# Vrai si une sous-phase est active (le joueur ne peut pas faire d'actions globales)
+func is_busy() -> bool:
+	return sub_phase != ""
 
 func mode_label() -> String:
 	if build_mode_id == "":
@@ -91,19 +60,14 @@ func mode_label() -> String:
 
 func phase_label() -> String:
 	match phase:
-		Phase.INITIAL_PLACEMENT:
-			var step := "colonie" if last_initial_settlement_key == "" else "route"
-			return "Placement initial (poser %s)" % step
+		Phase.SETUP:
+			if sub_phase != "":
+				return registry.get_sub_phase_label(sub_phase)
+			return "Mise en place"
 		Phase.PLAY:
-			match sub_phase:
-				SubPhase.ROBBER_DISCARD:
-					return "Défausse en cours"
-				SubPhase.ROBBER_MOVE:
-					return "Déplace le voleur (clique une tuile)"
-				SubPhase.ROBBER_STEAL:
-					return "Choisis une cible à voler"
-				_:
-					return "Tour de jeu"
+			if sub_phase != "":
+				return registry.get_sub_phase_label(sub_phase)
+			return "Tour de jeu"
 		Phase.GAME_OVER:
 			return "Joueur %d gagne!" % winner_index
 	return ""

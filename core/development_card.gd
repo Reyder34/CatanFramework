@@ -20,7 +20,7 @@ func is_playable(state: GameState, player: Player, bought_this_turn: bool) -> bo
 	if bought_this_turn:
 		return false  # règle officielle: pas le tour de l'achat
 	return state.phase == GameState.Phase.PLAY \
-		and state.sub_phase == GameState.SubPhase.NONE
+		and not state.is_busy()
 
 # Effet de la carte. Renvoie true si la carte a été consommée.
 # (peut renvoyer false si l'utilisateur a annulé pendant un await)

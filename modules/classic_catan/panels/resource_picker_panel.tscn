@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://bp0utj4q8umo1"]
+
+[ext_resource type="Script" path="res://modules/classic_catan/panels_scripts/resource_picker_pannel.gd" id="1_rpp"]
+
+[node name="ResourcePickerPanel" type="PanelContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_rpp")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Choisis ..."
+
+[node name="PromptLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Selectionne X ressources"
+
+[node name="ResourceButtons" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="ActionRow" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="ConfirmButton" type="Button" parent="Content/ActionRow"]
+layout_mode = 2
+text = "Valider"
+
+[node name="CancelButton" type="Button" parent="Content/ActionRow"]
+layout_mode = 2
+text = "Annuler"

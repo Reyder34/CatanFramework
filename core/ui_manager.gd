@@ -13,6 +13,9 @@ func _init(p_label: Label, p_state: GameState, p_board: Board) -> void:
 	for pl in state.players:
 		pl.resources_changed.connect(_on_resources_changed)
 		pl.custom_data_changed.connect(_on_custom_data_changed)
+		pl.buildings_changed.connect(_on_buildings_changed)
+		pl.cards_changed.connect(_on_cards_changed)
+		pl.effects_changed.connect(_on_effects_changed)
 	# Et aussi aux changements de plateau (pour les points)
 	board.vertex_changed.connect(_on_board_changed)
 	board.edge_changed.connect(_on_board_changed)
@@ -36,9 +39,8 @@ func update() -> void:
 		text += "%s:%d  " % [res_name, p.resources[res_id]]
 	
 	# Cartes développement (générique: lit le custom_data du mod Catan)
-	var cards: Array = p.get_data("catan:dev_cards", [])
-	if not cards.is_empty():
-		text += "\nCartes: %d" % cards.size()
+	if not p.cards.is_empty():
+		text += "\nCartes: %d" % p.cards.size()
 	# Points de tous les joueurs
 	text += "\nPoints:\n"
 	for pl in state.players:
@@ -54,14 +56,17 @@ func update() -> void:
 	info_label.modulate = p.color
 
 func _compute_points(player_id: int) -> int:
-	# Émet l'événement compute_victory_points pour laisser les mods calculer
-	var ctx := VictoryContext.new()
-	ctx.state = state
-	ctx.board = board
-	ctx.player_id = player_id
-	ctx.points = 0
-	state.registry.events.emit("compute_victory_points", ctx)
-	return ctx.points
+	var p: Player = state.players[player_id]
+	return state.registry.compute_victory_points(p)
 
 func _on_custom_data_changed(_player_id: int, _key: String) -> void:
+	update()
+
+func _on_buildings_changed(_player_id: int) -> void:
+	update()
+
+func _on_cards_changed(_player_id: int) -> void:
+	update()
+
+func _on_effects_changed(_player_id: int) -> void:
 	update()

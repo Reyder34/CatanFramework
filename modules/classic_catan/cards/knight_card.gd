@@ -7,5 +7,12 @@ func _init() -> void:
 	description = "Déplace le voleur. Compte pour la plus grande armée."
 
 func on_play(state: GameState, board: Board, registry: GameRegistry, player: Player) -> bool:
-	print("[Chevalier] joué par J%d (effet à implémenter)" % player.id)
+	# La carte annonce seulement qu'elle est jouée. Le mod du voleur (s'il est
+	# chargé) déplace le voleur et gère la plus grande armée. Sans mod voleur,
+	# la carte est inerte (modularité).
+	registry.emit(ClassicCatanMod.EVT_KNIGHT_PLAYED, {
+		"state": state,
+		"board": board,
+		"player": player,
+	})
 	return true

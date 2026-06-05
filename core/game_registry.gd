@@ -128,74 +128,19 @@ func register_panel(panel_id: String, scene: PackedScene) -> void:
 	ui.register_panel(panel_id, scene, _current_mod_id)
 	_track_origin("panel:" + panel_id)
 
-# === API: HOOKS (wrappers vers EventBus) ===
-# Convention: l'argument priority est optionnel, défaut 0
+# === API: ÉVÉNEMENTS (générique) ===
+# Le core ne connaît AUCUN nom d'événement de gameplay: les ids sont définis
+# par les mods (convention: "mod_id:event"). Les events de cycle de vie
+# ("game_start", ...) et d'interaction plateau ("vertex_clicked", ...) sont
+# émis par le core/main mais restent de simples chaînes.
 
-func on_game_setup(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("game_setup", callback, priority, _current_mod_id)
+# S'abonne à un événement. mod_id rempli automatiquement (traçabilité).
+func on(event_id: String, callback: Callable, priority: int = 0) -> void:
+	events.subscribe(event_id, callback, priority, _current_mod_id)
 
-func on_game_start(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("game_start", callback, priority, _current_mod_id)
-
-func on_game_over(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("game_over", callback, priority, _current_mod_id)
-
-func on_before_turn(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("before_turn", callback, priority, _current_mod_id)
-
-func on_turn_start(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("turn_start", callback, priority, _current_mod_id)
-
-func on_turn_end(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("turn_end", callback, priority, _current_mod_id)
-
-func on_before_dice_roll(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("before_dice_roll", callback, priority, _current_mod_id)
-
-func on_dice_roll(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("dice_roll", callback, priority, _current_mod_id)
-
-func on_after_dice_rolled(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("after_dice_rolled", callback, priority, _current_mod_id)
-
-func on_before_produce(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("before_produce", callback, priority, _current_mod_id)
-
-func on_compute_production_amount(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("compute_production_amount", callback, priority, _current_mod_id)
-
-func on_after_produce(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("after_produce", callback, priority, _current_mod_id)
-
-func on_before_place(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("before_place", callback, priority, _current_mod_id)
-
-func on_pay_for_building(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("pay_for_building", callback, priority, _current_mod_id)
-
-func on_after_place(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("after_place", callback, priority, _current_mod_id)
-
-func on_vertex_clicked(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("vertex_clicked", callback, priority, _current_mod_id)
-
-func on_edge_clicked(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("edge_clicked", callback, priority, _current_mod_id)
-
-func on_tile_clicked(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("tile_clicked", callback, priority, _current_mod_id)
-
-func on_compute_victory_points(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("compute_victory_points", callback, priority, _current_mod_id)
-
-func on_victory_check(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("victory_check", callback, priority, _current_mod_id)
-
-func on_before_resource_change(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("before_resource_change", callback, priority, _current_mod_id)
-
-func on_after_resource_change(callback: Callable, priority: int = 0) -> void:
-	events.subscribe("after_resource_change", callback, priority, _current_mod_id)
+# Émet un événement; le contexte (mutable) est transmis aux abonnés.
+func emit(event_id: String, context = null) -> void:
+	events.emit(event_id, context)
 
 # === API: ACTIONS ===
 
@@ -215,3 +160,43 @@ func get_actions_by_category(category: String) -> Array:
 		if action.category == category:
 			result.append(action)
 	return result
+
+# Labels des sous-phases (id -> string affichable)
+var _sub_phase_labels: Dictionary = {}
+
+func register_sub_phase_label(sub_phase_id: String, label: String) -> void:
+	_sub_phase_labels[sub_phase_id] = label
+	_track_origin("sub_phase:" + sub_phase_id)
+
+func get_sub_phase_label(sub_phase_id: String) -> String:
+	return _sub_phase_labels.get(sub_phase_id, sub_phase_id)  # fallback: l'id brut
+
+# Calcule les PV totaux d'un joueur:
+# Itère sur ses buildings, cards et effects.
+# Le board n'est plus utilisé directement (les buildings du joueur sont la source de vérité).
+func compute_victory_points(player: Player) -> int:
+	var total := 0
+	for placed in player.buildings:
+		if placed.building_type != null:
+			total += placed.building_type.victory_points
+	for card in player.cards:
+		total += card.victory_points
+	for effect in player.effects:
+		total += effect.victory_points
+	return total
+
+# Détection de victoire (core): si un joueur atteint le seuil, bascule en
+# GAME_OVER et émet "game_over". À appeler par les mods après tout changement
+# de points (pose, carte PV, effet gagné, etc.).
+func check_victory(state: GameState) -> bool:
+	if state.phase == GameState.Phase.GAME_OVER:
+		return true
+	for p in state.players:
+		var points := compute_victory_points(p)
+		if points >= victory_threshold:
+			state.phase = GameState.Phase.GAME_OVER
+			state.winner_index = p.id
+			print("Joueur %d atteint %d points et gagne!" % [p.id, points])
+			emit("game_over", {"state": state, "winner": p.id})
+			return true
+	return false
