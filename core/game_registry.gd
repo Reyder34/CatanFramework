@@ -21,6 +21,11 @@ var buildings: Dictionary = {}
 var tile_pool: Array = []
 var number_pool: Array = []
 
+# Générateur de map optionnel fourni par un mod (sinon: distribution par défaut).
+# Signature: func(reg: GameRegistry) -> Dictionary
+#   -> { Vector2(q, r): {"resource": String, "number": int} }
+var map_generator: Callable = Callable()
+
 # Actions globales déclarées par les mods
 # id -> GameAction
 var actions: Dictionary = {}
@@ -28,7 +33,7 @@ var actions: Dictionary = {}
 # Paramètres
 var board_radius: int = 2
 var min_players: int = 2
-var max_players: int = 4
+var max_players: int = 10
 var victory_threshold: int = 10
 
 # Trace de qui a déclaré quoi (pour debug + détection conflits)
@@ -106,6 +111,14 @@ func add_to_number_pool(number: int, count: int = 1) -> void:
 
 func clear_number_pool() -> void:
 	number_pool.clear()
+
+# Un mod fournit sa propre génération de map (disposition tuiles/numéros, forme).
+# cb: func(reg: GameRegistry) -> Dictionary { Vector2(q,r): {"resource","number"} }.
+# Le cœur appelle ce Callable au lieu de la distribution par défaut.
+func set_map_generator(cb: Callable) -> void:
+	if map_generator.is_valid():
+		push_warning("map_generator déjà défini; un autre mod le remplace.")
+	map_generator = cb
 
 # === API: PARAMÈTRES ===
 
@@ -200,3 +213,40 @@ func check_victory(state: GameState) -> bool:
 			emit("game_over", {"state": state, "winner": p.id})
 			return true
 	return false
+
+# Ventilation des PV d'un joueur, regroupée par source (générique).
+# Le core ne connaît pas les types concrets: il lit display_name + victory_points
+# des bâtiments/cartes/effets définis par les mods. Tout nouveau bâtiment/carte/
+# effet à PV est donc détecté et nommé automatiquement.
+# Retourne un Array de {"name": String, "count": int, "points": int} (sources à PV > 0).
+func compute_victory_breakdown(player: Player) -> Array:
+	var entries: Array = []
+	# Bâtiments regroupés par type
+	var by_building: Dictionary = {}
+	for placed in player.buildings:
+		var bt: BuildingType = placed.building_type
+		if bt == null or bt.victory_points == 0:
+			continue
+		if not by_building.has(bt.id):
+			by_building[bt.id] = {"name": bt.display_name, "count": 0, "points": 0}
+		by_building[bt.id]["count"] += 1
+		by_building[bt.id]["points"] += bt.victory_points
+	for id in by_building:
+		entries.append(by_building[id])
+	# Cartes à PV regroupées par type
+	var by_card: Dictionary = {}
+	for card in player.cards:
+		if card.victory_points == 0:
+			continue
+		if not by_card.has(card.id):
+			by_card[card.id] = {"name": card.display_name, "count": 0, "points": 0}
+		by_card[card.id]["count"] += 1
+		by_card[card.id]["points"] += card.victory_points
+	for id in by_card:
+		entries.append(by_card[id])
+	# Effets (un par effet: route la plus longue, plus grande armée, trophées…)
+	for effect in player.effects:
+		if effect.victory_points == 0:
+			continue
+		entries.append({"name": effect.display_name, "count": 1, "points": effect.victory_points})
+	return entries

@@ -23,42 +23,82 @@ func _init(p_registry: GameRegistry, p_board: Board) -> void:
 	board.edge_changed.connect(_refresh_edge)
 
 func generate(parent: Node3D) -> void:
-	var pool := registry.tile_pool.duplicate()
-	pool.shuffle()
-	var numbers := registry.number_pool.duplicate()
-	numbers.shuffle()
-	
+	# 1) PLAN: où va quelle tuile (données pures). Un mod peut le fournir.
+	# 2) RENDU: instancie les tuiles/sommets/arêtes + eau + graphe (générique).
+	var plan := _build_plan()
+	for coords in plan:
+		var cell: Dictionary = plan[coords]
+		var resource: String = cell.get("resource", "")
+		var number: int = int(cell.get("number", 0))
+		board.tile_data[coords] = {"resource": resource, "number": number}
+		if number > 0:
+			if not board.tiles_by_number.has(number):
+				board.tiles_by_number[number] = []
+			board.tiles_by_number[number].append(coords)
+		_create_tile(parent, int(coords.x), int(coords.y), resource, number)
+		_register_vertices(parent, int(coords.x), int(coords.y))
+		_register_edges(parent, int(coords.x), int(coords.y))
+	_generate_water(parent)
+	_build_graph()
+
+# Plan de tuiles: Vector2(q, r) -> {"resource": String, "number": int}.
+# Si un mod a fourni un générateur (registry.set_map_generator), on l'utilise;
+# sinon la distribution par défaut (mélange du tile_pool/number_pool).
+func _build_plan() -> Dictionary:
+	if registry.map_generator.is_valid():
+		var custom = registry.map_generator.call(registry)
+		if custom is Dictionary and not custom.is_empty():
+			return custom
+		push_warning("Le générateur de map a renvoyé un plan vide; repli sur la génération par défaut.")
+	return _default_plan()
+
+# Distribution par défaut: distribue les pools sur un disque hexagonal de rayon
+# board_radius. Si la map est plus grande que le pool, on RÉPÈTE le pool (sacs
+# dimensionnés) -> jamais de cases vides. À rayon 2, identique à l'historique.
+# Utilise le RNG global (semé par main.gd).
+func _default_plan() -> Dictionary:
 	var radius := registry.board_radius
-	var index := 0
-	var num_index := 0
+	var coords: Array = []
 	for r in range(-radius, radius + 1):
 		var q_start: int = max(-radius, -radius - r)
 		var q_end: int = min(radius, radius - r)
 		for q in range(q_start, q_end + 1):
-			var resource: String = pool[index]
-			var number := 0
-			if registry.is_producing_resource(resource):
-				number = numbers[num_index]
-				num_index += 1
-			board.tile_data[Vector2(q, r)] = {"resource": resource, "number": number}
-			if number > 0:
-				if not board.tiles_by_number.has(number):
-					board.tiles_by_number[number] = []
-				board.tiles_by_number[number].append(Vector2(q, r))
-			_create_tile(parent, q, r, resource, number)
-			_register_vertices(parent, q, r)
-			_register_edges(parent, q, r)
-			index += 1
-	
-	_generate_water(parent)
-	_build_graph()
+			coords.append(Vector2(q, r))
+	var tiles := _sized_bag(registry.tile_pool, coords.size())
+	var producing := 0
+	for t in tiles:
+		if registry.is_producing_resource(t):
+			producing += 1
+	var numbers := _sized_bag(registry.number_pool, producing)
+	var plan: Dictionary = {}
+	var ni := 0
+	for i in coords.size():
+		var resource: String = tiles[i] if i < tiles.size() else ""
+		var number := 0
+		if resource != "" and registry.is_producing_resource(resource) and ni < numbers.size():
+			number = numbers[ni]
+			ni += 1
+		plan[coords[i]] = {"resource": resource, "number": number}
+	return plan
+
+# Sac mélangé de taille `size`, répétant le pool si la map dépasse sa taille.
+# À size == pool.size(), c'est un simple mélange (rétro-compatible, même RNG).
+func _sized_bag(pool: Array, size: int) -> Array:
+	if pool.is_empty() or size <= 0:
+		return []
+	var bag: Array = []
+	while bag.size() < size:
+		bag.append_array(pool)
+	bag.shuffle()
+	bag.resize(size)
+	return bag
 
 func _create_tile(parent: Node3D, q: int, r: int, resource: String, number: int) -> void:
 	var body := StaticBody3D.new()
 	body.position = HexMath.hex_to_world(q, r)
 	body.name = "Tile_%s_%d" % [resource, number]
 	body.set_meta("coords", Vector2(q, r))
-	
+
 	var mesh_inst := MeshInstance3D.new()
 	var mesh := CylinderMesh.new()
 	mesh.top_radius = HexMath.HEX_SIZE
@@ -70,23 +110,25 @@ func _create_tile(parent: Node3D, q: int, r: int, resource: String, number: int)
 	mat.albedo_color = registry.get_resource_color(resource)
 	mesh_inst.material_override = mat
 	body.add_child(mesh_inst)
-	
+
 	var col := CollisionShape3D.new()
 	var shape := CylinderShape3D.new()
 	shape.radius = HexMath.HEX_SIZE
 	shape.height = HexMath.TILE_HEIGHT
 	col.shape = shape
 	body.add_child(col)
-	
+
 	if number > 0:
 		var label := Label3D.new()
 		label.text = str(number)
 		label.font_size = 64
-		label.position = Vector3(0, HexMath.TILE_HEIGHT / 2 + 0.01, 0)
-		label.rotation_degrees = Vector3(-90, 0, 0)
+		label.position = Vector3(0, HexMath.TILE_HEIGHT / 2 + 0.18, 0)
+		# Billboard: le chiffre fait toujours face à la caméra -> reste lisible
+		# quel que soit l'angle (la caméra peut tourner/zoomer).
+		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.modulate = Color.RED if number == 6 or number == 8 else Color.BLACK
 		body.add_child(label)
-	
+
 	if on_tile_click.is_valid():
 		body.input_event.connect(on_tile_click.bind(body))
 	tile_nodes[Vector2(q, r)] = body
@@ -117,7 +159,7 @@ func _create_vertex(parent: Node3D, pos: Vector3, key: String) -> void:
 	body.position = pos
 	body.name = "Vertex"
 	body.set_meta("key", key)
-	
+
 	var mesh_inst := MeshInstance3D.new()
 	var mesh := SphereMesh.new()
 	mesh.radius = 0.1
@@ -127,13 +169,13 @@ func _create_vertex(parent: Node3D, pos: Vector3, key: String) -> void:
 	mat.albedo_color = Color(0.3, 0.3, 0.3)
 	mesh_inst.material_override = mat
 	body.add_child(mesh_inst)
-	
+
 	var col := CollisionShape3D.new()
 	var shape := SphereShape3D.new()
 	shape.radius = 0.15
 	col.shape = shape
 	body.add_child(col)
-	
+
 	if on_vertex_click.is_valid():
 		body.input_event.connect(on_vertex_click.bind(body))
 	vertex_nodes[key] = body
@@ -155,7 +197,7 @@ func _create_edge(parent: Node3D, pos: Vector3, angle_y: float, key: String) -> 
 	body.rotation.y = angle_y
 	body.name = "Edge"
 	body.set_meta("key", key)
-	
+
 	var mesh_inst := MeshInstance3D.new()
 	var mesh := BoxMesh.new()
 	mesh.size = Vector3(HexMath.HEX_SIZE * 0.9, 0.08, 0.12)
@@ -164,34 +206,39 @@ func _create_edge(parent: Node3D, pos: Vector3, angle_y: float, key: String) -> 
 	mat.albedo_color = Color(0.4, 0.4, 0.4)
 	mesh_inst.material_override = mat
 	body.add_child(mesh_inst)
-	
+
 	var col := CollisionShape3D.new()
 	var shape := BoxShape3D.new()
 	shape.size = Vector3(HexMath.HEX_SIZE * 0.9, 0.08, 0.2)
 	col.shape = shape
 	body.add_child(col)
-	
+
 	if on_edge_click.is_valid():
 		body.input_event.connect(on_edge_click.bind(body))
 	edge_nodes[key] = body
 	parent.add_child(body)
 
+# Eau: tout hexagone sans tuile dans l'anneau (pilotée par tile_data -> supporte
+# n'importe quelle forme de carte produite par un mod, pas seulement le disque).
 func _generate_water(parent: Node3D) -> void:
-	var land_radius := registry.board_radius
-	for r in range(-WATER_RADIUS, WATER_RADIUS + 1):
-		var q_start: int = max(-WATER_RADIUS, -WATER_RADIUS - r)
-		var q_end: int = min(WATER_RADIUS, WATER_RADIUS - r)
+	var extent := _water_extent()
+	for r in range(-extent, extent + 1):
+		var q_start: int = max(-extent, -extent - r)
+		var q_end: int = min(extent, extent - r)
 		for q in range(q_start, q_end + 1):
-			if _is_land(q, r, land_radius):
+			if board.tile_data.has(Vector2(q, r)):
 				continue
 			_create_water_tile(parent, q, r)
 
-func _is_land(q: int, r: int, radius: int) -> bool:
-	if r < -radius or r > radius:
-		return false
-	var q_start: int = max(-radius, -radius - r)
-	var q_end: int = min(radius, radius - r)
-	return q >= q_start and q <= q_end
+# Au moins WATER_RADIUS, et toujours un cran au-delà de la terre la plus lointaine
+# (pour border correctement une carte plus grande qu'un mod aurait générée).
+func _water_extent() -> int:
+	var maxr := 0
+	for coords in board.tile_data:
+		var d := int((abs(coords.x) + abs(coords.y) + abs(coords.x + coords.y)) / 2.0)
+		if d > maxr:
+			maxr = d
+	return maxi(WATER_RADIUS, maxr + 1)
 
 func _create_water_tile(parent: Node3D, q: int, r: int) -> void:
 	var mesh_inst := MeshInstance3D.new()
@@ -209,25 +256,25 @@ func _create_water_tile(parent: Node3D, q: int, r: int) -> void:
 	mesh_inst.material_override = mat
 	parent.add_child(mesh_inst)
 
+# Graphe sommets/arêtes construit à partir des tuiles réellement générées
+# (tile_data), pas d'un rayon fixe -> compatible avec des cartes de forme libre.
 func _build_graph() -> void:
-	var radius := registry.board_radius
-	for r in range(-radius, radius + 1):
-		var q_start: int = max(-radius, -radius - r)
-		var q_end: int = min(radius, radius - r)
-		for q in range(q_start, q_end + 1):
-			for i in 6:
-				var n: Vector2 = HexMath.NEIGHBOR_OFFSETS[i]
-				var neighbor := Vector2(q + n.x, r + n.y)
-				var e_key := HexMath.edge_key(Vector2(q, r), neighbor)
-				if not edge_nodes.has(e_key):
-					continue
-				var c1: int = (i - 1 + 6) % 6
-				var c2: int = i
-				var v1_key := _vertex_key_at_corner(q, r, c1)
-				var v2_key := _vertex_key_at_corner(q, r, c2)
-				if not vertex_nodes.has(v1_key) or not vertex_nodes.has(v2_key):
-					continue
-				_link(v1_key, v2_key, e_key)
+	for coords in board.tile_data:
+		var q := int(coords.x)
+		var r := int(coords.y)
+		for i in 6:
+			var n: Vector2 = HexMath.NEIGHBOR_OFFSETS[i]
+			var neighbor := Vector2(q + n.x, r + n.y)
+			var e_key := HexMath.edge_key(Vector2(q, r), neighbor)
+			if not edge_nodes.has(e_key):
+				continue
+			var c1: int = (i - 1 + 6) % 6
+			var c2: int = i
+			var v1_key := _vertex_key_at_corner(q, r, c1)
+			var v2_key := _vertex_key_at_corner(q, r, c2)
+			if not vertex_nodes.has(v1_key) or not vertex_nodes.has(v2_key):
+				continue
+			_link(v1_key, v2_key, e_key)
 
 func _vertex_key_at_corner(q: int, r: int, corner: int) -> String:
 	var n1: Vector2 = HexMath.NEIGHBOR_OFFSETS[corner]
@@ -259,45 +306,74 @@ func _link(v1: String, v2: String, e: String) -> void:
 		board.vertex_edges[v2].append(e)
 
 
+# Re-rend tous les sommets/arêtes depuis l'état courant du board (utilisé en réseau
+# quand un client reçoit un snapshot complet).
+func refresh_all() -> void:
+	for key in vertex_nodes:
+		_refresh_vertex(key)
+	for key in edge_nodes:
+		_refresh_edge(key)
+
 func _refresh_vertex(key: String) -> void:
 	var node: StaticBody3D = vertex_nodes.get(key)
 	if node == null:
 		return
 	var mesh_inst: MeshInstance3D = node.get_child(0)
-	var mat: StandardMaterial3D = mesh_inst.material_override
-	var mesh: SphereMesh = mesh_inst.mesh
+	_clear_custom_model(node)
 	var owner_id := board.get_vertex_owner(key)
 	if owner_id < 0:
-		mat.albedo_color = Color(0.3, 0.3, 0.3)
-		mesh.radius = 0.1
-		mesh.height = 0.2
+		mesh_inst.visible = true
+		mesh_inst.material_override.albedo_color = Color(0.3, 0.3, 0.3)
+		mesh_inst.mesh.radius = 0.1
+		mesh_inst.mesh.height = 0.2
 		return
-	var building_id := board.get_vertex_type(key)
-	var building: BuildingType = registry.get_building(building_id)
+	var building: BuildingType = registry.get_building(board.get_vertex_type(key))
 	var player_color: Color = GameState.PLAYER_COLORS[owner_id]
+	# Modèle custom déclaré par le bâtiment, sinon primitive (sphère).
+	var model: Node3D = building.create_visual(player_color) if building != null else null
+	if model != null:
+		mesh_inst.visible = false
+		model.name = "CustomModel"
+		node.add_child(model)
+		return
+	mesh_inst.visible = true
 	if building != null:
-		mat.albedo_color = building.get_color(player_color)
-		mesh.radius = building.mesh_radius
-		mesh.height = building.mesh_height
+		mesh_inst.material_override.albedo_color = building.get_color(player_color)
+		mesh_inst.mesh.radius = building.mesh_radius
+		mesh_inst.mesh.height = building.mesh_height
 	else:
-		mat.albedo_color = player_color
-		mesh.radius = 0.2
-		mesh.height = 0.4
+		mesh_inst.material_override.albedo_color = player_color
+		mesh_inst.mesh.radius = 0.2
+		mesh_inst.mesh.height = 0.4
 
 func _refresh_edge(key: String) -> void:
 	var node: StaticBody3D = edge_nodes.get(key)
 	if node == null:
 		return
 	var mesh_inst: MeshInstance3D = node.get_child(0)
-	var mat: StandardMaterial3D = mesh_inst.material_override
+	_clear_custom_model(node)
 	var owner_id := board.get_edge_owner(key)
 	if owner_id < 0:
-		mat.albedo_color = Color(0.4, 0.4, 0.4)
+		mesh_inst.visible = true
+		mesh_inst.material_override.albedo_color = Color(0.4, 0.4, 0.4)
 		return
-	var building_id := board.get_edge_type(key)
-	var building: BuildingType = registry.get_building(building_id)
+	var building: BuildingType = registry.get_building(board.get_edge_type(key))
 	var player_color: Color = GameState.PLAYER_COLORS[owner_id]
+	var model: Node3D = building.create_visual(player_color) if building != null else null
+	if model != null:
+		mesh_inst.visible = false
+		model.name = "CustomModel"
+		node.add_child(model)
+		return
+	mesh_inst.visible = true
 	if building != null:
-		mat.albedo_color = building.get_color(player_color)
+		mesh_inst.material_override.albedo_color = building.get_color(player_color)
 	else:
-		mat.albedo_color = player_color
+		mesh_inst.material_override.albedo_color = player_color
+
+# Retire un éventuel modèle custom précédent (ex: colonie -> ville).
+func _clear_custom_model(node: Node) -> void:
+	var old := node.get_node_or_null("CustomModel")
+	if old != null:
+		node.remove_child(old)
+		old.queue_free()

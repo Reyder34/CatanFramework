@@ -9,6 +9,7 @@ signal effects_changed(player_id: int)
 
 var id: int
 var color: Color
+var display_name: String = ""  # pseudo (réseau); vide -> fallback "J<id>"
 
 # === DONNÉES TYPÉES (universelles) ===
 var resources: Dictionary = {}
@@ -22,6 +23,10 @@ var custom_data: Dictionary = {}
 func _init(p_id: int, p_color: Color) -> void:
 	id = p_id
 	color = p_color
+
+# Libellé affichable: le pseudo s'il existe (réseau), sinon "J<id>".
+func label() -> String:
+	return display_name if display_name != "" else "J%d" % id
 
 # === Ressources ===
 

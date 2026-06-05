@@ -35,15 +35,13 @@ func show_panel(panel_id: String, params: Dictionary = {}) -> Variant:
 		return null
 	_open_count += 1
 	var instance: Node = panel_scenes[panel_id].instantiate()
-	print("[UI] instance créée: ", instance, " script=", instance.get_script())
-	print("[UI] has show_panel: ", instance.has_method("show_panel"))
-	print("[UI] has signal closed: ", instance.has_signal("closed"))
 	if instance is CanvasItem:
 		instance.visible = true
 	ui_root.add_child(instance)
+	# Affiche le panneau en haut-centre (pour ne pas masquer les ressources en haut-gauche).
+	if instance is Control:
+		_place_top_center(instance)
 	await ui_root.get_tree().process_frame
-	print("[UI] taille panneau: ", instance.size, " position: ", instance.position)
-	print("[UI] visible: ", instance.visible, " modulate alpha: ", instance.modulate.a)
 	if instance.has_method("show_panel"):
 		instance.show_panel(params)
 	else:
@@ -54,6 +52,19 @@ func show_panel(panel_id: String, params: Dictionary = {}) -> Variant:
 	instance.queue_free()
 	_open_count -= 1
 	return result
+
+# Place un panneau en haut-centre de l'écran (centré horizontalement, près du haut).
+func _place_top_center(c: Control) -> void:
+	c.anchor_left = 0.5
+	c.anchor_right = 0.5
+	c.anchor_top = 0.0
+	c.anchor_bottom = 0.0
+	c.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	c.grow_vertical = Control.GROW_DIRECTION_END
+	c.offset_left = 0.0
+	c.offset_right = 0.0
+	c.offset_top = 12.0
+	c.offset_bottom = 12.0
 
 func is_any_panel_open() -> bool:
 	return _open_count > 0

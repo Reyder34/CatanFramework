@@ -7,8 +7,7 @@ func _init() -> void:
 	description = "Choisis une ressource. Tous les autres joueurs te donnent toute leur quantité."
 
 func on_play(state: GameState, board: Board, registry: GameRegistry, player: Player) -> bool:
-	var result = await registry.ui.show_panel("resource_picker", {
-		"registry": registry,
+	var result = await Net.show_panel_for(player.id, "resource_picker", {
 		"max_count": 1,
 		"title": "Monopole",
 		"prompt": "Choisis la ressource à monopoliser",

@@ -12,6 +12,25 @@ static func load_mods(registry: GameRegistry, mods: Array) -> Array:
 			return []
 		by_id[mod.mod_id] = mod
 
+	# Slots à fournisseur UNIQUE (ex: "map_generator"): on garde le PREMIER mod
+	# qui fournit chaque slot et on écarte les suivants. Garde-fou — le lobby
+	# empêche déjà d'en activer deux (exclusion mutuelle).
+	var slot_owner: Dictionary = {}
+	var kept: Array = []
+	for mod in mods:
+		var drop := false
+		for slot in mod.provides:
+			if slot_owner.has(slot):
+				push_warning("Slot '%s' déjà fourni par '%s'; mod '%s' écarté." % [slot, slot_owner[slot], mod.mod_id])
+				drop = true
+			else:
+				slot_owner[slot] = mod.mod_id
+		if drop:
+			by_id.erase(mod.mod_id)
+		else:
+			kept.append(mod)
+	mods = kept
+
 	# Dépendances présentes ?
 	for mod in mods:
 		for dep in mod.depends_on:

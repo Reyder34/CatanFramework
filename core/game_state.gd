@@ -6,6 +6,12 @@ const PLAYER_COLORS := [
 	Color.DODGER_BLUE,
 	Color.WHITE,
 	Color.ORANGE,
+	Color.FOREST_GREEN,
+	Color.MEDIUM_PURPLE,
+	Color.GOLD,
+	Color.DEEP_PINK,
+	Color.TURQUOISE,
+	Color.SADDLE_BROWN,
 ]
 
 enum Phase {
@@ -14,16 +20,39 @@ enum Phase {
 	GAME_OVER,
 }
 
+# Émis quand phase ou sub_phase change (rafraîchit le HUD après les séquences
+# asynchrones — vol, défausse… — qui ne passent pas par un autre signal).
+signal status_changed
+
 var registry: GameRegistry
 var players: Array = []
-var current_player_index: int = 0
+
+# Émet status_changed à chaque changement de joueur courant (rafraîchit le HUD,
+# essentiel en réseau quand le tour change suite à une action d'un autre peer).
+var current_player_index: int = 0:
+	set(value):
+		if value == current_player_index:
+			return
+		current_player_index = value
+		status_changed.emit()
 var build_mode_id: String = ""
-var phase: int = Phase.SETUP
+
+var phase: int = Phase.SETUP:
+	set(value):
+		if value == phase:
+			return
+		phase = value
+		status_changed.emit()
 
 # Sous-phase libre, gérée par les mods.
 # Convention: ids préfixés par mod_id (ex: "vanilla_robber:move", "classic_catan:free_road_building")
 # "" = aucune sous-phase active
-var sub_phase: String = ""
+var sub_phase: String = "":
+	set(value):
+		if value == sub_phase:
+			return
+		sub_phase = value
+		status_changed.emit()
 
 var winner_index: int = -1
 

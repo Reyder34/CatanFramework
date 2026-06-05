@@ -10,11 +10,15 @@ var cancel_button: Button
 
 var registry: GameRegistry
 var player: Player
+var ratios: Dictionary = {}        # res_id -> ratio d'échange (selon les ports du joueur)
 
-var selected_give: String = ""     # ressource à donner (x4)
+var selected_give: String = ""     # ressource à donner
 var selected_receive: String = ""  # ressource à recevoir (x1)
 
-const TRADE_RATIO := 4
+const DEFAULT_RATIO := 4
+
+func _ratio_for(res_id: String) -> int:
+	return int(ratios.get(res_id, DEFAULT_RATIO))
 
 func _ready() -> void:
 	title_label = get_node("Content/TitleLabel")
@@ -28,7 +32,8 @@ func _ready() -> void:
 func show_panel(params: Dictionary) -> void:
 	registry = params["registry"]
 	player = params["player"]
-	title_label.text = "Joueur %d — Échange %d:1 avec la banque" % [player.id, TRADE_RATIO]
+	ratios = params.get("ratios", {})
+	title_label.text = "Joueur %d — Échange avec la banque (taux selon tes ports)" % player.id
 	_build_buttons()
 	_update_state()
 
@@ -44,7 +49,7 @@ func _build_buttons() -> void:
 		var give_btn := Button.new()
 		give_btn.custom_minimum_size = Vector2(90, 60)
 		var owned: int = player.resources.get(res_id, 0)
-		give_btn.disabled = owned < TRADE_RATIO
+		give_btn.disabled = owned < _ratio_for(res_id)
 		give_btn.pressed.connect(_on_give_selected.bind(res_id))
 		give_buttons.add_child(give_btn)
 		_refresh_give_button(give_btn, res_id)
@@ -59,7 +64,7 @@ func _refresh_give_button(btn: Button, res_id: String) -> void:
 	var res_name: String = registry.resources[res_id]["name"]
 	var color: Color = registry.resources[res_id]["color"]
 	var owned: int = player.resources.get(res_id, 0)
-	btn.text = "%s\n%d" % [res_name, owned]
+	btn.text = "%s\n%d  (%d:1)" % [res_name, owned, _ratio_for(res_id)]
 	if res_id == selected_give:
 		btn.modulate = color
 	else:
@@ -96,7 +101,7 @@ func _update_state() -> void:
 	var ok: bool = selected_give != "" \
 		and selected_receive != "" \
 		and selected_give != selected_receive \
-		and player.resources.get(selected_give, 0) >= TRADE_RATIO
+		and player.resources.get(selected_give, 0) >= _ratio_for(selected_give)
 	confirm_button.disabled = not ok
 
 func _resource_id_at(index: int) -> String:
