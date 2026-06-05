@@ -1,26 +1,12 @@
-# Catan 2 — Framework de jeu de plateau modable (Godot 4.3)
+# Catan framework — Framework de jeu de plateau modable (Godot 4.3)
 
 Un moteur de jeu de plateau **modable** où le **core** ne gère que les **tours** et les **points de victoire**. **Tout le reste est un module** : ressources, bâtiments, dés, voleur, cartes, échanges, ports… Le jeu « Catan classique » livré est lui-même un assemblage de deux modules (`classic_catan` + `vanilla_robber`).
 
 ---
-
-## 1. Compte rendu — état du projet
-
-### Ce qui est fait
-- **Core agnostique** : tours, victoire par seuil, bus d'événements, registre générique, chargeur de mods. Aucun mot « bois / colonie / voleur / dés » en dur dans le core.
-- **Jeu de base complet** (modules) : ressources, colonie/route/ville, placement initial (snake), lancer de dés + production, voleur sur 7 (défausse / déplacement / vol), échanges joueur↔joueur et banque, **ports** (2:1 / 3:1), cartes développement (chevalier, monopole, invention, construction de routes, point de victoire), **plus longue route** et **plus grande armée**.
-- **UI** : menu + lobby, HUD (ressources, joueurs+scores, trophées, main de cartes, barre d'actions), panneaux d'échange/banque/défausse/etc., **ventilation des points** au clic sur un joueur.
-- **Modèles 3D** : point d'extension pour donner un mesh/scène à n'importe quel bâtiment (sinon primitive par défaut).
-- **Multijoueur** P2P (un joueur héberge, pas de serveur dédié) : hôte autoritaire, synchro complète du jeu de base (placement, dés, construction, échanges, voleur, cartes), restriction des tours, défausse simultanée.
-
 ### Limites connues / pistes
 - Cartes dev **visibles de tous** en réseau (simplification ; le vrai Catan les garde secrètes).
 - **Déconnexions** en cours de partie non gérées proprement.
-- `main.gd` distribue des **ressources de debug** au départ (à mettre à 0 pour une vraie partie).
 - Le **plateau hexagonal** reste dans le core (décision assumée pour ce framework « Catan-flavored ») ; le rendre lui-même un module serait un gros refactor.
-
-### Lancer le jeu
-Ouvre le projet dans Godot 4.3 et lance (F5). Le menu propose **Solo**, **Héberger** et **Rejoindre** (IP, défaut `127.0.0.1`, port `24545`). Pour tester le réseau en local : *Déboguer → Exécuter plusieurs instances → 2 instances*.
 
 ---
 
