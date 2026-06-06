@@ -4,6 +4,11 @@ extends RefCounted
 const WATER_RADIUS := 4
 const WATER_COLOR := Color(0.15, 0.4, 0.7)
 
+# Tuiles 3D (modèles fournis par un mod). Le .glb des tuiles Catan a un hex de rayon
+# ≈0.99 ; on remet sa rotation à plat pour aligner les 6 sommets sur le plateau.
+const TILE_MODEL_Y_DEG := 0.0      # si les tuiles semblent tournées de 30° : 30 ou -30
+const TILE_MODEL_NUMBER_Y := 0.9   # hauteur du numéro au-dessus d'une tuile 3D
+
 var registry: GameRegistry
 var board: Board
 
@@ -98,21 +103,28 @@ func _create_tile(parent: Node3D, q: int, r: int, resource: String, number: int)
 	body.name = "Tile_%s_%d" % [resource, number]
 	body.set_meta("coords", Vector2(q, r))
 
-	var mesh_inst := MeshInstance3D.new()
-	var mesh := CylinderMesh.new()
-	mesh.top_radius = HexMath.HEX_SIZE
-	mesh.bottom_radius = HexMath.HEX_SIZE
-	mesh.height = HexMath.TILE_HEIGHT
-	mesh.radial_segments = 6
-	mesh_inst.mesh = mesh
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = registry.get_resource_color(resource)
-	var tex := registry.get_resource_texture(resource)
-	if tex != null:
-		mat.albedo_texture = tex
-		mat.albedo_color = Color.WHITE  # ne pas teinter l'image
-	mesh_inst.material_override = mat
-	body.add_child(mesh_inst)
+	# Modèle 3D fourni par un mod (ex: tuiles Catan) -> remplace l'hexagone procédural.
+	# Sinon : cylindre 6 segments coloré/texturé (repli générique).
+	var model_scene := registry.get_resource_model(resource)
+	var has_model := model_scene != null
+	if has_model:
+		_add_tile_model(body, model_scene)
+	else:
+		var mesh_inst := MeshInstance3D.new()
+		var mesh := CylinderMesh.new()
+		mesh.top_radius = HexMath.HEX_SIZE
+		mesh.bottom_radius = HexMath.HEX_SIZE
+		mesh.height = HexMath.TILE_HEIGHT
+		mesh.radial_segments = 6
+		mesh_inst.mesh = mesh
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = registry.get_resource_color(resource)
+		var tex := registry.get_resource_texture(resource)
+		if tex != null:
+			mat.albedo_texture = tex
+			mat.albedo_color = Color.WHITE  # ne pas teinter l'image
+		mesh_inst.material_override = mat
+		body.add_child(mesh_inst)
 
 	var col := CollisionShape3D.new()
 	var shape := CylinderShape3D.new()
@@ -125,17 +137,33 @@ func _create_tile(parent: Node3D, q: int, r: int, resource: String, number: int)
 		var label := Label3D.new()
 		label.text = str(number)
 		label.font_size = 64
-		label.position = Vector3(0, HexMath.TILE_HEIGHT / 2 + 0.18, 0)
+		# Plus haut quand un modèle 3D occupe la tuile (sinon le décor cache le numéro).
+		var label_y: float = TILE_MODEL_NUMBER_Y if has_model else HexMath.TILE_HEIGHT / 2 + 0.18
+		label.position = Vector3(0, label_y, 0)
 		# Billboard: le chiffre fait toujours face à la caméra -> reste lisible
 		# quel que soit l'angle (la caméra peut tourner/zoomer).
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.modulate = Color.RED if number == 6 or number == 8 else Color.BLACK
+		# Contour blanc épais -> chiffres bien lisibles sur n'importe quelle tuile/décor.
+		label.outline_modulate = Color.WHITE
+		label.outline_size = 28
 		body.add_child(label)
 
 	if on_tile_click.is_valid():
 		body.input_event.connect(on_tile_click.bind(body))
 	tile_nodes[Vector2(q, r)] = body
 	parent.add_child(body)
+
+# Instancie un modèle 3D de tuile à la place de l'hexagone procédural. On met l'échelle
+# au rayon HEX_SIZE et on remet la rotation/position à plat (le .glb porte un +30° sur
+# sa racine) pour aligner les 6 sommets sur les emplacements de bâtiments du plateau.
+func _add_tile_model(body: Node3D, scene: PackedScene) -> void:
+	var model := scene.instantiate()
+	if model is Node3D:
+		model.position = Vector3.ZERO
+		model.rotation = Vector3(0, deg_to_rad(TILE_MODEL_Y_DEG + 90), 0)
+		model.scale = Vector3.ONE * (HexMath.HEX_SIZE / 0.99)
+	body.add_child(model)
 
 func _register_vertices(parent: Node3D, q: int, r: int) -> void:
 	for i in 6:

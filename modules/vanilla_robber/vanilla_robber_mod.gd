@@ -10,7 +10,7 @@ const SP_STEAL := "vanilla_robber:steal"
 const EFF_LARGEST_ARMY := "largest_army"
 const KNIGHTS_KEY := "vanilla_robber:knights"
 
-var _robber_node: MeshInstance3D
+var _robber_node: Node3D
 var _board: Board
 var _registry: GameRegistry
 var _state: GameState
@@ -54,17 +54,24 @@ func _on_game_start(ctx) -> void:
 	_board.marker_changed.connect(_on_marker_changed)
 
 func _create_robber_visual(board_view: BoardView) -> void:
-	_robber_node = MeshInstance3D.new()
+	# Modèle 3D du voleur (robber.glb) ; repli sur un cône sombre si le .glb est absent.
+	var path := "res://modules/vanilla_robber/robber.glb"
+	var scene: PackedScene = load(path) if ResourceLoader.exists(path) else null
+	if scene != null:
+		_robber_node = scene.instantiate()
+	else:
+		var m := MeshInstance3D.new()
+		var mesh := CylinderMesh.new()
+		mesh.top_radius = 0.15
+		mesh.bottom_radius = 0.25
+		mesh.height = 0.6
+		mesh.radial_segments = 12
+		m.mesh = mesh
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.1, 0.1, 0.1)
+		m.material_override = mat
+		_robber_node = m
 	_robber_node.name = "Robber"
-	var mesh := CylinderMesh.new()
-	mesh.top_radius = 0.15
-	mesh.bottom_radius = 0.25
-	mesh.height = 0.6
-	mesh.radial_segments = 12
-	_robber_node.mesh = mesh
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.1, 0.1, 0.1)
-	_robber_node.material_override = mat
 	var any_tile: Node = board_view.tile_nodes.values()[0]
 	any_tile.get_parent().add_child(_robber_node)
 	_refresh_robber_visual()
