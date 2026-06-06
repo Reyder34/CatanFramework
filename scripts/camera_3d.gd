@@ -1,10 +1,13 @@
 extends Camera3D
 
 # --- Paramètres de Rotation ---
-@export var mouse_sensitivity: float = 0.005 # Sensibilité du glissement
+@export var horizontal_sensitivity: float = 0.005
+@export var vertical_sensitivity: float = 0.05 # Souvent un peu plus forte que l'horizontale
 @export var radius: float = 15.0      
 @export var height: float = 10.0      
-@export var target_point: Vector3 = Vector3.ZERO 
+@export var min_height: float = 2.0    # Limite basse (au ras du plateau)
+@export var max_height: float = 30.0   # Limite haute (vue de dessus)
+@export var target_point: Vector3 = Vector3.ZERO
 
 # --- Paramètres de Zoom ---
 @export var zoom_speed: float = 1.5   
@@ -42,7 +45,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		# Si le clic gauche est maintenu, on tourne
 		if is_dragging:
 			# event.relative.x donne le déplacement horizontal de la souris en pixels
-			current_angle += event.relative.x * mouse_sensitivity
+			current_angle += event.relative.x * horizontal_sensitivity
+			height -= event.relative.y * vertical_sensitivity
+			height = clamp(height, min_height, max_height)
 			update_camera_position()
 
 func update_camera_position() -> void:

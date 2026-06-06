@@ -16,10 +16,11 @@ func _ready() -> void:
 		seed(GameConfig.game_seed)
 	registry = GameRegistry.new()
 	registry.setup_ui($UI/HUD)
+	$UI/HUD.theme = load("res://ui/theme.tres")  # thème partagé -> tous les pop-ups héritent
 	registry.events.subscribe("flash_tile", _flash_tile_handler, 0, "core")
 	registry.events.subscribe("game_log", _on_game_log, 0, "core")
 	
-	# Chargement des mods (sera remplacé par un ModLoader plus tard)
+	# Chargement des mods activés (le ModLoader résout l'ordre des dépendances + conflits)
 	_load_mods()
 	
 	# Taille de la map choisie au lobby (hors core): pilote board_radius, que les
@@ -41,11 +42,11 @@ func _ready() -> void:
 		if i < GameConfig.player_names.size() and str(GameConfig.player_names[i]) != "":
 			state.players[i].display_name = str(GameConfig.player_names[i])
 
-	# give ressource pour test
+	# Ressources de départ (0 par défaut; un mod peut en distribuer via l'event game_start).
 	for p in state.players:
 		for res_id in registry.resources:
 			if not registry.resources[res_id].get("is_desert", false):
-				p.resources[res_id] = 10	
+				p.resources[res_id] = 0	
 	
 	registry.emit("game_start", {
 		"state": state,
@@ -54,9 +55,14 @@ func _ready() -> void:
 		"board_view": board_view,
 	})
 
-	hud = GameHud.new()
+	hud = preload("res://scenes/hud.tscn").instantiate()
 	$UI/HUD.add_child(hud)
 	hud.setup(state, registry, board, self)
+
+	# Son "à toi de jouer" (core): -1 en solo (chaque tour), sinon le joueur local.
+	var turn_audio := TurnAudio.new()
+	add_child(turn_audio)
+	turn_audio.setup(state, GameConfig.local_player_index if GameConfig.is_multiplayer else -1)
 
 	# Réseau: panneaux + diffusion d'état (hôte) sur tout changement.
 	Net.game = self
@@ -97,6 +103,13 @@ func _input(event: InputEvent) -> void:
 		return
 	if event.keycode == KEY_M:
 		get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+		return
+	if event.keycode == KEY_F5:
+		_request_resync()  # anti-désync: l'hôte re-diffuse l'état complet à tous
+		return
+	if event.keycode == KEY_F1 or event.keycode == KEY_F6:
+		if hud != null:
+			hud.reset_layout()  # réinitialise position + taille de l'UI
 		return
 	if state.phase == GameState.Phase.GAME_OVER:
 		return
@@ -142,7 +155,7 @@ func _on_edge_clicked(_cam, event, _pos, _norm, _idx, body: StaticBody3D) -> voi
 # === MULTIJOUEUR (Phase 2a: clics + actions hors panneaux) ===
 
 # Actions différées en réseau (panneaux/cartes) -> Phase 2b.
-const MP_DEFERRED_ACTIONS := ["propose_trade", "show_dev_cards", "debug_hello"]
+const MP_DEFERRED_ACTIONS := ["show_dev_cards", "debug_hello"]
 
 func _authoritative() -> bool:
 	return not GameConfig.is_multiplayer or multiplayer.is_server()
@@ -171,6 +184,27 @@ func _net_command(cmd: Dictionary) -> void:
 	_apply_command(cmd, by)
 	if hud != null:
 		hud.update()  # l'hôte rafraîchit son affichage après une action d'un client
+
+# Anti-désync (touche F5): force l'hôte à re-diffuser l'état complet à tous.
+# N'importe qui peut le déclencher: si client, on demande à l'hôte de rediffuser.
+func _request_resync() -> void:
+	if not GameConfig.is_multiplayer:
+		return
+	if _authoritative():
+		_do_resync()
+	else:
+		_ask_resync.rpc_id(1)
+
+@rpc("any_peer", "reliable")
+func _ask_resync() -> void:
+	if _authoritative():
+		_do_resync()
+
+func _do_resync() -> void:
+	registry.emit("game_log", {"text": "🔄 Resynchronisation"})
+	_snapshot_dirty = true
+	if hud != null:
+		hud.update()
 
 func _apply_command(cmd: Dictionary, by: int) -> void:
 	if not _authoritative():

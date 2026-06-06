@@ -4,8 +4,8 @@ extends BuildingType
 func _init() -> void:
 	id = "road"
 	display_name = "Route"
+	description = "Relie tes constructions ; sert à t'étendre et à la plus longue route."
 	target = "edge"
-	hotkey = KEY_2
 	cost = {"wood": 1, "brick": 1}
 	victory_points = 0
 
