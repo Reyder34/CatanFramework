@@ -367,15 +367,33 @@ func _process(_delta: float) -> void:
 
 func _flash_tile_handler(ctx: Dictionary) -> void:
 	var coords: Vector2 = ctx.get("coords", Vector2.ZERO)
-	var tile: StaticBody3D = board_view.tile_nodes.get(coords)
+	var tile: Node = board_view.tile_nodes.get(coords)
 	if tile == null:
 		return
-	var mesh_inst: MeshInstance3D = tile.get_child(0)
-	var mat: StandardMaterial3D = mesh_inst.material_override
-	var original := mat.albedo_color
-	mat.albedo_color = Color.WHITE
+	# Flash robuste pour l'hexagone procédural ET les tuiles 3D (.glb). On superpose un
+	# overlay blanc translucide sur tous les MeshInstance3D, puis on le retire (sans
+	# toucher au matériau d'origine). Les tuiles à modèle n'ont PAS de material_override
+	# -> l'ancienne version (mesh_inst.material_override.albedo_color) plantait dessus.
+	var meshes := _collect_mesh_instances(tile)
+	var overlay := StandardMaterial3D.new()
+	overlay.albedo_color = Color(1, 1, 1, 0.75)
+	overlay.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	for mi in meshes:
+		mi.material_overlay = overlay
 	await get_tree().create_timer(0.4).timeout
-	mat.albedo_color = original
+	for mi in meshes:
+		if is_instance_valid(mi):
+			mi.material_overlay = null
+
+# Tous les MeshInstance3D sous un nœud (récursif) : flashe une tuile quel que soit son
+# rendu (cylindre procédural ou modèle 3D avec décor).
+func _collect_mesh_instances(node: Node) -> Array:
+	var out: Array = []
+	for c in node.get_children():
+		if c is MeshInstance3D:
+			out.append(c)
+		out.append_array(_collect_mesh_instances(c))
+	return out
 
 # Journal: un mod émet "game_log" {text}. On garde les derniers messages et on les
 # synchronise (snapshot) pour que tous les joueurs voient le même journal.
