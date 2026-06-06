@@ -5,6 +5,7 @@ func _init() -> void:
 	id = "monopoly"
 	display_name = "Monopole"
 	description = "Choisis une ressource. Tous les autres joueurs te donnent toute leur quantité."
+	image = "truc"
 
 func on_play(state: GameState, board: Board, registry: GameRegistry, player: Player) -> bool:
 	var result = await Net.show_panel_for(player.id, "resource_picker", {

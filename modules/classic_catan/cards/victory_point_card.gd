@@ -7,3 +7,4 @@ func _init() -> void:
 	description = "Donne 1 point de victoire (caché jusqu'à la fin)."
 	victory_points = 1
 	is_passive = true
+	image = "truc"
