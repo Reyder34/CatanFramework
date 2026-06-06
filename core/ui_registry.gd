@@ -13,6 +13,9 @@ var panel_origins: Dictionary = {}
 # Compte le nombre de panneaux actuellement ouverts
 var _open_count: int = 0
 
+# id -> instance des panneaux persistants (non bloquants, mis à jour en continu)
+var _persistent: Dictionary = {}
+
 func _init(p_ui_root: Node) -> void:
 	ui_root = p_ui_root
 
@@ -56,6 +59,52 @@ func show_panel(panel_id: String, params: Dictionary = {}) -> Variant:
 	instance.queue_free()
 	_open_count -= 1
 	return result
+
+# === PANNEAUX PERSISTANTS (NON bloquants, mis à jour en continu) ===
+# Contrairement à show_panel (modal, await closed), ceux-ci restent à l'écran et se
+# mettent à jour via leur méthode `update_panel(params)`. Idéal pour un afficheur live
+# (dés, minuterie, score…). Le panneau doit implémenter : func update_panel(params).
+#
+# Affiche le panneau (le crée s'il n'existe pas, sinon le met à jour) et le retourne.
+func show_persistent(panel_id: String, params: Dictionary = {}) -> Node:
+	var current = _persistent.get(panel_id, null)
+	if is_instance_valid(current):
+		if current.has_method("update_panel"):
+			current.update_panel(params)
+		return current
+	if not panel_scenes.has(panel_id):
+		push_error("Panel inconnu: %s" % panel_id)
+		return null
+	var instance: Node = panel_scenes[panel_id].instantiate()
+	if instance is CanvasItem:
+		instance.visible = true
+	ui_root.add_child(instance)
+	if instance is Control:
+		_place_top_center(instance)
+	if instance.has_method("update_panel"):
+		instance.update_panel(params)
+	if instance is Control:
+		_make_movable(instance, panel_id)  # déplaçable + redimensionnable, comme les pop-ups
+	_persistent[panel_id] = instance
+	return instance
+
+# Met à jour un panneau persistant déjà affiché (ne fait rien s'il est absent).
+func update_persistent(panel_id: String, params: Dictionary = {}) -> void:
+	var inst = _persistent.get(panel_id, null)
+	if is_instance_valid(inst) and inst.has_method("update_panel"):
+		inst.update_panel(params)
+
+# Retire un panneau persistant.
+func hide_persistent(panel_id: String) -> void:
+	var inst = _persistent.get(panel_id, null)
+	if is_instance_valid(inst):
+		inst.queue_free()
+	_persistent.erase(panel_id)
+
+# Récupère l'instance d'un panneau persistant (ou null).
+func get_persistent(panel_id: String) -> Node:
+	var inst = _persistent.get(panel_id, null)
+	return inst if is_instance_valid(inst) else null
 
 # Rend un pop-up déplaçable + redimensionnable, avec position/taille persistées
 # (partage le même mécanisme que le HUD via WindowMover). La poignée de déplacement
