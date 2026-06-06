@@ -127,6 +127,8 @@ func register(reg: GameRegistry) -> void:
     act.label = "Sélectionner : Temple"
     act.hotkey = KEY_4
     act.category = "build"
+    act.building_id = "temple"   # IMPORTANT : relie l'action au bâtiment -> le HUD affiche
+                                 # tout seul le tooltip (coût / PV / production). Sans ça, pas de tooltip.
     act.callback = func() -> void:
         _state.build_mode_id = "temple"
     act.is_available = func() -> bool:
@@ -170,7 +172,7 @@ reg.set_board_radius(2)
 reg.set_map_generator(mon_callable)                # remplace la disposition (voir §5)
 reg.set_victory_threshold(10)
 reg.set_player_count_range(2, 4)
-reg.register_action(une_game_action)
+reg.register_action(une_game_action)               # tooltip HUD: renseigne building_id (-> coût/PV/prod auto), ou tooltip/cost
 reg.register_panel("mon_panneau", preload("res://.../panel.tscn"))
 reg.register_sub_phase_label("mon_mod:ma_phase", "Texte affiché")
 reg.on(event_id, callback, priority := 0)          # s'abonner
