@@ -4,8 +4,8 @@ extends RefCounted
 # Identité
 var id: String = ""
 var display_name: String = ""
+var description: String = ""  # effet décrit par le mod (affiché en tooltip dans le HUD)
 var target: String = "vertex"  # "vertex" ou "edge"
-var hotkey: int = -1
 
 # Économie
 var cost: Dictionary = {}

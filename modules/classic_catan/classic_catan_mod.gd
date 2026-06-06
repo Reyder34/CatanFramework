@@ -498,9 +498,6 @@ func _edge_angle(c: Dictionary) -> float:
 	var pos := HexMath.edge_position(c["q"], c["r"], c["side"])
 	return atan2(pos.z, pos.x)
 
-func _res_name(res_id: String) -> String:
-	return _registry.resources[res_id]["name"] if _registry.resources.has(res_id) else res_id
-
 # Meilleur ratio d'échange banque du joueur pour une ressource (4 par défaut).
 func _best_bank_ratio(player: Player, resource: String) -> int:
 	var best := 4
@@ -619,9 +616,11 @@ func _register_actions(reg: GameRegistry) -> void:
 	# === Action: Acheter une carte développement ===
 	var buy := GameAction.new()
 	buy.id = "buy_dev_card"
-	buy.label = "Acheter carte (-1 blé/mouton/minerai)"
+	buy.label = "Acheter une carte"
 	buy.hotkey = KEY_D
-	buy.category = "build"
+	buy.category = "cards"
+	buy.cost = DEV_CARD_COST  # -> tooltip "Coût : ..."
+	buy.tooltip = "Pioche une carte développement."
 	buy.callback = _action_buy_dev_card
 	buy.is_available = func() -> bool:
 		return _state != null \
@@ -635,7 +634,7 @@ func _register_actions(reg: GameRegistry) -> void:
 	show.id = "show_dev_cards"
 	show.label = "Mes cartes"
 	show.hotkey = KEY_J
-	show.category = "build"
+	show.category = "cards"
 	show.callback = _action_show_dev_cards
 	show.is_available = func() -> bool:
 		return _state != null \
@@ -652,6 +651,7 @@ func _register_building_action(reg: GameRegistry, building_id: String, key: int)
 	action.label = "Sélectionner: " + b.display_name
 	action.hotkey = key
 	action.category = "build"
+	action.building_id = building_id  # -> le HUD affiche coût/PV/effet du BuildingType en tooltip
 	action.callback = func() -> void:
 		_state.build_mode_id = building_id
 	action.is_available = func() -> bool:
@@ -696,31 +696,36 @@ func _flash_tile(coords: Vector2) -> void:
 
 func _action_propose_trade() -> void:
 	var proposer := _state.current_player()
-	# Ouvrir le panneau de proposition
-	var result = await _registry.ui.show_panel("trade_proposal", {
-		"registry": _registry,
-		"proposer": proposer,
-	})
+	if _state.phase != GameState.Phase.PLAY or _state.is_busy():
+		return
+	# Le proposeur choisit son offre.
+	var result = await Net.show_panel_for(proposer.id, "trade_proposal", {})
 	if result == null or result.get("action") != "propose":
 		return
 	var offer: Dictionary = result["offer"]
 	var demand: Dictionary = result["demand"]
-	# Demander à chaque autre joueur séquentiellement
+	# Envoie la proposition à TOUS les autres EN MÊME TEMPS (réseau) / à la suite (solo).
+	var requests: Array = []
+	var indices: Array = []
 	for i in _state.players.size():
-		if i == _state.current_player_index:
+		if i == proposer.id:
 			continue
-		var responder: Player = _state.players[i]
-		var response = await _registry.ui.show_panel("trade_response", {
-			"registry": _registry,
-			"proposer": proposer,
-			"responder": responder,
-			"offer": offer,
-			"demand": demand,
+		indices.append(i)
+		requests.append({
+			"player_index": i,
+			"panel_id": "trade_response",
+			"raw": {"proposer_index": proposer.id, "offer": offer, "demand": demand},
 		})
-		if response != null and response.get("action") == "accept":
+	var responses: Array = await Net.show_panels_parallel(requests)
+	# Premier qui accepte remporte l'échange.
+	for k in responses.size():
+		var r = responses[k]
+		if r != null and r.get("action") == "accept":
+			var responder: Player = _state.players[indices[k]]
 			_execute_trade(proposer, responder, offer, demand)
+			_registry.emit("game_log", {"text": "%s a échangé avec %s" % [proposer.label(), responder.label()]})
 			return
-	print("Personne n'a accepté l'échange")
+	_registry.emit("game_log", {"text": "Personne n'a accepté l'échange de %s" % proposer.label()})
 
 func _execute_trade(proposer: Player, responder: Player, offer: Dictionary, demand: Dictionary) -> void:
 	# Vérification finale (le répondant pourrait avoir vu ses ressources changer entre temps, mais en solo non)

@@ -77,6 +77,25 @@ func is_producing_resource(id: String) -> bool:
 		return false
 	return not resources[id].get("is_desert", false)
 
+# Image d'une ressource, fournie par le MOD dans declare_resource :
+#   "icon"    -> petite image pour l'UI (HUD, à côté du nom)
+#   "texture" -> image de la tuile hexagonale (repli sur "icon" si absent)
+# La valeur peut être un chemin "res://..." OU une Texture2D déjà chargée.
+# Renvoie null si rien -> le HUD/plateau retombe sur la couleur.
+func get_resource_icon(id: String) -> Texture2D:
+	return _as_texture(resources.get(id, {}).get("icon", null))
+
+func get_resource_texture(id: String) -> Texture2D:
+	var d: Dictionary = resources.get(id, {})
+	return _as_texture(d.get("texture", d.get("icon", null)))
+
+func _as_texture(v) -> Texture2D:
+	if v is Texture2D:
+		return v
+	if v is String and v != "" and ResourceLoader.exists(v):
+		return load(v)
+	return null
+
 # === API: BÂTIMENTS ===
 
 func declare_building(building: BuildingType) -> void:

@@ -4,8 +4,8 @@ extends BuildingType
 func _init() -> void:
 	id = "city"
 	display_name = "Ville"
+	description = "Améliore une colonie. Produit ×2 les ressources."
 	target = "vertex"
-	hotkey = KEY_3
 	cost = {"wheat": 2, "ore": 3}
 	victory_points = 2
 	mesh_radius = 0.3

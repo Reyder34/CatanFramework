@@ -10,7 +10,6 @@ var board: Board
 var tile_nodes: Dictionary = {}
 var vertex_nodes: Dictionary = {}
 var edge_nodes: Dictionary = {}
-var marker_nodes: Dictionary = {}
 
 var on_tile_click: Callable
 var on_vertex_click: Callable
@@ -108,6 +107,10 @@ func _create_tile(parent: Node3D, q: int, r: int, resource: String, number: int)
 	mesh_inst.mesh = mesh
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = registry.get_resource_color(resource)
+	var tex := registry.get_resource_texture(resource)
+	if tex != null:
+		mat.albedo_texture = tex
+		mat.albedo_color = Color.WHITE  # ne pas teinter l'image
 	mesh_inst.material_override = mat
 	body.add_child(mesh_inst)
 

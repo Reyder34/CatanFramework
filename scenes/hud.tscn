@@ -1,0 +1,211 @@
+[gd_scene load_steps=3 format=3 uid="uid://b314sywhcegbv"]
+
+[ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
+[ext_resource type="Theme" uid="uid://dgp2ysc4sadf4" path="res://ui/theme.tres" id="2_theme"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_hud")
+
+[node name="Resources" type="PanelContainer" parent="." groups=["hud_window"]]
+layout_mode = 1
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 180.0
+offset_bottom = 160.0
+
+[node name="V" type="VBoxContainer" parent="Resources"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleBar" type="PanelContainer" parent="Resources/V" groups=["hud_titlebar"]]
+layout_mode = 2
+mouse_default_cursor_shape = 13
+theme_type_variation = &"TitleBar"
+
+[node name="L" type="Label" parent="Resources/V/TitleBar"]
+layout_mode = 2
+text = "⠿  Ressources"
+
+[node name="ResourcesContent" type="VBoxContainer" parent="Resources/V"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Players" type="PanelContainer" parent="." groups=["hud_window"]]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -180.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 200.0
+grow_horizontal = 0
+
+[node name="V" type="VBoxContainer" parent="Players"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleBar" type="PanelContainer" parent="Players/V" groups=["hud_titlebar"]]
+layout_mode = 2
+mouse_default_cursor_shape = 13
+theme_type_variation = &"TitleBar"
+
+[node name="L" type="Label" parent="Players/V/TitleBar"]
+layout_mode = 2
+text = "⠿  Joueurs"
+
+[node name="PlayersContent" type="VBoxContainer" parent="Players/V"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Journal" type="PanelContainer" parent="." groups=["hud_window"]]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -90.0
+offset_top = 8.0
+offset_right = 90.0
+offset_bottom = 60.0
+grow_horizontal = 2
+
+[node name="V" type="VBoxContainer" parent="Journal"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleBar" type="PanelContainer" parent="Journal/V" groups=["hud_titlebar"]]
+layout_mode = 2
+mouse_default_cursor_shape = 13
+theme_type_variation = &"TitleBar"
+
+[node name="L" type="Label" parent="Journal/V/TitleBar"]
+layout_mode = 2
+text = "⠿  Journal"
+
+[node name="JournalButton" type="Button" parent="Journal/V"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="JournalScroll" type="ScrollContainer" parent="Journal/V"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(260, 160)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="JournalContent" type="VBoxContainer" parent="Journal/V/JournalScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Build" type="PanelContainer" parent="." groups=["hud_window"]]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -160.0
+offset_right = 180.0
+offset_bottom = -8.0
+grow_vertical = 0
+
+[node name="V" type="VBoxContainer" parent="Build"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleBar" type="PanelContainer" parent="Build/V" groups=["hud_titlebar"]]
+layout_mode = 2
+mouse_default_cursor_shape = 13
+theme_type_variation = &"TitleBar"
+
+[node name="L" type="Label" parent="Build/V/TitleBar"]
+layout_mode = 2
+text = "⠿  Construire"
+
+[node name="BuildContent" type="VBoxContainer" parent="Build/V"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Turn" type="PanelContainer" parent="." groups=["hud_window"]]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -90.0
+offset_top = -140.0
+offset_right = 90.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="V" type="VBoxContainer" parent="Turn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleBar" type="PanelContainer" parent="Turn/V" groups=["hud_titlebar"]]
+layout_mode = 2
+mouse_default_cursor_shape = 13
+theme_type_variation = &"TitleBar"
+
+[node name="L" type="Label" parent="Turn/V/TitleBar"]
+layout_mode = 2
+text = "⠿  Tour"
+
+[node name="TurnContent" type="VBoxContainer" parent="Turn/V"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Cards" type="PanelContainer" parent="." groups=["hud_window"]]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -230.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="V" type="VBoxContainer" parent="Cards"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleBar" type="PanelContainer" parent="Cards/V" groups=["hud_titlebar"]]
+layout_mode = 2
+mouse_default_cursor_shape = 13
+theme_type_variation = &"TitleBar"
+
+[node name="L" type="Label" parent="Cards/V/TitleBar"]
+layout_mode = 2
+text = "⠿  Cartes"
+
+[node name="CardActionsContent" type="VBoxContainer" parent="Cards/V"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HandTitle" type="Label" parent="Cards/V"]
+layout_mode = 2
+text = "Ma main"
+
+[node name="HandContent" type="VBoxContainer" parent="Cards/V"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4

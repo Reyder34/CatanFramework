@@ -13,19 +13,33 @@ var board: Board
 # Actions déjà couvertes ailleurs dans le HUD (pas dans la barre d'actions).
 const _HIDDEN_ACTIONS := ["show_dev_cards", "propose_trade", "bank_trade"]
 
-var _res_box: VBoxContainer
-var _players_box: VBoxContainer
-var _actions_box: HBoxContainer
-var _cards_box: HBoxContainer
-var _log_box: VBoxContainer
-var _log_button: Button
-var _log_scroll: ScrollContainer
+# Conteneurs de la scène hud.tscn (le designer édite la structure/le style dans l'éditeur).
+@onready var _res_box: VBoxContainer = %ResourcesContent
+@onready var _players_box: VBoxContainer = %PlayersContent
+@onready var _build_box: VBoxContainer = %BuildContent
+@onready var _actions_box: VBoxContainer = %TurnContent
+@onready var _card_actions_box: VBoxContainer = %CardActionsContent
+@onready var _cards_box: VBoxContainer = %HandContent
+@onready var _log_box: VBoxContainer = %JournalContent
+@onready var _log_button: Button = %JournalButton
+@onready var _log_scroll: ScrollContainer = %JournalScroll
 var _log_open: bool = false
+# Panneaux déplaçables (barre de titre) + redimensionnables (poignée bas-droite) + persistance.
+var _windows: Dictionary = {}        # id -> {panel, default}
+var _drag_panel: Control = null
+var _drag_id: String = ""
+var _drag_grab: Vector2 = Vector2.ZERO
+var _resize_panel: Control = null
+var _resize_id: String = ""
+var _resize_base: Vector2 = Vector2.ZERO    # taille non scalée au début du redim
+var _resize_origin: Vector2 = Vector2.ZERO  # coin haut-gauche figé pendant le redim
+const LAYOUT_PATH := "user://hud_layout.cfg"
+var _layout := ConfigFile.new()
 var _selected_breakdown: int = -1  # joueur dont on affiche le détail des points (-1 = aucun)
 var _main: Node = null  # main (pour router les actions en réseau)
 
 # Actions à panneaux/cartes désactivées en réseau (Phase 2b).
-const _MP_DEFERRED := ["propose_trade", "show_dev_cards"]
+const _MP_DEFERRED := ["show_dev_cards"]
 
 func _net_my_turn() -> bool:
 	if not GameConfig.is_multiplayer:
@@ -53,98 +67,54 @@ func setup(p_state: GameState, p_registry: GameRegistry, p_board: Board, p_main:
 	offset_right = 0.0
 	offset_bottom = 0.0
 	mouse_filter = Control.MOUSE_FILTER_IGNORE  # laisse passer les clics vers le plateau 3D
-	_build()
+	_wire_windows()
 	_connect_signals()
 	update()
 
-func _build() -> void:
-	# Haut-gauche: ressources
-	var tl := _make_panel()
-	_anchor_corner(tl, "top_left")
-	_res_box = _titled_box(tl, "Ressources")
-	# Haut-droit: joueurs + banque
-	var tr := _make_panel()
-	_anchor_corner(tr, "top_right")
-	_players_box = _titled_box(tr, "Joueurs")
-	# Bas-centre: actions + main
-	var bottom := _make_panel()
-	_anchor_corner(bottom, "bottom_center")
-	var vb := VBoxContainer.new()
-	vb.add_theme_constant_override("separation", 6)
-	bottom.add_child(vb)
-	vb.add_child(_title("Actions"))
-	_actions_box = HBoxContainer.new()
-	_actions_box.add_theme_constant_override("separation", 6)
-	vb.add_child(_actions_box)
-	vb.add_child(_title("Ma main"))
-	_cards_box = HBoxContainer.new()
-	_cards_box.add_theme_constant_override("separation", 6)
-	vb.add_child(_cards_box)
-	# Haut-centre: bouton "Journal" qui ouvre/ferme un menu déroulant scrollable
-	# (évite de surcharger l'écran). Rempli par les events "game_log".
-	var tc := _make_panel()
-	_anchor_corner(tc, "top_center")
-	var log_vb := VBoxContainer.new()
-	tc.add_child(log_vb)
-	_log_button = Button.new()
+# Branche le drag + la persistance sur les panneaux de la SCÈNE (hud.tscn).
+# Le designer édite la structure/le style dans l'éditeur ; ici uniquement la logique.
+func _wire_windows() -> void:
+	_layout.load(LAYOUT_PATH)  # positions sauvegardées (ignore si absent)
 	_log_button.pressed.connect(_toggle_log)
-	log_vb.add_child(_log_button)
-	_log_scroll = ScrollContainer.new()
-	_log_scroll.custom_minimum_size = Vector2(260, 160)
-	_log_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	_log_scroll.visible = false
-	log_vb.add_child(_log_scroll)
-	_log_box = VBoxContainer.new()
-	_log_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_log_scroll.add_child(_log_box)
+	for win in get_tree().get_nodes_in_group("hud_window"):
+		if not is_ancestor_of(win):
+			continue
+		var id: String = win.name
+		_windows[id] = {"panel": win, "default": _capture_layout(win)}
+		var bar := _find_titlebar(win)
+		if bar != null:
+			bar.gui_input.connect(_on_titlebar_input.bind(id))
+		_add_resize_grip(win, id)  # poignée de redimensionnement (coin bas-droite)
+		if _layout.has_section_key("layout", id):
+			_set_free_pos(win, _layout.get_value("layout", id))
+		if _layout.has_section_key("scale", id):
+			win.pivot_offset = Vector2.ZERO
+			win.scale = Vector2.ONE * float(_layout.get_value("scale", id))
 
-func _make_panel() -> PanelContainer:
-	var panel := PanelContainer.new()
-	add_child(panel)
-	return panel
+func _find_titlebar(node: Node) -> Control:
+	for c in node.get_children():
+		if c is Control and c.is_in_group("hud_titlebar"):
+			return c
+		var found := _find_titlebar(c)
+		if found != null:
+			return found
+	return null
 
-# Ancre un Control (qui se dimensionne à son contenu) dans un coin du HUD.
-func _anchor_corner(c: Control, where: String) -> void:
-	match where:
-		"top_left":
-			c.anchor_left = 0.0; c.anchor_right = 0.0
-			c.anchor_top = 0.0; c.anchor_bottom = 0.0
-			c.grow_horizontal = Control.GROW_DIRECTION_END
-			c.grow_vertical = Control.GROW_DIRECTION_END
-			c.offset_left = 8.0; c.offset_top = 8.0
-		"top_right":
-			c.anchor_left = 1.0; c.anchor_right = 1.0
-			c.anchor_top = 0.0; c.anchor_bottom = 0.0
-			c.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-			c.grow_vertical = Control.GROW_DIRECTION_END
-			c.offset_right = -8.0; c.offset_top = 8.0
-		"bottom_center":
-			c.anchor_left = 0.5; c.anchor_right = 0.5
-			c.anchor_top = 1.0; c.anchor_bottom = 1.0
-			c.grow_horizontal = Control.GROW_DIRECTION_BOTH
-			c.grow_vertical = Control.GROW_DIRECTION_BEGIN
-			c.offset_bottom = -8.0
-		"top_center":
-			c.anchor_left = 0.5; c.anchor_right = 0.5
-			c.anchor_top = 0.0; c.anchor_bottom = 0.0
-			c.grow_horizontal = Control.GROW_DIRECTION_BOTH
-			c.grow_vertical = Control.GROW_DIRECTION_END
-			c.offset_top = 8.0
+# Mémorise/restaure l'ancrage défini dans la scène (pour F6 = réinitialiser).
+func _capture_layout(c: Control) -> Dictionary:
+	return {
+		"al": c.anchor_left, "at": c.anchor_top, "ar": c.anchor_right, "ab": c.anchor_bottom,
+		"ol": c.offset_left, "ot": c.offset_top, "ore": c.offset_right, "ob": c.offset_bottom,
+		"gh": c.grow_horizontal, "gv": c.grow_vertical,
+	}
 
-func _titled_box(panel: PanelContainer, title: String) -> VBoxContainer:
-	var vb := VBoxContainer.new()
-	vb.add_theme_constant_override("separation", 4)
-	panel.add_child(vb)
-	vb.add_child(_title(title))
-	var content := VBoxContainer.new()
-	vb.add_child(content)
-	return content
+func _restore_layout(c: Control, d: Dictionary) -> void:
+	c.anchor_left = d["al"]; c.anchor_top = d["at"]; c.anchor_right = d["ar"]; c.anchor_bottom = d["ab"]
+	c.offset_left = d["ol"]; c.offset_top = d["ot"]; c.offset_right = d["ore"]; c.offset_bottom = d["ob"]
+	c.grow_horizontal = d["gh"]; c.grow_vertical = d["gv"]
 
-func _title(text: String) -> Label:
-	var lbl := Label.new()
-	lbl.text = text
-	lbl.add_theme_font_size_override("font_size", 18)
-	return lbl
+# (Helpers de construction de panneaux retirés : le HUD est désormais une scène,
+# voir scenes/hud.tscn. Le placement par défaut vient de la scène, pas du code.)
 
 func _swatch(color: Color) -> ColorRect:
 	var sw := ColorRect.new()
@@ -172,7 +142,9 @@ func update() -> void:
 		return
 	_refresh_resources()
 	_refresh_players()
-	_refresh_actions()
+	_refresh_build()
+	_refresh_turn_actions()
+	_refresh_card_actions()
 	_refresh_cards()
 	_refresh_log()
 	# Seuls les boutons captent la souris; tout le reste laisse passer les clics
@@ -184,10 +156,106 @@ func _make_passthrough(node: Node) -> void:
 		return  # les boutons restent cliquables
 	if node == _log_scroll:
 		return  # le menu déroulant capte la souris (scroll) -> ne pas le rendre passthrough
+	if node is Control and (node.is_in_group("hud_titlebar") or node.is_in_group("hud_resize")):
+		return  # barre de titre / poignée de redim: gardent la souris
 	if node is Control:
 		node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for c in node.get_children():
 		_make_passthrough(c)
+
+# === PANNEAUX DÉPLAÇABLES (barre de titre de la scène, position retenue) ===
+# Positionnement libre (ancré en haut-gauche, grandit vers le contenu).
+func _set_free_pos(panel: Control, pos: Vector2) -> void:
+	panel.anchor_left = 0.0; panel.anchor_top = 0.0
+	panel.anchor_right = 0.0; panel.anchor_bottom = 0.0
+	panel.grow_horizontal = Control.GROW_DIRECTION_END
+	panel.grow_vertical = Control.GROW_DIRECTION_END
+	panel.offset_left = pos.x
+	panel.offset_top = pos.y
+
+func _on_titlebar_input(event: InputEvent, id: String) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var panel: Control = _windows[id]["panel"]
+		var gp: Vector2 = panel.global_position
+		_set_free_pos(panel, gp)  # fige la position visuelle courante
+		_drag_panel = panel
+		_drag_id = id
+		_drag_grab = gp - get_global_mouse_position()
+		accept_event()
+
+func _input(event: InputEvent) -> void:
+	if _resize_panel != null:
+		if event is InputEventMouseMotion:
+			var m: Vector2 = get_global_mouse_position()
+			var sx: float = (m.x - _resize_origin.x) / maxf(40.0, _resize_base.x)
+			var sy: float = (m.y - _resize_origin.y) / maxf(40.0, _resize_base.y)
+			var s: float = clampf(maxf(sx, sy), 0.6, 2.5)
+			_resize_panel.scale = Vector2(s, s)
+			get_viewport().set_input_as_handled()
+		elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+			_layout.set_value("scale", _resize_id, _resize_panel.scale.x)
+			_save_window_pos(_resize_id, Vector2(_resize_panel.offset_left, _resize_panel.offset_top))
+			_resize_panel = null
+			_resize_id = ""
+			get_viewport().set_input_as_handled()
+		return
+	if _drag_panel == null:
+		return
+	if event is InputEventMouseMotion:
+		var p: Vector2 = get_global_mouse_position() + _drag_grab
+		var maxp: Vector2 = get_viewport_rect().size - _drag_panel.size
+		p.x = clampf(p.x, 0.0, maxf(0.0, maxp.x))
+		p.y = clampf(p.y, 0.0, maxf(0.0, maxp.y))
+		_set_free_pos(_drag_panel, p)
+		get_viewport().set_input_as_handled()
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		_save_window_pos(_drag_id, Vector2(_drag_panel.offset_left, _drag_panel.offset_top))
+		_drag_panel = null
+		_drag_id = ""
+		get_viewport().set_input_as_handled()
+
+func _save_window_pos(id: String, pos: Vector2) -> void:
+	_layout.set_value("layout", id, pos)
+	_layout.save(LAYOUT_PATH)
+
+# === REDIMENSIONNEMENT PAR PANNEAU (poignée bas-droite, comme une fenêtre OS) ===
+# Petite poignée ajoutée en bas-droite du panneau (dans son VBox "V").
+func _add_resize_grip(win: Control, id: String) -> void:
+	var v := win.get_node_or_null("V")
+	if v == null:
+		return
+	var grip := ColorRect.new()
+	grip.color = Color(1, 1, 1, 0.45)
+	grip.custom_minimum_size = Vector2(14, 14)
+	grip.size_flags_horizontal = Control.SIZE_SHRINK_END
+	grip.mouse_filter = Control.MOUSE_FILTER_STOP
+	grip.mouse_default_cursor_shape = Control.CURSOR_FDIAGSIZE
+	grip.tooltip_text = "Glisser pour redimensionner"
+	grip.add_to_group("hud_resize")
+	grip.gui_input.connect(_on_grip_input.bind(id))
+	v.add_child(grip)
+
+func _on_grip_input(event: InputEvent, id: String) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var panel: Control = _windows[id]["panel"]
+		var gp: Vector2 = panel.global_position
+		_set_free_pos(panel, gp)         # fige le coin haut-gauche
+		panel.pivot_offset = Vector2.ZERO  # le panneau grandit vers le bas-droite
+		_resize_panel = panel
+		_resize_id = id
+		_resize_base = panel.size
+		_resize_origin = gp
+		accept_event()
+
+# Réinitialise position ET taille de chaque panneau à l'origine (touches F1 / F6).
+func reset_layout() -> void:
+	for id in _windows:
+		var p: Control = _windows[id]["panel"]
+		_restore_layout(p, _windows[id]["default"])
+		p.scale = Vector2.ONE
+		p.pivot_offset = Vector2.ZERO
+	_layout.clear()
+	_layout.save(LAYOUT_PATH)
 
 # === HAUT-GAUCHE: ressources du joueur courant ===
 func _refresh_resources() -> void:
@@ -209,7 +277,16 @@ func _refresh_resources() -> void:
 			continue
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 6)
-		row.add_child(_swatch(registry.get_resource_color(res_id)))
+		var icon := registry.get_resource_icon(res_id)
+		if icon != null:
+			var tr := TextureRect.new()
+			tr.texture = icon
+			tr.custom_minimum_size = Vector2(20, 20)
+			tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			row.add_child(tr)
+		else:
+			row.add_child(_swatch(registry.get_resource_color(res_id)))  # repli: carré de couleur
 		var lbl := Label.new()
 		lbl.text = "%s : %d" % [registry.resources[res_id]["name"], int(p.resources.get(res_id, 0))]
 		row.add_child(lbl)
@@ -235,6 +312,13 @@ func _refresh_players() -> void:
 		bank.text = "Banque"
 		bank.pressed.connect(_trigger_action.bind("bank_trade"))
 		_players_box.add_child(bank)
+	if registry.actions.has("propose_trade"):
+		var ta := Button.new()
+		ta.text = "Échanger à tous"
+		ta.tooltip_text = "Proposer un échange à tous les autres joueurs en même temps."
+		ta.disabled = not _net_my_turn() or not registry.actions["propose_trade"].can_trigger()
+		ta.pressed.connect(_trigger_action.bind("propose_trade"))
+		_players_box.add_child(ta)
 	# Trophées: récompenses à PV détenues (plus grande armée, plus longue route,
 	# ou tout effet de mod). Générique: lit les effets des joueurs.
 	_add_trophies()
@@ -289,19 +373,84 @@ func _build_breakdown(id: int) -> VBoxContainer:
 		box.add_child(trade)
 	return box
 
-# === BAS: barre d'actions (depuis les actions déclarées par les mods) ===
-func _refresh_actions() -> void:
+# === BAS: actions groupées (Construire / Tour / Cartes) ===
+# Chaque bouton porte un tooltip CONSTRUIT À PARTIR DES DONNÉES DU MOD.
+func _refresh_build() -> void:
+	_clear(_build_box)
+	for a in _actions_in_category("build"):
+		_build_box.add_child(_make_action_button(a))
+
+func _refresh_turn_actions() -> void:
 	_clear(_actions_box)
+	for a in _actions_in_category("game"):
+		_actions_box.add_child(_make_action_button(a))
+
+func _refresh_card_actions() -> void:
+	_clear(_card_actions_box)
+	for a in _actions_in_category("cards"):
+		_card_actions_box.add_child(_make_action_button(a))
+
+# Actions visibles d'une catégorie (filtre cachées / différées-réseau).
+func _actions_in_category(cat: String) -> Array:
+	var out: Array = []
 	for a in registry.actions.values():
-		if a.category == "debug" or a.id in _HIDDEN_ACTIONS:
+		if a.category != cat or a.id in _HIDDEN_ACTIONS:
 			continue
 		if GameConfig.is_multiplayer and a.id in _MP_DEFERRED:
 			continue
-		var btn := Button.new()
-		btn.text = a.label
-		btn.disabled = not a.can_trigger() or not _net_my_turn()
-		btn.pressed.connect(_on_action.bind(a))
-		_actions_box.add_child(btn)
+		out.append(a)
+	return out
+
+func _make_action_button(a: GameAction) -> Button:
+	var btn := Button.new()
+	btn.text = a.label
+	btn.disabled = not a.can_trigger() or not _net_my_turn()
+	btn.tooltip_text = _action_tooltip(a)
+	btn.pressed.connect(_on_action.bind(a))
+	return btn
+
+# === TOOLTIPS — toutes les infos viennent des mods (BuildingType / GameAction / DevelopmentCard) ===
+func _action_tooltip(a: GameAction) -> String:
+	if a.building_id != "":
+		var bt: BuildingType = registry.get_building(a.building_id)
+		if bt != null:
+			return _building_tooltip(bt)
+	var lines: Array = []
+	if a.tooltip != "":
+		lines.append(a.tooltip)
+	if not a.cost.is_empty():
+		lines.append("Coût : " + _format_cost(a.cost))
+	return "\n".join(lines)
+
+func _building_tooltip(bt: BuildingType) -> String:
+	var lines: Array = [bt.display_name]
+	if bt.description != "":
+		lines.append(bt.description)
+	if not bt.cost.is_empty():
+		lines.append("Coût : " + _format_cost(bt.cost))
+	if bt.victory_points != 0:
+		lines.append("Points de victoire : %d" % bt.victory_points)
+	var prod := bt.get_production_amount()
+	if prod > 0:
+		lines.append("Production : ×%d" % prod)
+	return "\n".join(lines)
+
+func _card_tooltip(card: DevelopmentCard) -> String:
+	var lines: Array = [card.display_name]
+	if card.description != "":
+		lines.append(card.description)
+	if card.victory_points != 0:
+		lines.append("Points de victoire : %d" % card.victory_points)
+	return "\n".join(lines)
+
+func _format_cost(cost: Dictionary) -> String:
+	var parts: Array = []
+	for res in cost:
+		var rname: String = res
+		if registry.resources.has(res):
+			rname = registry.resources[res].get("name", res)
+		parts.append("%d %s" % [int(cost[res]), rname])
+	return ", ".join(parts)
 
 # === BAS: main de cartes du joueur courant ===
 func _refresh_cards() -> void:
@@ -323,6 +472,7 @@ func _refresh_cards() -> void:
 		var card: DevelopmentCard = g["card"]
 		var btn := Button.new()
 		btn.text = "%s (x%d)" % [card.display_name, g["count"]]
+		btn.tooltip_text = _card_tooltip(card)
 		btn.disabled = card.is_passive or not _net_my_turn()
 		btn.pressed.connect(_on_play_card.bind(card))
 		_cards_box.add_child(btn)

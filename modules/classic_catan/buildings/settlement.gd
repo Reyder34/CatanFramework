@@ -6,8 +6,8 @@ var require_road: bool = true
 func _init() -> void:
 	id = "settlement"
 	display_name = "Colonie"
+	description = "Rapporte 1 ressource des tuiles adjacentes quand leur numéro sort."
 	target = "vertex"
-	hotkey = KEY_1
 	cost = {"wood": 1, "brick": 1, "sheep": 1, "wheat": 1}
 	victory_points = 1
 	mesh_radius = 0.2

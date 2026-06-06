@@ -1,17 +1,19 @@
 extends Control
 
-# Menu: solo, héberger, rejoindre, salon. UI construite en code.
+# Menu: solo, héberger, rejoindre, salon. Structure/style = scène main_menu.tscn ;
+# ce script ne fait que la logique (liste des mods, salon, actions).
 
-var _name_edit: LineEdit
-var _ip_edit: LineEdit
-var _player_spin: SpinBox
-var _map_spin: SpinBox
-var _mod_list: VBoxContainer
-var _connect_box: VBoxContainer
-var _lobby_box: VBoxContainer
-var _lobby_list: VBoxContainer
-var _start_btn: Button
-var _status: Label
+# Nœuds de la scène main_menu.tscn (le designer édite la structure/le style dans l'éditeur).
+@onready var _name_edit: LineEdit = %NameEdit
+@onready var _ip_edit: LineEdit = %IpEdit
+@onready var _player_spin: SpinBox = %PlayerSpin
+@onready var _map_spin: SpinBox = %MapSpin
+@onready var _mod_list: VBoxContainer = %ModList
+@onready var _connect_box: VBoxContainer = %ConnectBox
+@onready var _lobby_box: VBoxContainer = %LobbyBox
+@onready var _lobby_list: VBoxContainer = %LobbyList
+@onready var _start_btn: Button = %StartBtn
+@onready var _status: Label = %Status
 
 var _mods: Dictionary = {}        # id -> GameMod
 var _enabled: Dictionary = {}     # id -> bool
@@ -20,114 +22,23 @@ var _checkboxes: Dictionary = {}  # id -> CheckBox
 func _ready() -> void:
 	GameConfig.is_multiplayer = false
 	Net.leave()  # coupe une éventuelle connexion précédente
-	_build()
+	get_window().content_scale_factor = 1.0  # menu toujours à 100% (l'échelle in-game ne déteint pas)
+	if Net.my_name != "":
+		_name_edit.text = Net.my_name
+	_player_spin.value = clampi(GameConfig.player_count, 2, 10)
+	_map_spin.value = clampi(GameConfig.map_size, 2, 6)
+	%SoloBtn.pressed.connect(_on_solo)
+	%HostBtn.pressed.connect(_on_host)
+	%JoinBtn.pressed.connect(_on_join)
+	%QuitBtn.pressed.connect(func() -> void: get_tree().quit())
+	%StartBtn.pressed.connect(_on_start)
+	%LeaveBtn.pressed.connect(_on_leave)
+	_build_mod_list()
+	_show_connect()
 	Net.lobby_changed.connect(_refresh_lobby)
 	Net.connected.connect(_on_connected)
 	Net.connection_failed.connect(_on_failed)
 	Net.disconnected.connect(_on_disconnected)
-
-func _build() -> void:
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(center)
-	var panel := PanelContainer.new()
-	center.add_child(panel)
-	var margin := MarginContainer.new()
-	for m in ["left", "top", "right", "bottom"]:
-		margin.add_theme_constant_override("margin_" + m, 30)
-	panel.add_child(margin)
-	var root := VBoxContainer.new()
-	root.add_theme_constant_override("separation", 10)
-	margin.add_child(root)
-
-	var title := Label.new()
-	title.text = "CATAN 2"
-	title.add_theme_font_size_override("font_size", 40)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	root.add_child(title)
-
-	# --- Écran connexion ---
-	_connect_box = VBoxContainer.new()
-	_connect_box.add_theme_constant_override("separation", 8)
-	root.add_child(_connect_box)
-
-	var name_row := HBoxContainer.new()
-	name_row.add_child(_label("Pseudo :"))
-	_name_edit = LineEdit.new()
-	_name_edit.text = "Joueur"
-	_name_edit.custom_minimum_size = Vector2(170, 0)
-	name_row.add_child(_name_edit)
-	_connect_box.add_child(name_row)
-
-	_connect_box.add_child(_label("Mods :"))
-	_mod_list = VBoxContainer.new()
-	_connect_box.add_child(_mod_list)
-	_build_mod_list()
-
-	var pc_row := HBoxContainer.new()
-	pc_row.add_child(_label("Joueurs (solo) :"))
-	_player_spin = SpinBox.new()
-	_player_spin.min_value = 2
-	_player_spin.max_value = 10
-	_player_spin.value = clampi(GameConfig.player_count, 2, 10)
-	pc_row.add_child(_player_spin)
-	_connect_box.add_child(pc_row)
-
-	var ms_row := HBoxContainer.new()
-	ms_row.add_child(_label("Taille de la map :"))
-	_map_spin = SpinBox.new()
-	_map_spin.min_value = 2
-	_map_spin.max_value = 6
-	_map_spin.value = clampi(GameConfig.map_size, 2, 6)
-	ms_row.add_child(_map_spin)
-	_connect_box.add_child(ms_row)
-
-	_connect_box.add_child(_button("Jouer en solo", _on_solo))
-	_connect_box.add_child(HSeparator.new())
-	_connect_box.add_child(_button("Héberger une partie", _on_host))
-
-	var join_row := HBoxContainer.new()
-	join_row.add_child(_label("IP :"))
-	_ip_edit = LineEdit.new()
-	_ip_edit.text = "127.0.0.1"
-	_ip_edit.custom_minimum_size = Vector2(150, 0)
-	join_row.add_child(_ip_edit)
-	join_row.add_child(_button("Rejoindre", _on_join))
-	_connect_box.add_child(join_row)
-
-	_connect_box.add_child(_button("Quitter", func(): get_tree().quit()))
-
-	# --- Écran salon ---
-	_lobby_box = VBoxContainer.new()
-	_lobby_box.add_theme_constant_override("separation", 8)
-	_lobby_box.visible = false
-	root.add_child(_lobby_box)
-
-	var lt := Label.new()
-	lt.text = "Salon"
-	lt.add_theme_font_size_override("font_size", 24)
-	_lobby_box.add_child(lt)
-	_lobby_box.add_child(_label("Joueurs connectés :"))
-	_lobby_list = VBoxContainer.new()
-	_lobby_box.add_child(_lobby_list)
-	_start_btn = _button("Lancer la partie", _on_start)
-	_lobby_box.add_child(_start_btn)
-	_lobby_box.add_child(_button("Quitter le salon", _on_leave))
-
-	_status = Label.new()
-	_status.modulate = Color(1, 0.85, 0.4)
-	root.add_child(_status)
-
-func _label(t: String) -> Label:
-	var l := Label.new()
-	l.text = t
-	return l
-
-func _button(t: String, cb: Callable) -> Button:
-	var b := Button.new()
-	b.text = t
-	b.pressed.connect(cb)
-	return b
 
 # === MODS ===
 

@@ -1,7 +1,27 @@
-[gd_scene load_steps=3 format=3 uid="uid://dmk0op4230sum"]
+[gd_scene load_steps=6 format=3 uid="uid://dmk0op4230sum"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_20qpi"]
 [ext_resource type="Script" path="res://scripts/camera_3d.gd" id="2_qih3o"]
+[ext_resource type="Shader" path="res://ui/shader/sky.gdshader" id="3_lpto3"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d3bry"]
+shader = ExtResource("3_lpto3")
+shader_parameter/background_color = Color(0.02, 0.04, 0.12, 1)
+shader_parameter/aspect_ratio = 2.0
+shader_parameter/density = 0.3
+shader_parameter/layer_parascale = 4
+shader_parameter/star_speed = Vector2(0.05, 0)
+shader_parameter/star_wave = Vector2(0, 0)
+shader_parameter/star_size = 3.0
+shader_parameter/star_rotate_speed = 0.1
+shader_parameter/twinkle_effect = 0.2
+shader_parameter/twinkle_speed = 0.3
+shader_parameter/pixelate_enabled = false
+shader_parameter/pixelate_count = 1000.0
+
+[sub_resource type="Environment" id="Environment_gp4rb"]
+background_mode = 3
+background_canvas_max_layer = -10
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_20qpi")
@@ -25,3 +45,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="Sky" type="CanvasLayer" parent="."]
+layer = -10
+
+[node name="ColorRect" type="ColorRect" parent="Sky"]
+material = SubResource("ShaderMaterial_d3bry")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_gp4rb")
