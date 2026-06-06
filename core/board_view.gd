@@ -282,8 +282,9 @@ func _create_water_tile(parent: Node3D, q: int, r: int) -> void:
 	mesh.height = HexMath.TILE_HEIGHT
 	mesh.radial_segments = 6
 	mesh_inst.mesh = mesh
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = WATER_COLOR
+	var mat := ShaderMaterial.new()
+	var water_shader = load("res://ui/shader/water.gdshader")
+	mat.shader = water_shader
 	mesh_inst.material_override = mat
 	parent.add_child(mesh_inst)
 
