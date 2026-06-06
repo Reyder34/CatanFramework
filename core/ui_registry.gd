@@ -46,12 +46,27 @@ func show_panel(panel_id: String, params: Dictionary = {}) -> Variant:
 		instance.show_panel(params)
 	else:
 		push_warning("Le panneau %s n'a pas de méthode show_panel(params)" % panel_id)
+	# Rend le pop-up déplaçable (barre de titre) + redimensionnable, position retenue.
+	# Fait APRÈS show_panel() pour que la poignée de redim s'ajoute après le contenu.
+	if instance is Control:
+		_make_movable(instance, panel_id)
 	var result: Variant = null
 	if instance.has_signal("closed"):
 		result = await instance.closed
 	instance.queue_free()
 	_open_count -= 1
 	return result
+
+# Rend un pop-up déplaçable + redimensionnable, avec position/taille persistées
+# (partage le même mécanisme que le HUD via WindowMover). La poignée de déplacement
+# est le titre du panneau ("Content/TitleLabel"), sinon le conteneur "Content".
+func _make_movable(panel: Control, panel_id: String) -> void:
+	var handle: Control = panel.get_node_or_null("Content/TitleLabel")
+	if handle == null:
+		handle = panel.get_node_or_null("Content")
+	var mover := WindowMover.new()
+	panel.add_child(mover)
+	mover.setup(panel, handle, "popup_" + panel_id)
 
 # Place un panneau en haut-centre de l'écran (centré horizontalement, près du haut).
 func _place_top_center(c: Control) -> void:

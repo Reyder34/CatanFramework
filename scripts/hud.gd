@@ -25,16 +25,7 @@ const _HIDDEN_ACTIONS := ["show_dev_cards", "propose_trade", "bank_trade"]
 @onready var _log_scroll: ScrollContainer = %JournalScroll
 var _log_open: bool = false
 # Panneaux déplaçables (barre de titre) + redimensionnables (poignée bas-droite) + persistance.
-var _windows: Dictionary = {}        # id -> {panel, default}
-var _drag_panel: Control = null
-var _drag_id: String = ""
-var _drag_grab: Vector2 = Vector2.ZERO
-var _resize_panel: Control = null
-var _resize_id: String = ""
-var _resize_base: Vector2 = Vector2.ZERO    # taille non scalée au début du redim
-var _resize_origin: Vector2 = Vector2.ZERO  # coin haut-gauche figé pendant le redim
-const LAYOUT_PATH := "user://hud_layout.cfg"
-var _layout := ConfigFile.new()
+var _movers: Array = []  # un WindowMover (drag + redim + sauvegarde) par panneau du HUD
 var _selected_breakdown: int = -1  # joueur dont on affiche le détail des points (-1 = aucun)
 var _main: Node = null  # main (pour router les actions en réseau)
 
@@ -74,22 +65,14 @@ func setup(p_state: GameState, p_registry: GameRegistry, p_board: Board, p_main:
 # Branche le drag + la persistance sur les panneaux de la SCÈNE (hud.tscn).
 # Le designer édite la structure/le style dans l'éditeur ; ici uniquement la logique.
 func _wire_windows() -> void:
-	_layout.load(LAYOUT_PATH)  # positions sauvegardées (ignore si absent)
 	_log_button.pressed.connect(_toggle_log)
 	for win in get_tree().get_nodes_in_group("hud_window"):
 		if not is_ancestor_of(win):
 			continue
-		var id: String = win.name
-		_windows[id] = {"panel": win, "default": _capture_layout(win)}
-		var bar := _find_titlebar(win)
-		if bar != null:
-			bar.gui_input.connect(_on_titlebar_input.bind(id))
-		_add_resize_grip(win, id)  # poignée de redimensionnement (coin bas-droite)
-		if _layout.has_section_key("layout", id):
-			_set_free_pos(win, _layout.get_value("layout", id))
-		if _layout.has_section_key("scale", id):
-			win.pivot_offset = Vector2.ZERO
-			win.scale = Vector2.ONE * float(_layout.get_value("scale", id))
+		var mover := WindowMover.new()
+		win.add_child(mover)
+		mover.setup(win, _find_titlebar(win), win.name)  # drag (barre titre) + redim + sauvegarde
+		_movers.append(mover)
 
 func _find_titlebar(node: Node) -> Control:
 	for c in node.get_children():
@@ -100,18 +83,6 @@ func _find_titlebar(node: Node) -> Control:
 			return found
 	return null
 
-# Mémorise/restaure l'ancrage défini dans la scène (pour F6 = réinitialiser).
-func _capture_layout(c: Control) -> Dictionary:
-	return {
-		"al": c.anchor_left, "at": c.anchor_top, "ar": c.anchor_right, "ab": c.anchor_bottom,
-		"ol": c.offset_left, "ot": c.offset_top, "ore": c.offset_right, "ob": c.offset_bottom,
-		"gh": c.grow_horizontal, "gv": c.grow_vertical,
-	}
-
-func _restore_layout(c: Control, d: Dictionary) -> void:
-	c.anchor_left = d["al"]; c.anchor_top = d["at"]; c.anchor_right = d["ar"]; c.anchor_bottom = d["ab"]
-	c.offset_left = d["ol"]; c.offset_top = d["ot"]; c.offset_right = d["ore"]; c.offset_bottom = d["ob"]
-	c.grow_horizontal = d["gh"]; c.grow_vertical = d["gv"]
 
 # (Helpers de construction de panneaux retirés : le HUD est désormais une scène,
 # voir scenes/hud.tscn. Le placement par défaut vient de la scène, pas du code.)
@@ -163,99 +134,16 @@ func _make_passthrough(node: Node) -> void:
 	for c in node.get_children():
 		_make_passthrough(c)
 
-# === PANNEAUX DÉPLAÇABLES (barre de titre de la scène, position retenue) ===
-# Positionnement libre (ancré en haut-gauche, grandit vers le contenu).
-func _set_free_pos(panel: Control, pos: Vector2) -> void:
-	panel.anchor_left = 0.0; panel.anchor_top = 0.0
-	panel.anchor_right = 0.0; panel.anchor_bottom = 0.0
-	panel.grow_horizontal = Control.GROW_DIRECTION_END
-	panel.grow_vertical = Control.GROW_DIRECTION_END
-	panel.offset_left = pos.x
-	panel.offset_top = pos.y
+# === PANNEAUX DÉPLAÇABLES / REDIMENSIONNABLES ===
+# La logique (drag par la barre de titre, redim par la poignée bas-droite,
+# sauvegarde de la position/taille) est déléguée à WindowMover (core/window_mover.gd),
+# partagé avec les pop-ups. Ici on ne garde que la réinitialisation globale.
 
-func _on_titlebar_input(event: InputEvent, id: String) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		var panel: Control = _windows[id]["panel"]
-		var gp: Vector2 = panel.global_position
-		_set_free_pos(panel, gp)  # fige la position visuelle courante
-		_drag_panel = panel
-		_drag_id = id
-		_drag_grab = gp - get_global_mouse_position()
-		accept_event()
-
-func _input(event: InputEvent) -> void:
-	if _resize_panel != null:
-		if event is InputEventMouseMotion:
-			var m: Vector2 = get_global_mouse_position()
-			var sx: float = (m.x - _resize_origin.x) / maxf(40.0, _resize_base.x)
-			var sy: float = (m.y - _resize_origin.y) / maxf(40.0, _resize_base.y)
-			var s: float = clampf(maxf(sx, sy), 0.6, 2.5)
-			_resize_panel.scale = Vector2(s, s)
-			get_viewport().set_input_as_handled()
-		elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
-			_layout.set_value("scale", _resize_id, _resize_panel.scale.x)
-			_save_window_pos(_resize_id, Vector2(_resize_panel.offset_left, _resize_panel.offset_top))
-			_resize_panel = null
-			_resize_id = ""
-			get_viewport().set_input_as_handled()
-		return
-	if _drag_panel == null:
-		return
-	if event is InputEventMouseMotion:
-		var p: Vector2 = get_global_mouse_position() + _drag_grab
-		var maxp: Vector2 = get_viewport_rect().size - _drag_panel.size
-		p.x = clampf(p.x, 0.0, maxf(0.0, maxp.x))
-		p.y = clampf(p.y, 0.0, maxf(0.0, maxp.y))
-		_set_free_pos(_drag_panel, p)
-		get_viewport().set_input_as_handled()
-	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
-		_save_window_pos(_drag_id, Vector2(_drag_panel.offset_left, _drag_panel.offset_top))
-		_drag_panel = null
-		_drag_id = ""
-		get_viewport().set_input_as_handled()
-
-func _save_window_pos(id: String, pos: Vector2) -> void:
-	_layout.set_value("layout", id, pos)
-	_layout.save(LAYOUT_PATH)
-
-# === REDIMENSIONNEMENT PAR PANNEAU (poignée bas-droite, comme une fenêtre OS) ===
-# Petite poignée ajoutée en bas-droite du panneau (dans son VBox "V").
-func _add_resize_grip(win: Control, id: String) -> void:
-	var v := win.get_node_or_null("V")
-	if v == null:
-		return
-	var grip := ColorRect.new()
-	grip.color = Color(1, 1, 1, 0.45)
-	grip.custom_minimum_size = Vector2(14, 14)
-	grip.size_flags_horizontal = Control.SIZE_SHRINK_END
-	grip.mouse_filter = Control.MOUSE_FILTER_STOP
-	grip.mouse_default_cursor_shape = Control.CURSOR_FDIAGSIZE
-	grip.tooltip_text = "Glisser pour redimensionner"
-	grip.add_to_group("hud_resize")
-	grip.gui_input.connect(_on_grip_input.bind(id))
-	v.add_child(grip)
-
-func _on_grip_input(event: InputEvent, id: String) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		var panel: Control = _windows[id]["panel"]
-		var gp: Vector2 = panel.global_position
-		_set_free_pos(panel, gp)         # fige le coin haut-gauche
-		panel.pivot_offset = Vector2.ZERO  # le panneau grandit vers le bas-droite
-		_resize_panel = panel
-		_resize_id = id
-		_resize_base = panel.size
-		_resize_origin = gp
-		accept_event()
-
-# Réinitialise position ET taille de chaque panneau à l'origine (touches F1 / F6).
+# Réinitialise position ET taille de tous les panneaux à l'origine (touches F1 / F6).
 func reset_layout() -> void:
-	for id in _windows:
-		var p: Control = _windows[id]["panel"]
-		_restore_layout(p, _windows[id]["default"])
-		p.scale = Vector2.ONE
-		p.pivot_offset = Vector2.ZERO
-	_layout.clear()
-	_layout.save(LAYOUT_PATH)
+	for m in _movers:
+		m.reset_visual()
+	WindowMover.forget_all()  # efface les positions sauvegardées (HUD + pop-ups)
 
 # === HAUT-GAUCHE: ressources du joueur courant ===
 func _refresh_resources() -> void:

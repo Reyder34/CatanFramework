@@ -96,6 +96,20 @@ func _as_texture(v) -> Texture2D:
 		return load(v)
 	return null
 
+# Modèle 3D de la tuile (optionnel), fourni par le mod dans declare_resource via
+# "model" (PackedScene ou chemin res://). Remplace l'hexagone procédural au rendu.
+func get_resource_model(id: String) -> PackedScene:
+	return _as_scene(resources.get(id, {}).get("model", null))
+
+func _as_scene(v) -> PackedScene:
+	if v is PackedScene:
+		return v
+	if v is String and v != "" and ResourceLoader.exists(v):
+		var res = load(v)
+		if res is PackedScene:
+			return res
+	return null
+
 # === API: BÂTIMENTS ===
 
 func declare_building(building: BuildingType) -> void:

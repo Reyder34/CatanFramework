@@ -8,7 +8,7 @@ Un moteur de jeu de plateau **modable** où le **core** ne gère que les **tours
 ### Ce qui est fait
 - **Core agnostique** : tours, victoire par seuil, bus d'événements, registre générique, chargeur de mods, **son « à toi de jouer »**. Aucun mot « bois / colonie / voleur / dés » en dur dans le core.
 - **Jeu de base complet** (modules) : ressources, colonie/route/ville, placement initial (snake), lancer de dés + production, voleur sur 7 (défausse / déplacement / vol), **échanges joueur↔joueur (1-à-1 ou « à tous » en même temps)** et banque, **ports** (2:1 / 3:1), cartes développement (chevalier, monopole, invention, construction de routes, point de victoire), **plus longue route** et **plus grande armée**.
-- **UI = scènes Godot éditables** : menu (`scenes/main_menu.tscn`) et HUD (`scenes/hud.tscn`) sont des scènes + un **thème partagé** (`ui/theme.tres`) → tout est restylable par un designer dans l'éditeur. Panneaux du HUD **déplaçables** (barre de titre) et **redimensionnables** (poignée), positions/tailles mémorisées (**F1** = réinitialiser). **Journal** d'événements, **ventilation des points** au clic sur un joueur, **icônes/textures de ressources** moddables.
+- **UI = scènes Godot éditables** : menu (`scenes/main_menu.tscn`) et HUD (`scenes/hud.tscn`) sont des scènes + un **thème partagé** (`ui/theme.tres`) → tout est restylable par un designer dans l'éditeur. **Tous les panneaux** (HUD **et** pop-ups : échange, banque, défausse, vol…) sont **déplaçables** (barre de titre) et **redimensionnables** (poignée), positions/tailles mémorisées (**F1** = réinitialiser). **Journal** d'événements, **ventilation des points** au clic sur un joueur, **icônes/textures de ressources** moddables.
 - **Génération de carte moddable** : taille réglable au lobby + mods de map (`balanced_map`, `island_map`) qui ne dépendent de rien.
 - **Modèles 3D** : point d'extension pour donner un mesh/scène à n'importe quel bâtiment (sinon primitive par défaut).
 - **Multijoueur** P2P (un joueur héberge, pas de serveur dédié) : hôte autoritaire, synchro complète du jeu de base, jusqu'à **10 joueurs**, pseudos affichés, défausse simultanée.
@@ -42,13 +42,14 @@ Trois couches :
 | Types | `building_type.gd`, `development_card.gd`, `game_action.gd`, `placed_building.gd`, `player_effect.gd`, `contexts/click_context.gd` |
 | `hex_math.gd` | Géométrie hexagonale. |
 | `turn_audio.gd` | Joue un son quand c'est ton tour (remplace `core/sounds/your_turn.*`). |
+| `window_mover.gd` (`WindowMover`) | Rend un panneau déplaçable + redimensionnable, position/taille persistées (`user://hud_layout.cfg`). Partagé par le HUD **et** les pop-ups. |
 
 ### La couche `scripts/` (l'application — assemble le jeu)
 | Fichier | Rôle |
 |---|---|
 | `main.gd` | Bootstrap, routage entrées/clics, couche réseau (commandes + snapshot). |
 | `main_menu.gd` | Logique du menu (scène `scenes/main_menu.tscn`) : solo / héberger / rejoindre / salon. |
-| `hud.gd` (`GameHud`) | Logique du HUD (scène `scenes/hud.tscn`) : remplit les panneaux, drag/redim, journal. |
+| `hud.gd` (`GameHud`) | Logique du HUD (scène `scenes/hud.tscn`) : remplit les panneaux, journal (drag/redim délégués à `WindowMover`). |
 | `camera_3d.gd` | Caméra orbitale (clic-droit = tourner, molette = zoomer). |
 | `game_config.gd` (`GameConfig`) | Config partagée (nb joueurs, mods, réseau, seed). |
 | `mod_catalog.gd` (`ModCatalog`) | **Auto-détection des mods** : tout `extends GameMod` du projet + packs `.pck`/`.zip` du dossier `mods/`. |
@@ -159,7 +160,8 @@ Le jeu **scanne automatiquement** tous les `class_name … extends GameMod`. Dè
 ### `GameRegistry` (dans `register()`)
 ```gdscript
 reg.declare_resource(id, {"name": "...", "color": Color(...), "is_desert": false,
-    "icon": "res://.../x.png", "texture": "res://.../x.png"})  # images: icon=UI, texture=tuile (option.)
+    "icon": "res://.../x.png", "texture": "res://.../x.png",  # images: icon=UI, texture=tuile (option.)
+    "model": "res://.../x.glb"})                              # modèle 3D de tuile (option., remplace l'hexagone)
 reg.declare_building(mon_building_type)            # un BuildingType
 reg.override_building_cost(id, {"wood": 2})
 reg.add_to_tile_pool(resource_id, count)           # génération du plateau
@@ -211,6 +213,8 @@ Le HUD et le menu sont des **scènes** (`scenes/hud.tscn`, `scenes/main_menu.tsc
 
 ### Images & son
 - **Images de ressources** : `declare_resource(id, {..., "icon": "res://.../x.png", "texture": "res://.../y.png"})` — `icon` = à côté du nom dans le HUD, `texture` = sur la tuile hexagonale (repli sur `icon`). Sans image → la couleur. Lecture : `reg.get_resource_icon(id)` / `reg.get_resource_texture(id)`.
+- **Modèles 3D de tuiles** : `declare_resource(id, {..., "model": "res://.../x.glb"})` — remplace l'hexagone procédural par un vrai modèle 3D (base hex de rayon ≈1, sommets pointe-en-haut). Sans modèle → l'hexagone coloré/texturé. Les tuiles Catan de base sont dans `modules/classic_catan/tiles/`. Si une tuile semble mal orientée, ajuste la rotation dans `_add_tile_model` (`core/board_view.gd`).
+- **Pion voleur 3D** : `vanilla_robber` charge `modules/vanilla_robber/robber.glb` comme visuel du voleur (repli sur un cône sombre si le `.glb` est absent).
 - **Son « à toi de jouer »** : remplace `core/sounds/your_turn.wav` (ou dépose un `your_turn.ogg`, prioritaire).
 
 ### Générer la carte (map)
