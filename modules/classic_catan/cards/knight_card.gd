@@ -5,6 +5,7 @@ func _init() -> void:
 	id = "knight"
 	display_name = "Chevalier"
 	description = "Déplace le voleur. Compte pour la plus grande armée."
+	image = "truc"
 
 func on_play(state: GameState, board: Board, registry: GameRegistry, player: Player) -> bool:
 	# La carte annonce seulement qu'elle est jouée. Le mod du voleur (s'il est

@@ -5,6 +5,7 @@ extends RefCounted
 var id: String = ""
 var display_name: String = ""
 var description: String = ""
+var image: String = ""
 
 # Comportement
 var victory_points: int = 0     # cartes PV cachées
