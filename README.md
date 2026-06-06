@@ -38,7 +38,7 @@ Trois couches :
 | `board.gd` | Graphe générique (sommets/arêtes/tuiles, propriété, marqueurs) + signaux. |
 | `board_view.gd` | Plateau hexagonal : **plan** (quelle tuile où — surchargeable par un mod via `set_map_generator`) puis **rendu 3D** + eau + graphe, routage des clics, modèles custom. |
 | `mod_loader.gd` | Tri topologique des `depends_on`, détection de conflits/cycles. |
-| `ui_registry.gd` | Enregistrement de panneaux + `show_panel` (async). |
+| `ui_registry.gd` | Enregistrement de panneaux : `show_panel` (modal, async) + panneaux **persistants** non bloquants (`show_persistent` / `update_persistent`). |
 | Types | `building_type.gd`, `development_card.gd`, `game_action.gd`, `placed_building.gd`, `player_effect.gd`, `contexts/click_context.gd` |
 | `hex_math.gd` | Géométrie hexagonale. |
 | `turn_audio.gd` | Joue un son quand c'est ton tour (remplace `core/sounds/your_turn.*`). |
@@ -174,6 +174,8 @@ reg.set_victory_threshold(10)
 reg.set_player_count_range(2, 4)
 reg.register_action(une_game_action)               # tooltip HUD: renseigne building_id (-> coût/PV/prod auto), ou tooltip/cost
 reg.register_panel("mon_panneau", preload("res://.../panel.tscn"))
+reg.ui.show_persistent("dice_panel", params)       # panneau PERSISTANT non bloquant (afficheur live)
+reg.ui.update_persistent("dice_panel", params)     # le maj ; le panneau implémente func update_panel(params)
 reg.register_sub_phase_label("mon_mod:ma_phase", "Texte affiché")
 reg.on(event_id, callback, priority := 0)          # s'abonner
 reg.emit(event_id, contexte)                       # émettre
