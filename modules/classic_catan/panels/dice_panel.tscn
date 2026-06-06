@@ -1,25 +1,52 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://cqya5jfyvut3o"]
 
 [ext_resource type="Script" path="res://modules/classic_catan/panels_scripts/dice_panel.gd" id="1"]
 
 [node name="DicePanel" type="PanelContainer"]
-offset_right = 40.0
-offset_bottom = 40.0
 script = ExtResource("1")
 
 [node name="Content" type="VBoxContainer" parent="."]
 layout_mode = 2
+theme_override_constants/separation = 0
 
-[node name="TitleLabel" type="Label" parent="Content"]
+[node name="TitleLabel" type="PanelContainer" parent="Content"]
 layout_mode = 2
+theme_type_variation = &"TitleBar"
+
+[node name="Label" type="Label" parent="Content/TitleLabel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
 text = "Dés"
 horizontal_alignment = 1
 
-[node name="DiceRow" type="HBoxContainer" parent="Content"]
+[node name="Margin" type="MarginContainer" parent="Content"]
 layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="DiceRow" type="HBoxContainer" parent="Content/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
 alignment = 1
 
-[node name="Total" type="Label" parent="Content"]
+[node name="Plus" type="Label" parent="Content/Margin/DiceRow"]
 layout_mode = 2
-text = "Total : –"
+theme_override_font_sizes/font_size = 22
+text = "+"
+vertical_alignment = 1
+
+[node name="Eq" type="Label" parent="Content/Margin/DiceRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "="
+vertical_alignment = 1
+
+[node name="Total" type="Label" parent="Content/Margin/DiceRow"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "—"
 horizontal_alignment = 1
+vertical_alignment = 1
