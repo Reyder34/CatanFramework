@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://modules/classic_catan/panels_scripts/dice_panel.gd" id="1"]
+
+[node name="DicePanel" type="PanelContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Content"]
+layout_mode = 2
+text = "Dés"
+horizontal_alignment = 1
+
+[node name="DiceRow" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+alignment = 1
+
+[node name="Total" type="Label" parent="Content"]
+layout_mode = 2
+text = "Total : –"
+horizontal_alignment = 1

@@ -11,6 +11,7 @@ const DEV_CARD_COST := {"wheat": 1, "sheep": 1, "ore": 1}
 # Les mods dépendants (ex: vanilla_robber) s'y abonnent via ces constantes.
 const EVT_DICE_ROLL := "classic_catan:dice_roll"
 const EVT_AFTER_DICE := "classic_catan:after_dice_rolled"
+const DICE_MARKER := "classic_catan:dice"  # marqueur plateau Vector2(d1,d2) -> synchro à tous
 const EVT_BEFORE_PRODUCE := "classic_catan:before_produce"
 const EVT_BEFORE_PLACE := "classic_catan:before_place"
 const EVT_AFTER_PLACE := "classic_catan:after_place"
@@ -61,6 +62,7 @@ func register(reg: GameRegistry) -> void:
 	reg.register_panel("trade_response", preload("res://modules/classic_catan/panels/trade_response_panel.tscn"))
 	reg.register_panel("bank_trade", preload("res://modules/classic_catan/panels/bank_trade_panel.tscn"))
 	reg.register_panel("resource_picker", preload("res://modules/classic_catan/panels/resource_picker_panel.tscn"))
+	reg.register_panel("dice_panel", preload("res://modules/classic_catan/panels/dice_panel.tscn"))
 	reg.register_sub_phase_label(SP_FREE_ROAD, "Pose 2 routes gratuites")
 
 # === DONNÉES ===
@@ -104,7 +106,9 @@ func _subscribe_hooks(reg: GameRegistry) -> void:
 # Lancer 2d6 si personne n'a fourni de résultat
 func _on_dice_roll(ctx: RollContext) -> void:
 	if ctx.result == -1:
-		ctx.result = randi_range(1, 6) + randi_range(1, 6)
+		ctx.die1 = randi_range(1, 6)
+		ctx.die2 = randi_range(1, 6)
+		ctx.result = ctx.die1 + ctx.die2
 
 # Distribution des ressources (saute le 7, c'est pour le voleur ailleurs)
 func _on_after_dice_rolled(ctx: RollContext) -> void:
@@ -412,6 +416,10 @@ func _on_game_start_for_actions(ctx) -> void:
 	_state = ctx["state"]
 	_board = ctx["board"]
 	_registry = ctx["registry"]
+	# Panneau de dés : se met à jour à chaque changement du marqueur (host après lancer,
+	# clients à l'application du snapshot qui ré-émet marker_changed).
+	if not _board.marker_changed.is_connected(_on_dice_marker):
+		_board.marker_changed.connect(_on_dice_marker)
 	# Initialise le setup Catan: chaque joueur posera 2 colonies + 2 routes.
 	_initial_placements.clear()
 	for i in _state.players.size():
@@ -670,10 +678,15 @@ func _action_roll_dice() -> void:
 	roll_ctx.roller_id = _state.current_player_index
 	_registry.emit(EVT_DICE_ROLL, roll_ctx)
 	if roll_ctx.result == -1:
-		roll_ctx.result = randi_range(1, 6) + randi_range(1, 6)
+		roll_ctx.die1 = randi_range(1, 6)
+		roll_ctx.die2 = randi_range(1, 6)
+		roll_ctx.result = roll_ctx.die1 + roll_ctx.die2
 	print("Dés: %d" % roll_ctx.result)
 	_registry.emit("game_log", {"text": "🎲 %s a lancé les dés : %d" % [_state.current_player().label(), roll_ctx.result]})
 	_registry.emit(EVT_AFTER_DICE, roll_ctx)
+	# Mémorise les 2 dés dans un marqueur plateau -> synchronisé à tous (snapshot) et
+	# ré-émis (marker_changed) chez chaque client, qui met à jour le panneau de dés.
+	_board.set_marker(DICE_MARKER, Vector2(roll_ctx.die1, roll_ctx.die2))
 	if _board.tiles_by_number.has(roll_ctx.result):
 		for coords in _board.tiles_by_number[roll_ctx.result]:
 			_flash_tile(coords)
@@ -694,6 +707,14 @@ func _action_cancel_build() -> void:
 
 func _flash_tile(coords: Vector2) -> void:
 	_registry.emit("flash_tile", {"coords": coords})
+
+# Marqueur dés changé (host: après lancer ; clients: à l'application du snapshot)
+# -> affiche/maj le panneau persistant des 2 dés pour ce peer.
+func _on_dice_marker(marker_id: String, value: Vector2) -> void:
+	if marker_id != DICE_MARKER:
+		return
+	if _registry.ui != null:
+		_registry.ui.show_persistent("dice_panel", {"d1": int(value.x), "d2": int(value.y)})
 
 func _action_propose_trade() -> void:
 	var proposer := _state.current_player()
