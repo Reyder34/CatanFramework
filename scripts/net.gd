@@ -116,7 +116,8 @@ func start_game() -> void:
 	for i in ids.size():
 		mapping[ids[i]] = i
 		names.append(players[ids[i]].get("name", ""))
-	_launch.rpc(s, ids.size(), mapping, lobby_mods, lobby_map_size, names, lobby_timer)
+	# En direct, le déclencheur (l'hôte) est le serveur ET l'autorité : son id (=1) fait foi.
+	_launch.rpc(s, ids.size(), mapping, lobby_mods, lobby_map_size, names, lobby_timer, multiplayer.get_unique_id())
 
 # Config du salon: l'hôte la règle, on la diffuse à tous (sync live des cases mods…).
 func set_lobby_config(mods: Array, map_size: int, timer: int) -> void:
@@ -145,7 +146,7 @@ func resume_game(snapshot: Dictionary, mods: Array, map_size: int, timer: int, n
 		var idx: int = names.find(who)
 		mapping[pid] = idx if idx >= 0 else 0
 	GameConfig.resume_snapshot = snapshot  # l'hôte l'applique après le boot
-	_launch.rpc(saved_seed, names.size(), mapping, mods, map_size, names, timer)
+	_launch.rpc(saved_seed, names.size(), mapping, mods, map_size, names, timer, multiplayer.get_unique_id())
 
 # === PANNEAUX RÉSEAU (Phase 2b) ===
 # Affiche un panneau sur le client qui contrôle player_index, attend son résultat.
@@ -217,17 +218,21 @@ func _reconstruct(panel_id: String, raw: Dictionary, player_index: int) -> Dicti
 			p["players"] = game.state.players
 	return p
 
-@rpc("authority", "reliable")
+# any_peer : en mode relais l'autorité (qui ouvre les panneaux distants) est un client.
+# On vérifie que l'ordre vient bien de l'autorité avant d'afficher quoi que ce soit.
+@rpc("any_peer", "reliable")
 func _show_panel_rpc(req: int, panel_id: String, raw: Dictionary, player_index: int) -> void:
+	if multiplayer.get_remote_sender_id() != GameConfig.authority_peer_id:
+		return
 	var result = await game.registry.ui.show_panel(panel_id, _reconstruct(panel_id, raw, player_index))
-	_panel_response.rpc_id(1, req, result)
+	_panel_response.rpc_id(GameConfig.authority_peer_id, req, result)
 
 @rpc("any_peer", "reliable")
 func _panel_response(req: int, result: Variant) -> void:
 	_panel_results[req] = result
 
 @rpc("authority", "reliable", "call_local")
-func _launch(s: int, count: int, mapping: Dictionary, mods: Array, map_size: int, names: Array, timer: int) -> void:
+func _launch(s: int, count: int, mapping: Dictionary, mods: Array, map_size: int, names: Array, timer: int, authority: int) -> void:
 	GameConfig.is_multiplayer = true
 	GameConfig.game_seed = s
 	GameConfig.player_count = count
@@ -236,5 +241,6 @@ func _launch(s: int, count: int, mapping: Dictionary, mods: Array, map_size: int
 	GameConfig.player_names = names
 	GameConfig.peer_to_player = mapping
 	GameConfig.turn_timer = timer
+	GameConfig.authority_peer_id = authority  # qui fait tourner la logique (direct: l'hôte=1)
 	GameConfig.local_player_index = int(mapping.get(multiplayer.get_unique_id(), 0))
 	get_tree().change_scene_to_file("res://scenes/main.tscn")

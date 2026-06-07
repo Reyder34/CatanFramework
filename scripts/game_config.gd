@@ -14,6 +14,9 @@ static var is_multiplayer: bool = false
 static var game_seed: int = 0          # 0 = aléatoire; sinon plateau déterministe (réseau)
 static var local_player_index: int = 0  # quel joueur ce peer contrôle
 static var peer_to_player: Dictionary = {}  # peer_id -> index joueur (réseau)
+# Pair qui fait autorité sur la logique de jeu. En direct/LAN = 1 (l'hôte EST le serveur).
+# En mode relais, l'autorité est un CLIENT (1er connecté) distinct du serveur-relais.
+static var authority_peer_id: int = 1
 
 # === SAUVEGARDES (JSON) ===
 const SAVES_DIR := "user://saves"
