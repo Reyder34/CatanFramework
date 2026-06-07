@@ -169,7 +169,9 @@ func _on_edge_clicked(_cam, event, _pos, _norm, _idx, body: StaticBody3D) -> voi
 const MP_DEFERRED_ACTIONS := ["show_dev_cards", "debug_hello"]
 
 func _authoritative() -> bool:
-	return not GameConfig.is_multiplayer or multiplayer.is_server()
+	# Autorité = ce pair fait tourner la logique. En direct, l'hôte (pair 1) EST le serveur ;
+	# en mode relais, l'autorité est un client distinct du serveur (authority_peer_id != 1).
+	return not GameConfig.is_multiplayer or multiplayer.get_unique_id() == GameConfig.authority_peer_id
 
 # Le joueur local peut-il agir maintenant (son tour, pas de panneau ouvert) ?
 func _can_local_act() -> bool:
@@ -185,7 +187,7 @@ func submit_command(cmd: Dictionary) -> void:
 		var by := GameConfig.local_player_index if GameConfig.is_multiplayer else state.current_player_index
 		_apply_command(cmd, by)
 	else:
-		_net_command.rpc_id(1, cmd)
+		_net_command.rpc_id(GameConfig.authority_peer_id, cmd)
 
 @rpc("any_peer", "reliable")
 func _net_command(cmd: Dictionary) -> void:
@@ -204,7 +206,7 @@ func _request_resync() -> void:
 	if _authoritative():
 		_do_resync()
 	else:
-		_ask_resync.rpc_id(1)
+		_ask_resync.rpc_id(GameConfig.authority_peer_id)
 
 @rpc("any_peer", "reliable")
 func _ask_resync() -> void:
@@ -346,8 +348,12 @@ func _snapshot_from_json(j: Dictionary) -> Dictionary:
 		pd["resources"] = r
 	return s
 
-@rpc("authority", "reliable")
+# any_peer (et non "authority") car en mode relais l'autorité est un CLIENT, pas le serveur.
+# On n'accepte donc un snapshot QUE s'il vient bien du pair autorité.
+@rpc("any_peer", "reliable")
 func _net_snapshot(snap: Dictionary) -> void:
+	if multiplayer.get_remote_sender_id() != GameConfig.authority_peer_id:
+		return
 	_apply_snapshot(snap)
 
 func _apply_snapshot(snap: Dictionary) -> void:
@@ -451,7 +457,15 @@ func _connect_broadcast_signals() -> void:
 func _process(_delta: float) -> void:
 	if _snapshot_dirty and GameConfig.is_multiplayer and _authoritative():
 		_snapshot_dirty = false
-		_net_snapshot.rpc(_build_snapshot())
+		_send_snapshot_to_clients(_build_snapshot())
+
+# Envoi CIBLÉ à chaque joueur (sauf soi) plutôt qu'un rpc() global : en mode relais le
+# serveur n'est pas un joueur, il ne doit jamais recevoir de RPC de jeu (il relaie seulement).
+func _send_snapshot_to_clients(snap: Dictionary) -> void:
+	var me := multiplayer.get_unique_id()
+	for pid in GameConfig.peer_to_player:
+		if int(pid) != me:
+			_net_snapshot.rpc_id(int(pid), snap)
 
 func _flash_tile_handler(ctx: Dictionary) -> void:
 	var coords: Vector2 = ctx.get("coords", Vector2.ZERO)
