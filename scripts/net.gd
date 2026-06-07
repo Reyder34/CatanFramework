@@ -338,7 +338,7 @@ func show_panel_for(player_index: int, panel_id: String, raw: Dictionary) -> Var
 		return null
 	var req := _req_counter
 	_req_counter += 1
-	game.registry.ui.note_external_open()  # met le timer de tour en pause (pop-up distante)
+	game.registry.ui.note_external_open()  # compte la pop-up distante comme ouverte (gèle les actions/HUD locaux)
 	_show_panel_rpc.rpc_id(peer, req, panel_id, raw, player_index)
 	while not _panel_results.has(req):
 		await game.get_tree().process_frame

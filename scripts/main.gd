@@ -69,6 +69,8 @@ func _ready() -> void:
 	var turn_timer := TurnTimer.new()
 	add_child(turn_timer)
 	turn_timer.setup(state, registry, GameConfig.turn_timer, _authoritative())
+	# À l'expiration du tour : on annule les pop-ups optionnelles (échange/banque) en cours.
+	registry.on("turn_timeout", _on_turn_timeout_cancel, 0)
 
 	# Réseau: panneaux + diffusion d'état (hôte) sur tout changement.
 	Net.game = self
@@ -232,6 +234,25 @@ func on_authority_lost() -> void:
 		hud.update()
 	await get_tree().create_timer(2.0).timeout
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
+# Expiration du timer (émise sur l'autorité uniquement) : on annule les pop-ups optionnelles
+# (échange/banque) ouvertes ici ET chez chaque client, pour ne pas laisser un échange traîner.
+func _on_turn_timeout_cancel(_ctx) -> void:
+	if registry.ui != null:
+		registry.ui.cancel_open_modals()
+	if not GameConfig.is_multiplayer:
+		return
+	var me := multiplayer.get_unique_id()
+	for pid in GameConfig.peer_to_player:
+		if int(pid) != me:
+			_net_cancel_modals.rpc_id(int(pid))
+
+@rpc("any_peer", "reliable")
+func _net_cancel_modals() -> void:
+	if multiplayer.get_remote_sender_id() != GameConfig.authority_peer_id:
+		return
+	if registry.ui != null:
+		registry.ui.cancel_open_modals()
 
 func _apply_command(cmd: Dictionary, by: int) -> void:
 	if not _authoritative():
