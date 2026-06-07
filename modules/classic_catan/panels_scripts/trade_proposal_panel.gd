@@ -68,39 +68,8 @@ func _refresh_stack(stack_container: Control, res_id: String, count: int) -> voi
 	var icon := registry.get_resource_icon(res_id)
 	var res_color := registry.get_resource_color(res_id)
 
-	if count == 0:
-		# Affiche un placeholder grisé avec le nom
-		var placeholder := Panel.new()
-		var ph_style := StyleBoxFlat.new()
-		ph_style.bg_color = Color(0.3, 0.3, 0.3, 0.3)
-		ph_style.border_width_left = 2
-		ph_style.border_width_top = 2
-		ph_style.border_width_right = 2
-		ph_style.border_width_bottom = 2
-		ph_style.border_color = Color(0.5, 0.5, 0.5, 0.4)
-		ph_style.corner_radius_top_left = 6
-		ph_style.corner_radius_top_right = 6
-		ph_style.corner_radius_bottom_left = 6
-		ph_style.corner_radius_bottom_right = 6
-		ph_style.set_content_margin_all(4)
-		placeholder.add_theme_stylebox_override("panel", ph_style)
-		placeholder.position = Vector2(0, 0)
-		placeholder.size = Vector2(card_w, card_h)
-		placeholder.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		stack_container.add_child(placeholder)
-
-		var lbl := Label.new()
-		lbl.text = registry.resources[res_id]["name"]
-		lbl.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7, 0.8))
-		lbl.add_theme_font_size_override("font_size", 11)
-		lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
-		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		placeholder.add_child(lbl)
-		return
-
-	var visible_cards: int = min(count, 3)
+	# Toujours afficher au moins une carte (même à 0)
+	var visible_cards: int = max(min(count, 3), 1)
 
 	for i in range(visible_cards):
 		var card := Panel.new()
@@ -112,10 +81,14 @@ func _refresh_stack(stack_container: Control, res_id: String, count: int) -> voi
 		card_style.border_width_bottom = 0
 		card.add_theme_stylebox_override("panel", card_style)
 
-		var shift: int = (visible_cards - 1 - i) * offset
+		# À count == 0 on n'affiche qu'une seule carte sans décalage
+		var shift: int = 0
+		if count > 1:
+			shift = (visible_cards - 1 - i) * offset
 		card.position = Vector2(shift, shift)
 		card.size = Vector2(card_w, card_h)
 		card.clip_contents = true
+		card.modulate = Color(1, 1, 1, 1)
 		card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		stack_container.add_child(card)
 
@@ -132,6 +105,15 @@ func _refresh_stack(stack_container: Control, res_id: String, count: int) -> voi
 			tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			card.add_child(tr)
+
+		# Overlay sombre quand count == 0 pour indiquer non-sélectionné
+		if count == 0:
+			var overlay := ColorRect.new()
+			overlay.color = Color(0, 0, 0, 0.55)
+			overlay.position = Vector2(0, 0)
+			overlay.size = Vector2(card_w, card_h)
+			overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			card.add_child(overlay)
 
 		# Badge compteur uniquement sur la carte du dessus
 		if i == visible_cards - 1:
