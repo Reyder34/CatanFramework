@@ -592,8 +592,19 @@ func _create_port_visuals(board_view) -> void:
 
 	for info in _ports_info:
 		var res: String = info["resource"]
-<<<<<<< HEAD
 		var col: Color = _registry.get_resource_color(res) if res != "" else Color.WHITE
+		var pos: Vector3 = info["pos"]
+		var outward := Vector3(pos.x, 0.0, pos.z).normalized()
+
+		# Modèle 3D du port (au bord, tourné vers l'extérieur)
+		if port_scene != null:
+			var port_node := port_scene.instantiate()
+			port_node.position = Vector3(pos.x, 0.0, pos.z) - outward * 0.3
+			if outward.length() > 0.001:
+				port_node.rotation.y = atan2(outward.x, outward.z) - PI * 0.5
+			port_node.scale = Vector3(2.0, 2.0, 2.0)
+			parent.add_child(port_node)
+
 		# Repère sur CHACUN des 2 coins desservis par le port (montre les 2 sommets).
 		for corner in info.get("corners", []):
 			var ball := MeshInstance3D.new()
@@ -608,37 +619,16 @@ func _create_port_visuals(board_view) -> void:
 			cp.y = 0.18
 			ball.position = cp
 			parent.add_child(ball)
-		# Ratio au milieu de l'arête, au premier plan (lisible même avec un bâtiment dessus).
-=======
-		var pos: Vector3 = info["pos"]
-		var outward := Vector3(pos.x, 0.0, pos.z).normalized()
 
-		# Modèle 3D du port
-		if port_scene != null:
-			var port_node := port_scene.instantiate()
-			port_node.position = Vector3(pos.x, 0.0, pos.z) - outward * 0.3
-			if outward.length() > 0.001:
-				port_node.rotation.y = atan2(outward.x, outward.z) - PI * 0.5
-			port_node.scale = Vector3(2.0, 2.0, 2.0)
-			parent.add_child(port_node)
-
-		# Label3D du ratio (billboard, toujours lisible)
->>>>>>> c8050d1b74abf95ec0260d4bda6751f13f90d6d8
+		# Label3D du ratio (billboard, au-dessus du modèle, toujours lisible)
 		var label := Label3D.new()
 		label.text = "%d:1" % int(info["ratio"])
 		label.font_size = 48
 		label.outline_size = 12
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.no_depth_test = true
-<<<<<<< HEAD
 		label.modulate = col
-		var pos: Vector3 = info["pos"]
-		pos.y = 0.32
-		label.position = pos
-=======
-		label.modulate = _registry.get_resource_color(res) if res != "" else Color.WHITE
 		label.position = Vector3(pos.x, 0.55, pos.z)
->>>>>>> c8050d1b74abf95ec0260d4bda6751f13f90d6d8
 		parent.add_child(label)
 
 	# Collecter les positions des tuiles terrestres pour la détection eau/terre
