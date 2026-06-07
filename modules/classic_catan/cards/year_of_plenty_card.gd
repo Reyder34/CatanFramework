@@ -19,6 +19,6 @@ func on_play(state: GameState, board: Board, registry: GameRegistry, player: Pla
 	var selected: Dictionary = result["selected"]
 	for res_id in selected:
 		if selected[res_id] > 0:
-			player.add_resource(res_id, selected[res_id])
+			ClassicCatanMod.give_capped(state, player, res_id, selected[res_id])
 	print("[Invention] J%d reçoit: %s" % [player.id, str(selected)])
 	return true

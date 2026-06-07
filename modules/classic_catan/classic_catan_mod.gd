@@ -12,6 +12,7 @@ const DEV_CARD_COST := {"wheat": 1, "sheep": 1, "ore": 1}
 const EVT_DICE_ROLL := "classic_catan:dice_roll"
 const EVT_AFTER_DICE := "classic_catan:after_dice_rolled"
 const DICE_MARKER := "classic_catan:dice"  # marqueur plateau Vector2(d1,d2) -> synchro à tous
+const BANK_MAX := 19  # règle officielle Catan: 19 ressources de CHAQUE type
 const EVT_BEFORE_PRODUCE := "classic_catan:before_produce"
 const EVT_BEFORE_PLACE := "classic_catan:before_place"
 const EVT_AFTER_PLACE := "classic_catan:after_place"
@@ -63,6 +64,7 @@ func register(reg: GameRegistry) -> void:
 	reg.register_panel("bank_trade", preload("res://modules/classic_catan/panels/bank_trade_panel.tscn"))
 	reg.register_panel("resource_picker", preload("res://modules/classic_catan/panels/resource_picker_panel.tscn"))
 	reg.register_panel("dice_panel", preload("res://modules/classic_catan/panels/dice_panel.tscn"))
+	reg.register_panel("bank_stock", preload("res://modules/classic_catan/panels/bank_stock_panel.tscn"))
 	reg.register_sub_phase_label(SP_FREE_ROAD, "Pose 2 routes gratuites")
 
 # === DONNÉES ===
@@ -99,6 +101,7 @@ func _subscribe_hooks(reg: GameRegistry) -> void:
 	reg.on("vertex_clicked", _on_vertex_clicked, 0)
 	reg.on("edge_clicked", _on_edge_clicked, 0)
 	reg.on("game_start", _on_game_start_for_actions, 0)
+	reg.on("turn_timeout", _on_turn_timeout, 0)
 	reg.on(EVT_ROAD_BUILDING_PLAYED, _on_road_building_played, 0)
 	reg.on(EVT_REQUEST_TRADE_WITH, _on_request_trade_with, 0)
 	reg.on(EVT_REQUEST_PLAY_CARD, _on_request_play_card, 0)
@@ -110,36 +113,59 @@ func _on_dice_roll(ctx: RollContext) -> void:
 		ctx.die2 = randi_range(1, 6)
 		ctx.result = ctx.die1 + ctx.die2
 
-# Distribution des ressources (saute le 7, c'est pour le voleur ailleurs)
+# Distribution des ressources (saute le 7) avec la règle de banque finie : si la banque
+# ne peut pas servir TOUS les joueurs dus d'une ressource ET que ça concerne PLUSIEURS
+# joueurs -> personne ne la reçoit ; un seul joueur concerné -> il prend ce qui reste.
 func _on_after_dice_rolled(ctx: RollContext) -> void:
 	if ctx.cancel_production or ctx.result == 7:
 		return
 	if not ctx.board.tiles_by_number.has(ctx.result):
 		return
-	for coords in ctx.board.tiles_by_number[ctx.result]:
-		_distribute_resource(ctx.state, ctx.board, coords)
-
-func _distribute_resource(state: GameState, board: Board, coords: Vector2) -> void:
-	# before_produce permet à un mod (ex: voleur) d'annuler la production d'une tuile
-	var pctx := ProductionContext.new()
-	pctx.state = state
-	pctx.board = board
-	pctx.tile_coords = coords
-	pctx.resource_id = board.tile_data[coords]["resource"]
-	state.registry.emit(EVT_BEFORE_PRODUCE, pctx)
-	if pctx.cancelled:
-		return
-	
-	var resource: String = pctx.resource_id
-	for v_key in board.tile_vertices.get(coords, []):
-		var owner_id := board.get_vertex_owner(v_key)
-		if owner_id < 0:
+	var state := ctx.state
+	var board := ctx.board
+	# 1) Calcule la demande (en respectant le voleur via before_produce).
+	var owed: Dictionary = {}        # player_id -> {res: quantité due}
+	var demand: Dictionary = {}      # res -> total demandé
+	var recipients: Dictionary = {}  # res -> {player_id: true}
+	for coords in board.tiles_by_number[ctx.result]:
+		var pctx := ProductionContext.new()
+		pctx.state = state
+		pctx.board = board
+		pctx.tile_coords = coords
+		pctx.resource_id = board.tile_data[coords]["resource"]
+		state.registry.emit(EVT_BEFORE_PRODUCE, pctx)
+		if pctx.cancelled:
 			continue
-		var v_type := board.get_vertex_type(v_key)
-		var building: BuildingType = state.registry.get_building(v_type)
-		if building == null:
+		var res: String = pctx.resource_id
+		if res == "" or not state.registry.is_producing_resource(res):
 			continue
-		state.players[owner_id].add_resource(resource, building.get_production_amount())
+		for v_key in board.tile_vertices.get(coords, []):
+			var owner_id := board.get_vertex_owner(v_key)
+			if owner_id < 0:
+				continue
+			var building: BuildingType = state.registry.get_building(board.get_vertex_type(v_key))
+			if building == null:
+				continue
+			var amt := building.get_production_amount()
+			if not owed.has(owner_id):
+				owed[owner_id] = {}
+			owed[owner_id][res] = int(owed[owner_id].get(res, 0)) + amt
+			demand[res] = int(demand.get(res, 0)) + amt
+			if not recipients.has(res):
+				recipients[res] = {}
+			recipients[res][owner_id] = true
+	# 2) Pénurie + plusieurs bénéficiaires -> on retire cette ressource (personne ne l'a).
+	for res in demand:
+		if demand[res] <= bank_remaining(state, res):
+			continue
+		if recipients[res].size() == 1:
+			continue  # un seul joueur : il prendra ce qui reste (give_capped plafonne)
+		for pid in owed:
+			owed[pid].erase(res)
+	# 3) Distribution effective (plafonnée par la banque).
+	for pid in owed:
+		for res in owed[pid]:
+			give_capped(state, state.players[pid], res, owed[pid][res])
 
 # Clic sommet: distribue selon la phase
 func _on_vertex_clicked(ctx: ClickContext) -> void:
@@ -233,7 +259,7 @@ func _distribute_initial_resources(state: GameState, board: Board, vertex_key: S
 		var resource: String = board.tile_data[coords]["resource"]
 		if not state.registry.is_producing_resource(resource):
 			continue
-		state.players[state.current_player_index].add_resource(resource, 1)
+		give_capped(state, state.players[state.current_player_index], resource, 1)
 
 # Avance le placement initial (snake-draft): chaque joueur pose 2 colonies+routes.
 # Pilote directement current_player_index/phase du core (le core ne connaît pas cette règle).
@@ -420,6 +446,12 @@ func _on_game_start_for_actions(ctx) -> void:
 	# clients à l'application du snapshot qui ré-émet marker_changed).
 	if not _board.marker_changed.is_connected(_on_dice_marker):
 		_board.marker_changed.connect(_on_dice_marker)
+	# Panneau banque (stock restant) : toujours visible, rafraîchi à chaque changement
+	# de ressources (host et clients, via resources_changed ré-émis aux snapshots).
+	for pl in _state.players:
+		if not pl.resources_changed.is_connected(_on_bank_dirty):
+			pl.resources_changed.connect(_on_bank_dirty)
+	_refresh_bank_panel()
 	# Initialise le setup Catan: chaque joueur posera 2 colonies + 2 routes.
 	_initial_placements.clear()
 	for i in _state.players.size():
@@ -482,26 +514,21 @@ func _compute_ports() -> void:
 		var eps: Array = _board.edge_endpoints.get(c["edge"], [])
 		for v in eps:
 			_port_at_vertex[v] = {"ratio": pt["ratio"], "resource": pt["resource"]}
-		# Position: ancrée sur le sommet côtier le plus au large (MÊME fonction que les
-		# colonies: vertex_position), avec un léger retrait vers l'eau pour ne pas
-		# masquer le spot de construction. Bas pour éviter la parallaxe.
-		var anchor := HexMath.edge_position(c["q"], c["r"], c["side"])
-		var best_d := -1.0
+		# Le port appartient à l'ARÊTE côtière -> il dessert ses 2 coins (sommets).
+		# Étiquette au milieu de l'arête poussée vers le large ; on mémorise les 2 coins
+		# pour y poser un repère (montre clairement les 2 sommets concernés).
+		var mid := HexMath.edge_position(c["q"], c["r"], c["side"])
+		var corners: Array = []
 		for v in eps:
 			var vd: Dictionary = _board.vertex_data.get(v, {})
-			if vd.is_empty():
-				continue
-			var vpos := HexMath.vertex_position(vd["q"], vd["r"], vd["corner"])
-			var d := Vector2(vpos.x, vpos.z).length()
-			if d > best_d:
-				best_d = d
-				anchor = vpos
-		var outward := Vector3(anchor.x, 0, anchor.z)
+			if not vd.is_empty():
+				corners.append(HexMath.vertex_position(vd["q"], vd["r"], vd["corner"]))
+		var outward := Vector3(mid.x, 0, mid.z)
 		if outward.length() > 0.001:
 			outward = outward.normalized()
-		var pos := anchor + outward * 0.1
+		var pos := mid + outward * 0.25
 		pos.y = 0.14
-		_ports_info.append({"pos": pos, "ratio": pt["ratio"], "resource": pt["resource"]})
+		_ports_info.append({"pos": pos, "ratio": pt["ratio"], "resource": pt["resource"], "corners": corners})
 
 func _edge_angle(c: Dictionary) -> float:
 	var pos := HexMath.edge_position(c["q"], c["r"], c["side"])
@@ -520,25 +547,106 @@ func _best_bank_ratio(player: Player, resource: String) -> int:
 			best = min(best, int(port["ratio"]))
 	return best
 
+# === BANQUE FINIE (règle: BANK_MAX de chaque ressource) ===
+# Restant = BANK_MAX - total détenu par tous les joueurs (invariant auto-cohérent,
+# donc identique chez tous en réseau sans synchro dédiée).
+static func bank_remaining(state: GameState, res: String) -> int:
+	var total := 0
+	for p in state.players:
+		total += int(p.resources.get(res, 0))
+	return maxi(0, BANK_MAX - total)
+
+# Donne `amount` de `res` à `player`, plafonné par le stock banque. Retourne le donné.
+static func give_capped(state: GameState, player: Player, res: String, amount: int) -> int:
+	var give: int = mini(amount, bank_remaining(state, res))
+	if give > 0:
+		player.add_resource(res, give)
+	return give
+
+func _on_bank_dirty(_pid: int) -> void:
+	_refresh_bank_panel()
+
+# (Re)construit le panneau persistant du stock banque (toujours visible).
+func _refresh_bank_panel() -> void:
+	if _registry == null or _registry.ui == null or _state == null:
+		return
+	var rows: Array = []
+	for res_id in _registry.resources:
+		if _registry.resources[res_id].get("is_desert", false):
+			continue
+		rows.append({
+			"name": _registry.resources[res_id].get("name", res_id),
+			"count": bank_remaining(_state, res_id),
+			"color": _registry.get_resource_color(res_id),
+			"icon": _registry.get_resource_icon(res_id),
+		})
+	_registry.ui.show_persistent("bank_stock", {"rows": rows})
+
 func _create_port_visuals(board_view) -> void:
 	if board_view == null or board_view.tile_nodes.is_empty():
 		return
 	var parent: Node = board_view.tile_nodes.values()[0].get_parent()
+	var port_scene: PackedScene = load("res://modules/classic_catan/ports/port.glb")
+	var boat_scene: PackedScene = load("res://modules/classic_catan/ports/boat.glb")
+	var boat_script = load("res://modules/classic_catan/ports/boat.gd")
+
 	for info in _ports_info:
 		var res: String = info["resource"]
-		# Juste le ratio, coloré par la ressource (blanc pour le port générique 3:1),
-		# gardé au premier plan pour rester lisible même avec un bâtiment dessus.
+		var col: Color = _registry.get_resource_color(res) if res != "" else Color.WHITE
+		var pos: Vector3 = info["pos"]
+		var outward := Vector3(pos.x, 0.0, pos.z).normalized()
+
+		# Modèle 3D du port (au bord, tourné vers l'extérieur)
+		if port_scene != null:
+			var port_node := port_scene.instantiate()
+			port_node.position = Vector3(pos.x, 0.0, pos.z) - outward * 0.3
+			if outward.length() > 0.001:
+				port_node.rotation.y = atan2(outward.x, outward.z) - PI * 0.5
+			port_node.scale = Vector3(2.0, 2.0, 2.0)
+			parent.add_child(port_node)
+
+		# Repère sur CHACUN des 2 coins desservis par le port (montre les 2 sommets).
+		for corner in info.get("corners", []):
+			var ball := MeshInstance3D.new()
+			var sm := SphereMesh.new()
+			sm.radius = 0.12
+			sm.height = 0.24
+			ball.mesh = sm
+			var bmat := StandardMaterial3D.new()
+			bmat.albedo_color = col
+			ball.material_override = bmat
+			var cp: Vector3 = corner
+			cp.y = 0.18
+			ball.position = cp
+			parent.add_child(ball)
+
+		# Label3D du ratio (billboard, au-dessus du modèle, toujours lisible)
 		var label := Label3D.new()
 		label.text = "%d:1" % int(info["ratio"])
 		label.font_size = 48
 		label.outline_size = 12
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.no_depth_test = true
-		label.modulate = _registry.get_resource_color(res) if res != "" else Color.WHITE
-		var pos: Vector3 = info["pos"]
-		pos.y = 0.32
-		label.position = pos
+		label.modulate = col
+		label.position = Vector3(pos.x, 0.55, pos.z)
 		parent.add_child(label)
+
+	# Collecter les positions des tuiles terrestres pour la détection eau/terre
+	var land_positions: Array = []
+	for tile_node in board_view.tile_nodes.values():
+		var tp := (tile_node as Node3D).position
+		land_positions.append(Vector3(tp.x, 0.0, tp.z))
+
+	# 3 bateaux partagés — chacun choisit un port aléatoire et arrive en longeant la côte
+	if boat_scene != null and boat_script != null:
+		for i in 3:
+			var boat := boat_scene.instantiate()
+			boat.set_script(boat_script)
+			boat.ports_info     = _ports_info
+			boat.land_positions = land_positions
+			boat.start_delay    = i * 4.0 + randf_range(0.0, 2.5)
+			boat.scale          = Vector3(2.0, 2.0, 2.0)
+			parent.add_child(boat)
 
 func _register_actions(reg: GameRegistry) -> void:
 	# === Action: Lancer les dés ===
@@ -692,9 +800,17 @@ func _action_roll_dice() -> void:
 			_flash_tile(coords)
 	_state.current_player().set_data(ROLLED_KEY, true)
 
+# Fin de tour automatique quand le timer du core expire (event générique "turn_timeout").
+func _on_turn_timeout(_ctx) -> void:
+	if _state == null or _state.phase != GameState.Phase.PLAY or _state.sub_phase != "":
+		return
+	_registry.emit("game_log", {"text": "⏱ Temps écoulé : tour de %s passé" % _state.current_player().label()})
+	_action_next_player()
+
 func _action_next_player() -> void:
 	var p := _state.current_player()
 	p.set_data(_CARDS_BOUGHT_KEY, [])
+	p.set_data(_DEV_PLAYED_KEY, false)  # nouvelle carte dev autorisée au prochain tour
 	p.set_data(ROLLED_KEY, false)  # le prochain joueur devra relancer
 	_state.next_player()
 	
@@ -789,6 +905,9 @@ func _action_bank_trade() -> void:
 	if p.resources.get(give, 0) < ratio:
 		print("Pas assez de ressources pour l'échange")
 		return
+	if bank_remaining(_state, receive) < 1:
+		print("La banque n'a plus de %s" % receive)
+		return
 	p.add_resource(give, -ratio)
 	p.add_resource(receive, 1)
 	print("Échange banque J%d: -%d %s, +1 %s" % [p.id, ratio, give, receive])
@@ -834,9 +953,13 @@ func _on_request_play_card(ctx) -> void:
 	if not card.is_playable(_state, p, card in bought):
 		print("Carte non jouable maintenant")
 		return
+	if p.get_data(_DEV_PLAYED_KEY, false):
+		print("Tu as déjà joué une carte développement ce tour-ci")
+		return
 	var consumed: bool = await card.on_play(_state, _board, _registry, p)
 	if consumed:
 		p.remove_card(card)
+		p.set_data(_DEV_PLAYED_KEY, true)  # 1 carte dev par tour (règle Catan)
 	_registry.emit("game_log", {"text": "%s a joué : %s" % [p.label(), card.display_name]})
 
 func _init_dev_deck(_ctx) -> void:
@@ -854,6 +977,7 @@ func _init_dev_deck(_ctx) -> void:
 # === CARTES DÉVELOPPEMENT ===
 
 const _CARDS_BOUGHT_KEY := "catan:dev_cards_bought_this_turn"
+const _DEV_PLAYED_KEY := "catan:dev_card_played_this_turn"  # règle: 1 carte dev / tour
 
 func _get_bought_this_turn(player: Player) -> Array:
 	return player.get_data(_CARDS_BOUGHT_KEY, [])

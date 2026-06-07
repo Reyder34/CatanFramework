@@ -231,6 +231,14 @@ func compute_victory_points(player: Player) -> int:
 		total += effect.victory_points
 	return total
 
+# Points "publics" (ce que les AUTRES joueurs voient) : on retire les cartes à PV,
+# cachées en main jusqu'à la victoire. L'hôte garde le total complet pour détecter le gain.
+func compute_public_victory_points(player: Player) -> int:
+	var total := compute_victory_points(player)
+	for card in player.cards:
+		total -= card.victory_points
+	return total
+
 # Détection de victoire (core): si un joueur atteint le seuil, bascule en
 # GAME_OVER et émet "game_over". À appeler par les mods après tout changement
 # de points (pose, carte PV, effet gagné, etc.).
@@ -252,7 +260,7 @@ func check_victory(state: GameState) -> bool:
 # des bâtiments/cartes/effets définis par les mods. Tout nouveau bâtiment/carte/
 # effet à PV est donc détecté et nommé automatiquement.
 # Retourne un Array de {"name": String, "count": int, "points": int} (sources à PV > 0).
-func compute_victory_breakdown(player: Player) -> Array:
+func compute_victory_breakdown(player: Player, hide_cards := false) -> Array:
 	var entries: Array = []
 	# Bâtiments regroupés par type
 	var by_building: Dictionary = {}
@@ -266,17 +274,18 @@ func compute_victory_breakdown(player: Player) -> Array:
 		by_building[bt.id]["points"] += bt.victory_points
 	for id in by_building:
 		entries.append(by_building[id])
-	# Cartes à PV regroupées par type
-	var by_card: Dictionary = {}
-	for card in player.cards:
-		if card.victory_points == 0:
-			continue
-		if not by_card.has(card.id):
-			by_card[card.id] = {"name": card.display_name, "count": 0, "points": 0}
-		by_card[card.id]["count"] += 1
-		by_card[card.id]["points"] += card.victory_points
-	for id in by_card:
-		entries.append(by_card[id])
+	# Cartes à PV regroupées par type (cachées aux AUTRES joueurs en réseau)
+	if not hide_cards:
+		var by_card: Dictionary = {}
+		for card in player.cards:
+			if card.victory_points == 0:
+				continue
+			if not by_card.has(card.id):
+				by_card[card.id] = {"name": card.display_name, "count": 0, "points": 0}
+			by_card[card.id]["count"] += 1
+			by_card[card.id]["points"] += card.victory_points
+		for id in by_card:
+			entries.append(by_card[id])
 	# Effets (un par effet: route la plus longue, plus grande armée, trophées…)
 	for effect in player.effects:
 		if effect.victory_points == 0:
