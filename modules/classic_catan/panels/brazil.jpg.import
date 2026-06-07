@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cel28s3cwqtyx"
-path="res://.godot/imported/briques.png-a7ffd86ab718ca052f95fb9de2fdd55b.ctex"
+uid="uid://c47h7pg2jayp8"
+path="res://.godot/imported/brazil.jpg-ce705a480b526fa8c288ae9845298edb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://modules/classic_catan/images/briques.png"
-dest_files=["res://.godot/imported/briques.png-a7ffd86ab718ca052f95fb9de2fdd55b.ctex"]
+source_file="res://modules/classic_catan/panels/brazil.jpg"
+dest_files=["res://.godot/imported/brazil.jpg-ce705a480b526fa8c288ae9845298edb.ctex"]
 
 [params]
 

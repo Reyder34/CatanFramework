@@ -172,11 +172,10 @@ func _refresh_resources() -> void:
 	
 	var p := _view_player()
 	
-	# 1. Les infos du haut (Texte blanc/clair pour bien ressortir sur le fond sombre global)
+	# 1. Les infos du haut
 	var header := Label.new()
 	header.text = "%s — %s" % [p.label(), state.phase_label()]
 	header.modulate = p.color
-	# On lui donne un style un peu plus grand/vibrant si nécessaire
 	_res_box.add_child(header)
 	
 	if GameConfig.is_multiplayer:
@@ -187,73 +186,93 @@ func _refresh_resources() -> void:
 		
 	var mode := Label.new()
 	mode.text = "Mode: %s" % state.mode_label()
-	mode.add_theme_color_override("font_color", Color("#dfdfdf")) # Un gris-blanc propre
+	mode.add_theme_color_override("font_color", Color("#dfdfdf"))
 	_res_box.add_child(mode)
 	
-	# 2. LE PANEL DES CARTES (Style Parchment / Chaleureux / Contrasté)
-	var bg_panel := PanelContainer.new()
-	var style_box := StyleBoxFlat.new()
-	
-	# Couleur de fond : Un ambré/parchemin très sombre et chaud, semi-transparent (Alpha = 0.6)
-	# Cela permet de voir subtilement l'océan ou la map derrière, façon UI moderne
-	style_box.bg_color = Color("#1e1a15", 0.65) 
-	
-	# Bordure fine pour donner du relief et de la structure (Style or/bois clair)
-	style_box.border_width_left = 1
-	style_box.border_width_top = 1
-	style_box.border_width_right = 1
-	style_box.border_width_bottom = 1
-	style_box.border_color = Color("#d3a058", 0.4) # Un doré cuivré discret
-	
-	# Marges internes et angles arrondis
-	style_box.set_content_margin_all(8)
-	style_box.corner_radius_top_left = 6
-	style_box.corner_radius_top_right = 6
-	style_box.corner_radius_bottom_left = 6
-	style_box.corner_radius_bottom_right = 6
-	
-	bg_panel.add_theme_stylebox_override("panel", style_box)
-	_res_box.add_child(bg_panel)
-	
-	# 3. Conteneur horizontal pour les ressources
+	# 2. Conteneur horizontal pour les ressources (sans panel encadré)
 	var resources_hbox := HBoxContainer.new()
-	resources_hbox.add_theme_constant_override("separation", 20) # Un peu plus d'espace pour respirer
-	bg_panel.add_child(resources_hbox)
+	resources_hbox.add_theme_constant_override("separation", 14)
+	resources_hbox.alignment = BoxContainer.ALIGNMENT_BEGIN
+	_res_box.add_child(resources_hbox)
 	
-	# 4. Alignement des ressources
+	# 3. Affichage des ressources sous forme de cartes empilées
 	for res_id in registry.resources:
 		if registry.resources[res_id].get("is_desert", false):
 			continue
-			
-		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", 8)
+		
+		var count := int(p.resources.get(res_id, 0))
+		if count == 0:
+			continue
+		
+		var visible_cards: int = min(count, 3)
+		var card_w: int = 110
+		var card_h: int = 130
+		var offset: int = 8
+		
+		var total_w: int = card_w + offset * (visible_cards - 1)
+		var total_h: int = card_h + offset * (visible_cards - 1)
+		
+		var stack_container := Control.new()
+		stack_container.custom_minimum_size = Vector2(total_w, total_h)
 		
 		var icon := registry.get_resource_icon(res_id)
-		if icon != null:
-			var tr := TextureRect.new()
-			tr.texture = icon
-			tr.custom_minimum_size = Vector2(42, 42) # Légèrement agrandi pour valoriser l'artwork
-			tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			row.add_child(tr)
-		else:
-			row.add_child(_swatch(registry.get_resource_color(res_id)))
+		
+		for i in range(visible_cards):
+			var card := Panel.new()
+			var card_style := StyleBoxFlat.new()
 			
-		# Le texte de la ressource (Ex: "Bois : 0")
-		var lbl := Label.new()
-		lbl.text = "%s : %d" % [registry.resources[res_id]["name"], int(p.resources.get(res_id, 0))]
+			# Fond transparent, pas de bordure
+			card_style.bg_color = Color(0, 0, 0, 0)
+			card_style.border_width_left = 0
+			card_style.border_width_top = 0
+			card_style.border_width_right = 0
+			card_style.border_width_bottom = 0
+			card.add_theme_stylebox_override("panel", card_style)
+			
+			var shift: int = (visible_cards - 1 - i) * offset
+			card.position = Vector2(shift, shift)
+			card.size = Vector2(card_w, card_h)
+			card.clip_contents = true
+			stack_container.add_child(card)
+			
+			# Icône sur toutes les cartes
+			if icon != null:
+				var tr := TextureRect.new()
+				tr.texture = icon
+				tr.set_anchors_preset(Control.PRESET_FULL_RECT)
+				tr.offset_left = 0
+				tr.offset_top = 0
+				tr.offset_right = 0
+				tr.offset_bottom = 0
+				tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				card.add_child(tr)
+			
+			# Badge compteur uniquement sur la carte du dessus
+			if i == visible_cards - 1:
+				var badge := Panel.new()
+				var badge_style := StyleBoxFlat.new()
+				badge_style.bg_color = Color(0.1, 0.1, 0.1, 0.85)
+				badge_style.corner_radius_top_left = 10
+				badge_style.corner_radius_top_right = 10
+				badge_style.corner_radius_bottom_left = 10
+				badge_style.corner_radius_bottom_right = 10
+				badge.add_theme_stylebox_override("panel", badge_style)
+				badge.size = Vector2(20, 20)
+				badge.position = Vector2(card_w - 22, 2)
+				card.add_child(badge)
+				
+				var count_label := Label.new()
+				count_label.text = str(count)
+				count_label.add_theme_color_override("font_color", Color.WHITE)
+				count_label.add_theme_font_size_override("font_size", 12)
+				count_label.size = Vector2(20, 20)
+				count_label.position = Vector2(card_w - 22, 2)
+				count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+				count_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+				card.add_child(count_label)
 		
-		# Couleur du texte : Jaune sable / Crème chaud (#f3e5c8) 
-		# C'est ultra-lisible sur le marron/noir en fond, et ça rappelle les jeux de société en bois
-		lbl.add_theme_color_override("font_color", Color("#f3e5c8"))
-		
-		# Optionnel : Donne une légère ombre au texte pour détacher le chiffre du fond
-		lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
-		lbl.add_theme_constant_override("shadow_offset_x", 1)
-		lbl.add_theme_constant_override("shadow_offset_y", 1)
-		
-		row.add_child(lbl)
-		resources_hbox.add_child(row)
+		resources_hbox.add_child(stack_container)
 
 # === HAUT-DROIT: joueurs, scores, échange, banque ===
 func _refresh_players() -> void:
