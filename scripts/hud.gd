@@ -61,6 +61,27 @@ func setup(p_state: GameState, p_registry: GameRegistry, p_board: Board, p_main:
 	_wire_windows()
 	_connect_signals()
 	update()
+	_add_save_button()
+
+# Bouton "Sauvegarder" (autorité uniquement, en multi) -> écrit dans user://saves/.
+func _add_save_button() -> void:
+	if not GameConfig.is_multiplayer or _main == null or not _main._authoritative():
+		return
+	var btn := Button.new()
+	btn.text = "💾 Sauvegarder"
+	btn.anchor_left = 1.0
+	btn.anchor_right = 1.0
+	btn.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	btn.offset_left = -170
+	btn.offset_top = 8
+	btn.offset_right = -8
+	btn.pressed.connect(_on_save_pressed)
+	add_child(btn)
+
+func _on_save_pressed() -> void:
+	if _main != null and _main.has_method("save_game"):
+		var stamp := Time.get_datetime_string_from_system().replace(":", "-").replace("T", "_")
+		_main.save_game("partie_" + stamp)
 
 # Branche le drag + la persistance sur les panneaux de la SCÈNE (hud.tscn).
 # Le designer édite la structure/le style dans l'éditeur ; ici uniquement la logique.
@@ -185,7 +206,9 @@ func _refresh_players() -> void:
 	_clear(_players_box)
 	var threshold := registry.victory_threshold
 	for pl in state.players:
-		var pts := registry.compute_victory_points(pl)
+		var pts: int = registry.compute_victory_points(pl)
+		if GameConfig.is_multiplayer and pl.id != _view_player().id:
+			pts = registry.compute_public_victory_points(pl)  # cache les cartes PV adverses
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 6)
 		row.add_child(_swatch(pl.color))
@@ -240,11 +263,13 @@ func _build_breakdown(id: int) -> VBoxContainer:
 	var box := VBoxContainer.new()
 	box.add_child(HSeparator.new())
 	var pl: Player = state.players[id]
+	var hide := GameConfig.is_multiplayer and id != _view_player().id  # PV des cartes adverses cachés
 	var title := Label.new()
-	title.text = "Points de %s : %d" % [pl.label(), registry.compute_victory_points(pl)]
+	var pts: int = registry.compute_public_victory_points(pl) if hide else registry.compute_victory_points(pl)
+	title.text = "Points de %s : %d" % [pl.label(), pts]
 	title.modulate = pl.color
 	box.add_child(title)
-	var entries := registry.compute_victory_breakdown(pl)
+	var entries := registry.compute_victory_breakdown(pl, hide)
 	if entries.is_empty():
 		var none := Label.new()
 		none.text = "  (aucun point)"

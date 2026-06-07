@@ -2,6 +2,15 @@
 
 Un moteur de jeu de plateau **modable** où le **core** ne gère que les **tours** et les **points de victoire**. **Tout le reste est un module** : ressources, bâtiments, dés, voleur, cartes, échanges, ports… Le jeu « Catan classique » livré est lui-même un assemblage de deux modules (`classic_catan` + `vanilla_robber`).
 
+> ### 🧠 Modèle mental (à lire en premier — surtout pour une IA)
+> **Règle d'or : `core/` ne référence JAMAIS `modules/`** ni aucun mot de gameplay (bois, colonie, voleur, dés, 7…). Le core ne connaît que : *tours, joueurs, points de victoire, plateau hexagonal générique, bus d'événements, registre, UI*. **Tout le contenu (les règles de Catan incluses) vit dans `modules/`.**
+>
+> **Où mettre quoi ?** Un *nom* générique (un joueur, un point de victoire, un panneau) → **core**. Un *verbe* de jeu (produire, voler, échanger, lancer les dés) → **un module**.
+>
+> **Flux d'une action** (clé pour lire le code) : `clic 3D` → `scripts/main.gd` en fait une **commande** → routée vers l'**hôte autoritaire** → l'hôte **émet un événement générique** (`"vertex_clicked"`, `"tile_clicked"`…) → **les mods abonnés** (`reg.on(...)`) réagissent (pose, production…) → l'hôte **diffuse un snapshot** → les clients l'appliquent. Le core **n'appelle jamais** un mod : il **émet**, les mods **s'abonnent**.
+>
+> **3 couches :** `core/` (moteur agnostique) · `scripts/` (l'app : assemble, réseau, HUD) · `modules/` (le jeu). Un mod = une classe `extends GameMod` **auto-détectée** (rien à enregistrer dans une liste).
+
 ---
 ## 1. Compte rendu — état du projet
 
@@ -11,10 +20,19 @@ Un moteur de jeu de plateau **modable** où le **core** ne gère que les **tours
 - **UI = scènes Godot éditables** : menu (`scenes/main_menu.tscn`) et HUD (`scenes/hud.tscn`) sont des scènes + un **thème partagé** (`ui/theme.tres`) → tout est restylable par un designer dans l'éditeur. **Tous les panneaux** (HUD **et** pop-ups : échange, banque, défausse, vol…) sont **déplaçables** (barre de titre) et **redimensionnables** (poignée), positions/tailles mémorisées (**F1** = réinitialiser). **Journal** d'événements, **ventilation des points** au clic sur un joueur, **icônes/textures de ressources** moddables.
 - **Génération de carte moddable** : taille réglable au lobby + mods de map (`balanced_map`, `island_map`) qui ne dépendent de rien.
 - **Modèles 3D** : point d'extension pour donner un mesh/scène à n'importe quel bâtiment (sinon primitive par défaut).
-- **Multijoueur** P2P (un joueur héberge, pas de serveur dédié) : hôte autoritaire, synchro complète du jeu de base, jusqu'à **10 joueurs**, pseudos affichés, défausse simultanée.
+- **Multijoueur** P2P (un joueur héberge, pas de serveur dédié) : hôte autoritaire, **snapshot incrémental** (ne rafraîchit que ce qui change), jusqu'à **10 joueurs**, pseudos affichés, défausse simultanée.
+- **Timer de tour** (core, optionnel, réglé au lobby/solo) : décompte, **pause sur pop-up**, **passe le tour à 0** ; UI déplaçable/redim.
+- **Banque finie** (19 de chaque ressource, règle officielle) : gains plafonnés + distribution stricte, **panneau de stock toujours visible**.
+- **Menu en 4 écrans** (Accueil / Solo / Multijoueur / Salon) : en multi, l'**hôte règle mods + timer + taille** et **tout le monde le voit en direct**.
+- **Modèles 3D** : tuiles (hex), bâtiments et pion voleur (`.glb`), + **panneau de dés** persistant ; teinte joueur configurable.
+
+### Conformité aux règles de Catan classique
+**Respecté fidèlement** : plateau **19 tuiles** (4 bois / 3 brique / 4 mouton / 4 blé / 3 minerai / 1 désert) + **18 jetons** (2 et 12 ×1, 3→11 ×2, pas de 7) · setup en **serpent** (2 colonies + 2 routes, 2ᵉ colonie = ressources adjacentes) · **coûts & PV exacts** (route 1 bois+1 brique ; colonie 1/1/1/1 = 1 PV ; ville 2 blé+3 minerai = 2 PV) · règle de **distance** · production (colonie ×1, ville ×2) · **voleur posé sur le désert**, bloque sa tuile · **7** = défausse de la moitié (>7 cartes), déplacement + vol d'un voisin · cartes dev (**deck 25** = 14 chevalier / 5 PV / 2 monopole / 2 invention / 2 routes ; coût minerai+blé+mouton ; **injouable le tour de l'achat**) · chevalier → voleur + vol · **plus grande armée** (≥3) et **plus longue route** (≥5) à +2 PV, transférables · banque **4:1** + ports **3:1 / 2:1** (sur les **2 coins** de l'arête côtière) · **victoire à 10 PV**.
+
+**Toutes ces règles sont appliquées**, y compris : banque **19**, **1 carte dev par tour**, **distribution stricte** (pénurie + plusieurs joueurs → personne), **PV des cartes cachés** aux adversaires. Seule simplification assumée : les données de cartes transitent dans le snapshot réseau (l'UI ne les révèle pas, mais **pas d'anti-triche** — choix volontaire).
 
 ### Limites connues / pistes
-- Cartes dev **visibles de tous** en réseau (simplification ; le vrai Catan les garde secrètes).
+- Cartes dev : leurs **types ne sont jamais affichés** aux adversaires et leurs **PV cachés** ne comptent pas dans le score visible des autres ; les données transitent quand même dans le snapshot (pas d'anti-triche, assumé).
 - **Déconnexions** en cours de partie non gérées proprement (**F5** = forcer une resynchro depuis l'hôte).
 - La **disposition/forme** du plateau est moddable (`set_map_generator`), mais la **géométrie hexagonale** elle-même (rendu, voisinage) reste dans le core ; la rendre carrée/triangulaire serait un refactor (point d'extension non fait).
 
@@ -186,6 +204,7 @@ reg.compute_victory_breakdown(player)              # [{name, count, points}]
 ### Événements utiles
 - **Cycle de vie / plateau (émis par le core)** : `"game_start"` (ctx = `{state, board, registry, board_view}`), `"vertex_clicked"`, `"edge_clicked"`, `"tile_clicked"` (ctx = un `ClickContext`).
 - **Journal du HUD** : `registry.emit("game_log", {"text": "..."})` ajoute une ligne au panneau « Journal » (haut-centre), synchronisé en réseau. Pour afficher tes propres événements (ex. un mod de dés affiche son résultat) sans rien coder côté app.
+- **Timer de tour** : `"turn_timeout"` (ctx = `{state, player}`), émis par le core à l'expiration du temps ; un mod le transforme en fin de tour (`classic_catan` passe au joueur suivant).
 - **Possédés par `classic_catan`** (constantes namespacées, accessibles à un mod qui en `depends_on`) : `ClassicCatanMod.EVT_DICE_ROLL`, `EVT_AFTER_DICE`, `EVT_BEFORE_PRODUCE`, `EVT_BEFORE_PLACE`, `EVT_AFTER_PLACE`, `EVT_TRADE_COMPLETED`, `EVT_BANK_TRADE_COMPLETED`, `EVT_KNIGHT_PLAYED`…
 
 ### `BuildingType` (à étendre)
@@ -248,6 +267,22 @@ Modèle **hôte autoritaire** : les clients envoient leurs actions, l'hôte appl
 - Un mod qui ouvre un **panneau** (UI interactive) doit utiliser **`await Net.show_panel_for(player_index, "mon_panneau", params_sérialisables)`** au lieu de `registry.ui.show_panel(...)` : le panneau s'affiche sur l'écran du **bon joueur** et le résultat revient à l'hôte. Pour plusieurs panneaux simultanés (ex. défausse), `await Net.show_panels_parallel([...])`.
 - Le plateau est identique chez tous via une **seed** partagée diffusée au lancement.
 - port 24545 
+
+### Timer de tour (core)
+Composant core **optionnel**, réglé au **lobby/solo** (`GameConfig.turn_timer`, en secondes, `0` = désactivé). Il décompte le tour courant, **se met en pause** sur pop-up (locale ou réseau) / hors phase de jeu / sous-phase, et à `0` **émet `"turn_timeout"`** (sur l'hôte) qu'un mod traduit en fin de tour (`classic_catan` passe au suivant). UI persistante déplaçable/redim. Écoute possible : `reg.on("turn_timeout", ...)`.
+
+### Panneaux PERSISTANTS (afficheurs live)
+Pour un affichage **permanent et mis à jour** (dés, stock banque, timer…) plutôt qu'une pop-up modale :
+```gdscript
+reg.register_panel("mon_afficheur", preload("res://.../panel.tscn"))
+reg.ui.show_persistent("mon_afficheur", {"x": 1})    # crée OU met à jour (non bloquant)
+reg.ui.update_persistent("mon_afficheur", {"x": 2})  # met à jour
+reg.ui.hide_persistent("mon_afficheur")
+```
+Le script du panneau implémente **`func update_panel(params: Dictionary)`** ; il est déplaçable/redim comme les autres. (Différence : `show_panel` / `Net.show_panel_for` = **modal** avec `await` ; `show_persistent` = **permanent non bloquant**.)
+
+### Banque finie (patron de ressource limitée)
+`classic_catan` traite la banque comme un stock fini (`BANK_MAX = 19` par ressource, règle officielle). Le **restant = `BANK_MAX − Σ(possédé par tous les joueurs)`** → invariant auto-cohérent, donc **synchro réseau gratuite** (calculé pareil partout). Tous les gains passent par `ClassicCatanMod.give_capped(state, player, res, n)` (plafonné par le stock) et un panneau persistant `bank_stock` affiche le restant. Bon modèle pour n'importe quelle ressource limitée.
 
 ### Sous-phases
 Pour un déroulé multi-étapes (ex. « pose 2 routes gratuites »), pose `state.sub_phase = "mon_mod:ma_phase"` (et `register_sub_phase_label`). Tant que `sub_phase != ""`, `state.is_busy()` est vrai et les actions globales sont bloquées. Remets `""` quand c'est fini.

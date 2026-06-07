@@ -8,6 +8,7 @@ var hud: GameHud
 
 var loaded_mods: Array = []
 var _snapshot_dirty := false  # réseau (hôte): un changement à diffuser
+var _authority_lost := false  # réseau: l'autorité a quitté (évite un double retour menu)
 var game_log: Array = []  # derniers événements (dés, actions...), synchronisé en réseau
 
 func _ready() -> void:
@@ -64,10 +65,21 @@ func _ready() -> void:
 	add_child(turn_audio)
 	turn_audio.setup(state, GameConfig.local_player_index if GameConfig.is_multiplayer else -1)
 
+	# Timer de tour (core, réglé au lobby/solo ; 0 = off). À l'expiration -> "turn_timeout".
+	var turn_timer := TurnTimer.new()
+	add_child(turn_timer)
+	turn_timer.setup(state, registry, GameConfig.turn_timer, _authoritative())
+
 	# Réseau: panneaux + diffusion d'état (hôte) sur tout changement.
 	Net.game = self
 	if GameConfig.is_multiplayer and _authoritative():
 		_connect_broadcast_signals()
+
+	# Reprise de partie (autorité) : applique le snapshot chargé, puis il sera diffusé.
+	if _authoritative() and not GameConfig.resume_snapshot.is_empty():
+		_apply_snapshot(_snapshot_from_json(GameConfig.resume_snapshot))
+		GameConfig.resume_snapshot = {}
+		_snapshot_dirty = true
 
 	print("Jeu prêt. Mods chargés: ", registry._origin.size(), " entrées dans le registry")
 
@@ -158,7 +170,9 @@ func _on_edge_clicked(_cam, event, _pos, _norm, _idx, body: StaticBody3D) -> voi
 const MP_DEFERRED_ACTIONS := ["show_dev_cards", "debug_hello"]
 
 func _authoritative() -> bool:
-	return not GameConfig.is_multiplayer or multiplayer.is_server()
+	# Autorité = ce pair fait tourner la logique. En direct, l'hôte (pair 1) EST le serveur ;
+	# en mode relais, l'autorité est un client distinct du serveur (authority_peer_id != 1).
+	return not GameConfig.is_multiplayer or multiplayer.get_unique_id() == GameConfig.authority_peer_id
 
 # Le joueur local peut-il agir maintenant (son tour, pas de panneau ouvert) ?
 func _can_local_act() -> bool:
@@ -174,7 +188,7 @@ func submit_command(cmd: Dictionary) -> void:
 		var by := GameConfig.local_player_index if GameConfig.is_multiplayer else state.current_player_index
 		_apply_command(cmd, by)
 	else:
-		_net_command.rpc_id(1, cmd)
+		_net_command.rpc_id(GameConfig.authority_peer_id, cmd)
 
 @rpc("any_peer", "reliable")
 func _net_command(cmd: Dictionary) -> void:
@@ -193,7 +207,7 @@ func _request_resync() -> void:
 	if _authoritative():
 		_do_resync()
 	else:
-		_ask_resync.rpc_id(1)
+		_ask_resync.rpc_id(GameConfig.authority_peer_id)
 
 @rpc("any_peer", "reliable")
 func _ask_resync() -> void:
@@ -205,6 +219,19 @@ func _do_resync() -> void:
 	_snapshot_dirty = true
 	if hud != null:
 		hud.update()
+
+# Appelé par Net quand l'autorité (ou le relais) tombe : on termine proprement et on rentre au menu.
+func on_authority_lost() -> void:
+	if _authority_lost:
+		return  # déjà géré (peut être notifié 2x : _authority_left + peer_disconnected)
+	_authority_lost = true
+	if state != null:
+		state.phase = GameState.Phase.GAME_OVER
+	registry.emit("game_log", {"text": "⚠️ L'hôte a quitté. Partie terminée."})
+	if hud != null:
+		hud.update()
+	await get_tree().create_timer(2.0).timeout
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 func _apply_command(cmd: Dictionary, by: int) -> void:
 	if not _authoritative():
@@ -283,17 +310,85 @@ func _build_snapshot() -> Dictionary:
 		"log": game_log.duplicate(),
 	}
 
-@rpc("authority", "reliable")
+# === SAUVEGARDE / REPRISE ===
+# L'autorité écrit l'état complet (méta + snapshot) dans user://saves/<slot>.json.
+func save_game(slot: String) -> bool:
+	DirAccess.make_dir_recursive_absolute(GameConfig.SAVES_DIR)
+	var data := {
+		"meta": {
+			"mods": GameConfig.enabled_mod_ids,
+			"map_size": GameConfig.map_size,
+			"seed": GameConfig.game_seed,
+			"timer": GameConfig.turn_timer,
+			"names": GameConfig.player_names,
+			"turn": state.current_player_index,
+		},
+		"snapshot": _snapshot_to_json(_build_snapshot()),
+	}
+	var f := FileAccess.open("%s/%s.json" % [GameConfig.SAVES_DIR, slot], FileAccess.WRITE)
+	if f == null:
+		return false
+	f.store_string(JSON.stringify(data, "\t"))
+	f.close()
+	registry.emit("game_log", {"text": "💾 Partie sauvegardée : %s" % slot})
+	return true
+
+# JSON ne connaît pas Vector2 -> marqueurs en [x, y] (et inversement au chargement).
+func _snapshot_to_json(snap: Dictionary) -> Dictionary:
+	var s := snap.duplicate()
+	var m := {}
+	for id in snap.get("markers", {}):
+		var v: Vector2 = snap["markers"][id]
+		m[id] = [v.x, v.y]
+	s["markers"] = m
+	return s
+
+func _snapshot_from_json(j: Dictionary) -> Dictionary:
+	var s := j.duplicate(true)
+	var m := {}
+	for id in j.get("markers", {}):
+		var a = j["markers"][id]
+		m[id] = Vector2(float(a[0]), float(a[1]))
+	s["markers"] = m
+	# JSON ramène les entiers en float -> on réentier les champs indexés/sensibles.
+	for key in s.get("vertex_state", {}):
+		s["vertex_state"][key]["owner"] = int(s["vertex_state"][key]["owner"])
+	for key in s.get("edge_state", {}):
+		s["edge_state"][key]["owner"] = int(s["edge_state"][key]["owner"])
+	for pd in s.get("players", []):
+		var r := {}
+		for res in pd.get("resources", {}):
+			r[res] = int(pd["resources"][res])
+		pd["resources"] = r
+	return s
+
+# any_peer (et non "authority") car en mode relais l'autorité est un CLIENT, pas le serveur.
+# On n'accepte donc un snapshot QUE s'il vient bien du pair autorité.
+@rpc("any_peer", "reliable")
 func _net_snapshot(snap: Dictionary) -> void:
+	if multiplayer.get_remote_sender_id() != GameConfig.authority_peer_id:
+		return
 	_apply_snapshot(snap)
 
 func _apply_snapshot(snap: Dictionary) -> void:
-	board.vertex_state = snap["vertex_state"]
-	board.edge_state = snap["edge_state"]
-	board_view.refresh_all()
-	board.tile_markers = snap["markers"]
-	for mid in board.tile_markers:
-		board.marker_changed.emit(mid, board.tile_markers[mid])
+	# Incrémental: ne rafraîchir QUE les cases changées (sinon on ré-instancie tous les
+	# modèles 3D de bâtiments + re-rend les 126 sommets/arêtes à CHAQUE snapshot -> gros
+	# à-coups pendant les actions).
+	var new_v: Dictionary = snap["vertex_state"]
+	var new_e: Dictionary = snap["edge_state"]
+	var new_m: Dictionary = snap["markers"]
+	var changed_v := _diff_keys(board.vertex_state, new_v)
+	var changed_e := _diff_keys(board.edge_state, new_e)
+	var changed_m := _diff_keys(board.tile_markers, new_m)
+	board.vertex_state = new_v
+	board.edge_state = new_e
+	board.tile_markers = new_m
+	for key in changed_v:
+		board_view._refresh_vertex(key)
+	for key in changed_e:
+		board_view._refresh_edge(key)
+	for mid in changed_m:
+		board.marker_changed.emit(mid, board.tile_markers.get(mid, Vector2.INF))
 	state.current_player_index = snap["current_player"]
 	state.build_mode_id = snap["build_mode"]
 	state.winner_index = snap["winner"]
@@ -302,8 +397,10 @@ func _apply_snapshot(snap: Dictionary) -> void:
 	for i in state.players.size():
 		var pd: Dictionary = snap["players"][i]
 		var p: Player = state.players[i]
+		var res_changed: bool = p.resources != pd["resources"]
 		p.resources = pd["resources"]
-		p.resources_changed.emit(p.id)
+		if res_changed:
+			p.resources_changed.emit(p.id)
 		for k in pd.get("custom_data", {}):
 			p.custom_data[k] = pd["custom_data"][k]
 		_rebuild_buildings(p)
@@ -312,6 +409,17 @@ func _apply_snapshot(snap: Dictionary) -> void:
 	game_log = snap.get("log", [])
 	if hud != null:
 		hud.update()
+
+# Clés dont la valeur a changé (ajout / suppression / modif) entre deux dictionnaires.
+func _diff_keys(old: Dictionary, new: Dictionary) -> Array:
+	var out: Dictionary = {}
+	for k in old:
+		if not new.has(k) or new[k] != old[k]:
+			out[k] = true
+	for k in new:
+		if not old.has(k) or old[k] != new[k]:
+			out[k] = true
+	return out.keys()
 
 # Reconstruit player.buildings depuis l'état du board (pour les PV/affichage côté client).
 func _rebuild_buildings(p: Player) -> void:
@@ -363,7 +471,15 @@ func _connect_broadcast_signals() -> void:
 func _process(_delta: float) -> void:
 	if _snapshot_dirty and GameConfig.is_multiplayer and _authoritative():
 		_snapshot_dirty = false
-		_net_snapshot.rpc(_build_snapshot())
+		_send_snapshot_to_clients(_build_snapshot())
+
+# Envoi CIBLÉ à chaque joueur (sauf soi) plutôt qu'un rpc() global : en mode relais le
+# serveur n'est pas un joueur, il ne doit jamais recevoir de RPC de jeu (il relaie seulement).
+func _send_snapshot_to_clients(snap: Dictionary) -> void:
+	var me := multiplayer.get_unique_id()
+	for pid in GameConfig.peer_to_player:
+		if int(pid) != me:
+			_net_snapshot.rpc_id(int(pid), snap)
 
 func _flash_tile_handler(ctx: Dictionary) -> void:
 	var coords: Vector2 = ctx.get("coords", Vector2.ZERO)
