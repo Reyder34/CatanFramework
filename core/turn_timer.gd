@@ -6,8 +6,9 @@ extends Node
 # tour. Le core ne connaît pas la notion de "passer son tour" : il signale juste la fin.
 #
 # - Actif uniquement pendant un TOUR DE JEU normal (phase PLAY, hors sous-phase).
-# - EN PAUSE quand une pop-up est ouverte (locale OU panneau réseau en attente, via
-#   UIRegistry.is_any_panel_open()).
+# - EN PAUSE seulement pendant les ÉVÉNEMENTS OBLIGATOIRES, qui passent tous par une
+#   sous-phase synchronisée (défausse, déplacement du voleur, vol, routes gratuites).
+#   Les pop-ups OPTIONNELLES (échange, banque, cartes) ne stoppent PAS le timer.
 # - N'émet le timeout que sur le pair AUTORITAIRE (host/solo) -> action une seule fois.
 # - UI persistante core (déplaçable/redimensionnable comme les autres panneaux).
 
@@ -44,12 +45,13 @@ func _reset() -> void:
 	_remaining = _duration
 	_fired = false
 
-# Actif: tour de jeu normal, hors sous-phase (voleur…) et hors pop-up.
+# Actif: tour de jeu normal, hors sous-phase. Les événements obligatoires (défausse, voleur,
+# vol, routes gratuites) posent une sub_phase -> pause synchronisée chez TOUS les joueurs.
+# Les pop-ups optionnelles (échange/banque/cartes) n'ont pas de sub_phase -> pas de pause
+# (corrige la désync : avant, is_any_panel_open() ne bloquait le décompte que localement).
 func _active() -> bool:
 	return _state.phase == GameState.Phase.PLAY \
-		and _state.sub_phase == "" \
-		and _registry.ui != null \
-		and not _registry.ui.is_any_panel_open()
+		and _state.sub_phase == ""
 
 func _process(delta: float) -> void:
 	if _duration <= 0.0:

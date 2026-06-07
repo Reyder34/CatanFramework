@@ -13,6 +13,10 @@ var panel_origins: Dictionary = {}
 # Compte le nombre de panneaux actuellement ouverts
 var _open_count: int = 0
 
+# Instances des pop-ups modaux (show_panel) actuellement ouverts -> pour pouvoir les
+# fermer de force (annulation des échanges/banque à l'expiration du timer de tour).
+var _open_modals: Array = []
+
 # id -> instance des panneaux persistants (non bloquants, mis à jour en continu)
 var _persistent: Dictionary = {}
 
@@ -41,6 +45,7 @@ func show_panel(panel_id: String, params: Dictionary = {}) -> Variant:
 	if instance is CanvasItem:
 		instance.visible = true
 	ui_root.add_child(instance)
+	_open_modals.append(instance)
 	# Affiche le panneau en haut-centre (pour ne pas masquer les ressources en haut-gauche).
 	if instance is Control:
 		_place_top_center(instance)
@@ -56,6 +61,7 @@ func show_panel(panel_id: String, params: Dictionary = {}) -> Variant:
 	var result: Variant = null
 	if instance.has_signal("closed"):
 		result = await instance.closed
+	_open_modals.erase(instance)
 	instance.queue_free()
 	_open_count -= 1
 	return result
@@ -133,9 +139,18 @@ func _place_top_center(c: Control) -> void:
 func is_any_panel_open() -> bool:
 	return _open_count > 0
 
+# Ferme de force tous les pop-ups modaux ouverts (chacun se résout avec null = annulation).
+# Appelé à l'expiration du timer de tour pour annuler les échanges/la banque en cours.
+# (À l'expiration, aucune sous-phase n'est active -> seuls des panneaux optionnels peuvent
+# être ouverts, donc on n'annule jamais un événement obligatoire.)
+func cancel_open_modals() -> void:
+	for inst in _open_modals.duplicate():
+		if is_instance_valid(inst) and inst.has_signal("closed"):
+			inst.emit_signal("closed", null)
+
 # Comptés comme "ouverts" même si le panneau s'affiche sur un AUTRE peer (réseau) :
-# Net appelle ceci autour d'un panneau distant en attente -> le timer de tour se met
-# en pause pendant qu'un joueur répond à une pop-up, où qu'elle soit.
+# Net appelle ceci autour d'un panneau distant en attente -> gèle les actions/HUD locaux
+# pendant la réponse. (Le timer de tour, lui, ne dépend QUE des sous-phases, pas de ceci.)
 func note_external_open() -> void:
 	_open_count += 1
 
