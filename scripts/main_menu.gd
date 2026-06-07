@@ -27,14 +27,21 @@ extends Control
 @onready var _saves_list: VBoxContainer = %SavesList
 @onready var _start_btn: Button = %StartBtn
 @onready var _status: Label = %Status
+@onready var _relay_form: VBoxContainer = %RelayForm
+@onready var _relay_addr: LineEdit = %RelayAddrEdit
+@onready var _relay_port: SpinBox = %RelayPortSpin
+@onready var _relay_token: LineEdit = %RelayTokenEdit
 
 var _mods: Dictionary = {}        # id -> GameMod
 var _enabled: Dictionary = {}     # id -> bool
 var _checkboxes: Dictionary = {}  # id -> CheckBox
 var _in_lobby := false
 var _suppress_push := false       # vrai quand on APPLIQUE une config reçue (pas de re-broadcast)
+var _config_published := false    # l'autorité a-t-elle déjà publié sa config initiale au salon ?
 
 func _ready() -> void:
+	if Net.is_relay:
+		return  # process relais (--relay) : pas de menu, on laisse Net faire serveur
 	GameConfig.is_multiplayer = false
 	Net.leave()
 	get_window().content_scale_factor = 1.0
@@ -50,6 +57,8 @@ func _ready() -> void:
 	%RetourSoloBtn.pressed.connect(_show_home)
 	%HostBtn.pressed.connect(_on_host)
 	%JoinBtn.pressed.connect(_on_join)
+	%RelayBtn.pressed.connect(func() -> void: _relay_form.visible = not _relay_form.visible)
+	%RelayConnectBtn.pressed.connect(_on_relay_connect)
 	%RetourMultiBtn.pressed.connect(_show_home)
 	%StartBtn.pressed.connect(_on_start)
 	%LeaveBtn.pressed.connect(_on_leave)
@@ -165,14 +174,14 @@ func _enabled_ids() -> Array:
 func _push_config_if_host() -> void:
 	if _suppress_push:
 		return
-	if _in_lobby and Net.is_host:
+	if _in_lobby and Net.can_edit_lobby():
 		Net.set_lobby_config(_enabled_ids(), int(_map_spin.value), int(_timer_spin.value))
 
 func _on_config_edited(_v: float = 0.0) -> void:
 	_push_config_if_host()
 
 func _on_config_received() -> void:
-	if Net.is_host:
+	if Net.am_authority():
 		return
 	_suppress_push = true
 	_map_spin.value = clampi(Net.lobby_map_size, 2, 6)
@@ -218,6 +227,14 @@ func _on_join() -> void:
 		_set_status("Connexion à %s…" % _ip_edit.text)
 	else:
 		_set_status("Adresse invalide.")
+
+# Connexion à un serveur-relais distant (token requis ; le 1er connecté devient l'autorité).
+func _on_relay_connect() -> void:
+	Net.my_name = _name_edit.text
+	if Net.join_relay(_relay_addr.text, int(_relay_port.value), _relay_token.text):
+		_set_status("Connexion au serveur…")
+	else:
+		_set_status("Adresse/port invalides.")
 
 func _on_connected() -> void:
 	_enter_lobby(false)
@@ -274,22 +291,14 @@ func _show_multi() -> void:
 	_hide_all_screens()
 	_multi_box.visible = true
 
-func _enter_lobby(as_host: bool) -> void:
+func _enter_lobby(_as_host: bool) -> void:
+	# _as_host n'est qu'indicatif : en mode relais l'autorité (1er client) n'est connue
+	# qu'à réception de _sync_lobby. _refresh_lobby ré-évalue l'autorité à chaque mise à jour.
 	_in_lobby = true
+	_config_published = false
 	_hide_all_screens()
 	_move_config(_lobby_slot)
 	_pc_row.visible = false  # en multi: nb joueurs = nb connectés
-	_config_title.text = "Options (tu décides)" if as_host else "Options (réglées par l'hôte)"
-	_set_config_editable(as_host)
-	if as_host:
-		_push_config_if_host()  # publie la config initiale aux clients
-	else:
-		_on_config_received()   # applique la config déjà reçue
-	# Reprise de partie : seul l'hôte charge une save (avec contrainte de roster).
-	_saves_label.visible = as_host
-	_saves_list.visible = as_host
-	if as_host:
-		_refresh_saves_list()
 	_lobby_box.visible = true
 	_refresh_lobby()
 
@@ -323,7 +332,7 @@ func _on_pick_save(slot: String) -> void:
 		int(meta.get("timer", 0)), meta.get("names", []), int(meta.get("seed", 0)))
 
 func _refresh_lobby() -> void:
-	if _lobby_list == null:
+	if _lobby_list == null or not _in_lobby:
 		return
 	for c in _lobby_list.get_children():
 		c.queue_free()
@@ -332,8 +341,21 @@ func _refresh_lobby() -> void:
 	for i in ids.size():
 		var id = ids[i]
 		var lbl := Label.new()
-		var tag := "  (hôte)" if id == 1 else ""
+		var tag := "  (hôte)" if id == Net.authority_peer_id else ""
 		lbl.text = "J%d : %s%s" % [i, Net.players[id].get("name", "?"), tag]
 		_lobby_list.add_child(lbl)
-	_start_btn.visible = Net.is_host
+	# Ré-évalue l'autorité : l'autorité règle les options + voit Lancer/les sauvegardes.
+	var auth := Net.am_authority()
+	_config_title.text = "Options (tu décides)" if auth else "Options (réglées par l'hôte)"
+	_set_config_editable(auth)
+	_saves_label.visible = auth
+	_saves_list.visible = auth
+	if auth and _saves_list.get_child_count() == 0:
+		_refresh_saves_list()
+	if not auth:
+		_on_config_received()         # reflète la config de l'autorité
+	elif not _config_published:
+		_config_published = true
+		_push_config_if_host()        # publie la config initiale une fois reconnu autorité
+	_start_btn.visible = auth
 	_start_btn.disabled = Net.players.size() < 2
