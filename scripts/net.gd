@@ -371,6 +371,40 @@ func _run_one_panel(player_index: int, panel_id: String, raw: Dictionary, idx: i
 	results[idx] = await show_panel_for(player_index, panel_id, raw)
 	remaining["n"] -= 1
 
+# COURSE entre plusieurs panneaux : dès qu'une réponse satisfait `accept` (prédicat sur le
+# résultat), on FERME tous les autres panneaux (ici + chez les clients) et on renvoie
+# {"index": i, "result": r}. Personne n'accepte -> {"index": -1}. Sert à l'échange "à tout
+# le monde" : le 1er qui accepte conclut, l'UI des autres se ferme (plus d'attente inutile).
+func show_panels_race(requests: Array, accept: Callable) -> Dictionary:
+	if requests.is_empty():
+		return {"index": -1, "result": null}
+	# Solo : séquentiel (un seul écran), le 1er accept gagne, on n'affiche pas la suite.
+	if not GameConfig.is_multiplayer:
+		for idx in requests.size():
+			var r = requests[idx]
+			var res = await show_panel_for(r["player_index"], r["panel_id"], r["raw"])
+			if accept.call(res):
+				return {"index": idx, "result": res}
+		return {"index": -1, "result": null}
+	# Réseau : tous les panneaux en parallèle, on s'arrête au 1er accept.
+	var state := {"done": false, "n": requests.size(), "outcome": {"index": -1, "result": null}}
+	for idx in requests.size():
+		_run_race_panel(requests[idx], idx, accept, state)
+	while not state["done"] and state["n"] > 0:
+		await game.get_tree().process_frame
+	return state["outcome"]
+
+func _run_race_panel(req_def: Dictionary, idx: int, accept: Callable, state: Dictionary) -> void:
+	var r = await show_panel_for(req_def["player_index"], req_def["panel_id"], req_def["raw"])
+	state["n"] -= 1
+	if state["done"]:
+		return  # un autre a déjà conclu l'échange
+	if accept.call(r):
+		state["done"] = true
+		state["outcome"] = {"index": idx, "result": r}
+		if game != null and game.has_method("broadcast_cancel_modals"):
+			game.broadcast_cancel_modals()  # ferme les panneaux des autres répondants
+
 func _player_to_peer(player_index: int) -> int:
 	for pid in GameConfig.peer_to_player:
 		if int(GameConfig.peer_to_player[pid]) == player_index:
