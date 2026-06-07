@@ -854,15 +854,14 @@ func _action_propose_trade() -> void:
 			"panel_id": "trade_response",
 			"raw": {"proposer_index": proposer.id, "offer": offer, "demand": demand},
 		})
-	var responses: Array = await Net.show_panels_parallel(requests)
-	# Premier qui accepte remporte l'échange.
-	for k in responses.size():
-		var r = responses[k]
-		if r != null and r.get("action") == "accept":
-			var responder: Player = _state.players[indices[k]]
-			_execute_trade(proposer, responder, offer, demand)
-			_registry.emit("game_log", {"text": "%s a échangé avec %s" % [proposer.label(), responder.label()]})
-			return
+	# Course : le PREMIER qui accepte conclut, et l'UI des autres répondants se ferme aussitôt.
+	var outcome: Dictionary = await Net.show_panels_race(requests, func(r): return r != null and r.get("action") == "accept")
+	var win: int = int(outcome.get("index", -1))
+	if win >= 0:
+		var responder: Player = _state.players[indices[win]]
+		_execute_trade(proposer, responder, offer, demand)
+		_registry.emit("game_log", {"text": "%s a échangé avec %s" % [proposer.label(), responder.label()]})
+		return
 	_registry.emit("game_log", {"text": "Personne n'a accepté l'échange de %s" % proposer.label()})
 
 func _execute_trade(proposer: Player, responder: Player, offer: Dictionary, demand: Dictionary) -> void:

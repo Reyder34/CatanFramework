@@ -238,6 +238,11 @@ func on_authority_lost() -> void:
 # Expiration du timer (émise sur l'autorité uniquement) : on annule les pop-ups optionnelles
 # (échange/banque) ouvertes ici ET chez chaque client, pour ne pas laisser un échange traîner.
 func _on_turn_timeout_cancel(_ctx) -> void:
+	broadcast_cancel_modals()
+
+# Ferme les pop-ups modales ouvertes ICI et chez TOUS les clients. Appelé par l'autorité :
+# à l'expiration du timer, ou quand un échange est conclu (le 1er accepteur ferme l'UI de tous).
+func broadcast_cancel_modals() -> void:
 	if registry.ui != null:
 		registry.ui.cancel_open_modals()
 	if not GameConfig.is_multiplayer:

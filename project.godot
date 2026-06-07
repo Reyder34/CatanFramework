@@ -22,3 +22,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Net="*res://scripts/net.gd"
+
+[gui]
+
+theme/default_font_multichannel_signed_distance_field=true
