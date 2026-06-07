@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://b314sywhcegbv"]
+[gd_scene format=3 uid="uid://b314sywhcegbv"]
 
-[ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
+[ext_resource type="Script" uid="uid://dprn233hniieb" path="res://scripts/hud.gd" id="1_hud"]
 [ext_resource type="Theme" uid="uid://dgp2ysc4sadf4" path="res://ui/theme.tres" id="2_theme"]
 
-[node name="HUD" type="Control"]
+[node name="HUD" type="Control" unique_id=1676276043]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,32 +14,32 @@ mouse_filter = 2
 theme = ExtResource("2_theme")
 script = ExtResource("1_hud")
 
-[node name="Resources" type="PanelContainer" parent="." groups=["hud_window"]]
+[node name="Resources" type="PanelContainer" parent="." unique_id=347916835 groups=["hud_window"]]
 layout_mode = 1
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 180.0
 offset_bottom = 160.0
 
-[node name="V" type="VBoxContainer" parent="Resources"]
+[node name="V" type="VBoxContainer" parent="Resources" unique_id=1353920949]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="TitleBar" type="PanelContainer" parent="Resources/V" groups=["hud_titlebar"]]
+[node name="TitleBar" type="PanelContainer" parent="Resources/V" unique_id=1658366620 groups=["hud_titlebar"]]
 layout_mode = 2
 mouse_default_cursor_shape = 13
 theme_type_variation = &"TitleBar"
 
-[node name="L" type="Label" parent="Resources/V/TitleBar"]
+[node name="L" type="Label" parent="Resources/V/TitleBar" unique_id=1266372245]
 layout_mode = 2
 text = "⠿  Ressources"
 
-[node name="ResourcesContent" type="VBoxContainer" parent="Resources/V"]
+[node name="ResourcesContent" type="VBoxContainer" parent="Resources/V" unique_id=999613273]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="Players" type="PanelContainer" parent="." groups=["hud_window"]]
+[node name="Players" type="PanelContainer" parent="." unique_id=541088517 groups=["hud_window"]]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -50,25 +50,25 @@ offset_right = -8.0
 offset_bottom = 200.0
 grow_horizontal = 0
 
-[node name="V" type="VBoxContainer" parent="Players"]
+[node name="V" type="VBoxContainer" parent="Players" unique_id=93331199]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="TitleBar" type="PanelContainer" parent="Players/V" groups=["hud_titlebar"]]
+[node name="TitleBar" type="PanelContainer" parent="Players/V" unique_id=1110928594 groups=["hud_titlebar"]]
 layout_mode = 2
 mouse_default_cursor_shape = 13
 theme_type_variation = &"TitleBar"
 
-[node name="L" type="Label" parent="Players/V/TitleBar"]
+[node name="L" type="Label" parent="Players/V/TitleBar" unique_id=71944392]
 layout_mode = 2
 text = "⠿  Joueurs"
 
-[node name="PlayersContent" type="VBoxContainer" parent="Players/V"]
+[node name="PlayersContent" type="VBoxContainer" parent="Players/V" unique_id=1865965065]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="Journal" type="PanelContainer" parent="." groups=["hud_window"]]
+[node name="Journal" type="PanelContainer" parent="." unique_id=1013577054 groups=["hud_window"]]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -79,36 +79,36 @@ offset_right = 90.0
 offset_bottom = 60.0
 grow_horizontal = 2
 
-[node name="V" type="VBoxContainer" parent="Journal"]
+[node name="V" type="VBoxContainer" parent="Journal" unique_id=146360284]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="TitleBar" type="PanelContainer" parent="Journal/V" groups=["hud_titlebar"]]
+[node name="TitleBar" type="PanelContainer" parent="Journal/V" unique_id=1941155886 groups=["hud_titlebar"]]
 layout_mode = 2
 mouse_default_cursor_shape = 13
 theme_type_variation = &"TitleBar"
 
-[node name="L" type="Label" parent="Journal/V/TitleBar"]
+[node name="L" type="Label" parent="Journal/V/TitleBar" unique_id=1634735602]
 layout_mode = 2
 text = "⠿  Journal"
 
-[node name="JournalButton" type="Button" parent="Journal/V"]
+[node name="JournalButton" type="Button" parent="Journal/V" unique_id=89484429]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="JournalScroll" type="ScrollContainer" parent="Journal/V"]
+[node name="JournalScroll" type="ScrollContainer" parent="Journal/V" unique_id=1162216314]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(260, 160)
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="JournalContent" type="VBoxContainer" parent="Journal/V/JournalScroll"]
+[node name="JournalContent" type="VBoxContainer" parent="Journal/V/JournalScroll" unique_id=920753156]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Build" type="PanelContainer" parent="." groups=["hud_window"]]
+[node name="Build" type="PanelContainer" parent="." unique_id=159234333 groups=["hud_window"]]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -119,25 +119,25 @@ offset_right = 180.0
 offset_bottom = -8.0
 grow_vertical = 0
 
-[node name="V" type="VBoxContainer" parent="Build"]
+[node name="V" type="VBoxContainer" parent="Build" unique_id=1025848310]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="TitleBar" type="PanelContainer" parent="Build/V" groups=["hud_titlebar"]]
+[node name="TitleBar" type="PanelContainer" parent="Build/V" unique_id=1646275188 groups=["hud_titlebar"]]
 layout_mode = 2
 mouse_default_cursor_shape = 13
 theme_type_variation = &"TitleBar"
 
-[node name="L" type="Label" parent="Build/V/TitleBar"]
+[node name="L" type="Label" parent="Build/V/TitleBar" unique_id=252740516]
 layout_mode = 2
 text = "⠿  Construire"
 
-[node name="BuildContent" type="VBoxContainer" parent="Build/V"]
+[node name="BuildContent" type="VBoxContainer" parent="Build/V" unique_id=2099271709]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="Turn" type="PanelContainer" parent="." groups=["hud_window"]]
+[node name="Turn" type="PanelContainer" parent="." unique_id=1898170958 groups=["hud_window"]]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -151,25 +151,25 @@ offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="V" type="VBoxContainer" parent="Turn"]
+[node name="V" type="VBoxContainer" parent="Turn" unique_id=2047575428]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="TitleBar" type="PanelContainer" parent="Turn/V" groups=["hud_titlebar"]]
+[node name="TitleBar" type="PanelContainer" parent="Turn/V" unique_id=1465228047 groups=["hud_titlebar"]]
 layout_mode = 2
 mouse_default_cursor_shape = 13
 theme_type_variation = &"TitleBar"
 
-[node name="L" type="Label" parent="Turn/V/TitleBar"]
+[node name="L" type="Label" parent="Turn/V/TitleBar" unique_id=1402665802]
 layout_mode = 2
 text = "⠿  Tour"
 
-[node name="TurnContent" type="VBoxContainer" parent="Turn/V"]
+[node name="TurnContent" type="VBoxContainer" parent="Turn/V" unique_id=558389171]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="Cards" type="PanelContainer" parent="." groups=["hud_window"]]
+[node name="Cards" type="PanelContainer" parent="." unique_id=1055207310 groups=["hud_window"]]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -183,29 +183,29 @@ offset_bottom = -8.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="V" type="VBoxContainer" parent="Cards"]
+[node name="V" type="VBoxContainer" parent="Cards" unique_id=1253290886]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="TitleBar" type="PanelContainer" parent="Cards/V" groups=["hud_titlebar"]]
+[node name="TitleBar" type="PanelContainer" parent="Cards/V" unique_id=1052105074 groups=["hud_titlebar"]]
 layout_mode = 2
 mouse_default_cursor_shape = 13
 theme_type_variation = &"TitleBar"
 
-[node name="L" type="Label" parent="Cards/V/TitleBar"]
+[node name="L" type="Label" parent="Cards/V/TitleBar" unique_id=1716330620]
 layout_mode = 2
 text = "⠿  Cartes"
 
-[node name="CardActionsContent" type="VBoxContainer" parent="Cards/V"]
+[node name="CardActionsContent" type="VBoxContainer" parent="Cards/V" unique_id=378648864]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="HandTitle" type="Label" parent="Cards/V"]
+[node name="HandTitle" type="Label" parent="Cards/V" unique_id=1106769337]
 layout_mode = 2
 text = "Ma main"
 
-[node name="HandContent" type="VBoxContainer" parent="Cards/V"]
+[node name="HandContent" type="VBoxContainer" parent="Cards/V" unique_id=971149639]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
