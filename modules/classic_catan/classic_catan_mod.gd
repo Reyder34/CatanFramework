@@ -69,11 +69,11 @@ func register(reg: GameRegistry) -> void:
 
 func _declare_resources(reg: GameRegistry) -> void:
 	var tiles := "res://modules/classic_catan/tiles/"
-	reg.declare_resource("wood",   {"name": "Bois",    "color": Color(0.2, 0.5, 0.1), "model": tiles + "wood.glb"})
-	reg.declare_resource("brick",  {"name": "Brique",  "color": Color(0.7, 0.3, 0.1), "model": tiles + "brick.glb"})
-	reg.declare_resource("sheep",  {"name": "Mouton",  "color": Color(0.6, 0.9, 0.4), "model": tiles + "sheep.glb"})
-	reg.declare_resource("wheat",  {"name": "Blé",     "color": Color(0.9, 0.8, 0.2), "model": tiles + "wheat.glb"})
-	reg.declare_resource("ore",    {"name": "Minerai", "color": Color(0.5, 0.5, 0.6), "model": tiles + "ore.glb"})
+	reg.declare_resource("wood",   {"name": "Bois",    "color": Color(0.2, 0.5, 0.1), "model": tiles + "wood.glb", "icon": "res://modules/classic_catan/images/bois.png"})
+	reg.declare_resource("brick",  {"name": "Brique",  "color": Color(0.7, 0.3, 0.1), "model": tiles + "brick.glb", "icon": "res://modules/classic_catan/images/briques.png"})
+	reg.declare_resource("sheep",  {"name": "Mouton",  "color": Color(0.6, 0.9, 0.4), "model": tiles + "sheep.glb", "icon": "res://modules/classic_catan/images/mouton.png"})
+	reg.declare_resource("wheat",  {"name": "Blé",     "color": Color(0.9, 0.8, 0.2), "model": tiles + "wheat.glb", "icon": "res://modules/classic_catan/images/ble.png"})
+	reg.declare_resource("ore",    {"name": "Minerai", "color": Color(0.5, 0.5, 0.6), "model": tiles + "ore.glb", "icon": "res://modules/classic_catan/images/minerais.png"})
 	reg.declare_resource("desert", {"name": "Désert",  "color": Color(0.9, 0.8, 0.5), "is_desert": true, "model": tiles + "desert.glb"})
 
 func _declare_buildings(reg: GameRegistry) -> void:
