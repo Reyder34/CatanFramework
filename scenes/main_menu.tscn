@@ -196,6 +196,61 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Rejoindre"
 
+[node name="RelayBtn" type="Button" parent="Center/Panel/Margin/Root/MultiBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rejoindre un serveur"
+
+[node name="RelayForm" type="VBoxContainer" parent="Center/Panel/Margin/Root/MultiBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="RelayAddrRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/MultiBox/RelayForm"]
+layout_mode = 2
+
+[node name="L" type="Label" parent="Center/Panel/Margin/Root/MultiBox/RelayForm/RelayAddrRow"]
+layout_mode = 2
+text = "Adresse :"
+
+[node name="RelayAddrEdit" type="LineEdit" parent="Center/Panel/Margin/Root/MultiBox/RelayForm/RelayAddrRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "127.0.0.1"
+
+[node name="RelayPortRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/MultiBox/RelayForm"]
+layout_mode = 2
+
+[node name="L" type="Label" parent="Center/Panel/Margin/Root/MultiBox/RelayForm/RelayPortRow"]
+layout_mode = 2
+text = "Port :"
+
+[node name="RelayPortSpin" type="SpinBox" parent="Center/Panel/Margin/Root/MultiBox/RelayForm/RelayPortRow"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 65535.0
+value = 24545.0
+
+[node name="RelayTokenRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/MultiBox/RelayForm"]
+layout_mode = 2
+
+[node name="L" type="Label" parent="Center/Panel/Margin/Root/MultiBox/RelayForm/RelayTokenRow"]
+layout_mode = 2
+text = "Mot de passe :"
+
+[node name="RelayTokenEdit" type="LineEdit" parent="Center/Panel/Margin/Root/MultiBox/RelayForm/RelayTokenRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+secret = true
+
+[node name="RelayConnectBtn" type="Button" parent="Center/Panel/Margin/Root/MultiBox/RelayForm"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Se connecter"
+
 [node name="RetourMultiBtn" type="Button" parent="Center/Panel/Margin/Root/MultiBox"]
 unique_name_in_owner = true
 layout_mode = 2

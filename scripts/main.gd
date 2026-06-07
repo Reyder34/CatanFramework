@@ -8,6 +8,7 @@ var hud: GameHud
 
 var loaded_mods: Array = []
 var _snapshot_dirty := false  # réseau (hôte): un changement à diffuser
+var _authority_lost := false  # réseau: l'autorité a quitté (évite un double retour menu)
 var game_log: Array = []  # derniers événements (dés, actions...), synchronisé en réseau
 
 func _ready() -> void:
@@ -218,6 +219,19 @@ func _do_resync() -> void:
 	_snapshot_dirty = true
 	if hud != null:
 		hud.update()
+
+# Appelé par Net quand l'autorité (ou le relais) tombe : on termine proprement et on rentre au menu.
+func on_authority_lost() -> void:
+	if _authority_lost:
+		return  # déjà géré (peut être notifié 2x : _authority_left + peer_disconnected)
+	_authority_lost = true
+	if state != null:
+		state.phase = GameState.Phase.GAME_OVER
+	registry.emit("game_log", {"text": "⚠️ L'hôte a quitté. Partie terminée."})
+	if hud != null:
+		hud.update()
+	await get_tree().create_timer(2.0).timeout
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 func _apply_command(cmd: Dictionary, by: int) -> void:
 	if not _authoritative():
