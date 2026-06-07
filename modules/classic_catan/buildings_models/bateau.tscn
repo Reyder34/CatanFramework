@@ -1,0 +1,74 @@
+[gd_scene format=3 uid="uid://bqkpjevllocgq"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ficfq"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_353no"]
+height = 1.95
+
+[sub_resource type="PrismMesh" id="PrismMesh_ebrqu"]
+size = Vector3(0.8, 0.8, 0.05)
+
+[sub_resource type="PrismMesh" id="PrismMesh_ficfq"]
+size = Vector3(0.2, 0.8, 0.05)
+
+[sub_resource type="PrismMesh" id="PrismMesh_353no"]
+size = Vector3(0.8, 0.8, 0.3)
+subdivide_height = 10
+
+[sub_resource type="BoxMesh" id="BoxMesh_4lcqp"]
+size = Vector3(0.85, 0.6, 0.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ebrqu"]
+size = Vector3(0.85, 0.2, 0.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_q7pjr"]
+size = Vector3(1.3, 0.001, 0.8)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ux6bd"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 1.0
+
+[node name="Node3D" type="Node3D" unique_id=742059813]
+
+[node name="bateau" type="CSGMesh3D" parent="." unique_id=320237218]
+transform = Transform3D(-4.371139e-08, -1, 0, -4.371139e-08, 1.9106855e-15, -1, 1, -4.371139e-08, -4.371139e-08, -0.0070141554, -0.0061662197, 0)
+mesh = SubResource("CapsuleMesh_ficfq")
+
+[node name="sub_coque" type="CSGMesh3D" parent="bateau" unique_id=1264532699]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.007014159, -0.0061662197, -0.115995646)
+operation = 2
+mesh = SubResource("CapsuleMesh_353no")
+
+[node name="avant1" type="CSGMesh3D" parent="bateau" unique_id=1171516622]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.172675e-08, 1.0833758, -0.12877926)
+mesh = SubResource("PrismMesh_ebrqu")
+
+[node name="avant2" type="CSGMesh3D" parent="bateau/avant1" unique_id=2100716381]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.172675e-08, 1.0833758, -0.12877926)
+mesh = SubResource("PrismMesh_ficfq")
+
+[node name="avant3" type="CSGMesh3D" parent="bateau/avant1" unique_id=861402211]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.580535e-09, 0.00022161007, 0.1732014)
+mesh = SubResource("PrismMesh_353no")
+
+[node name="sub_coque2" type="CSGMesh3D" parent="bateau" unique_id=721793443]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.007014158, -0.0061662197, -0.115995646)
+operation = 2
+mesh = SubResource("CapsuleMesh_353no")
+
+[node name="arriere" type="CSGMesh3D" parent="bateau" unique_id=224131805]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2405364e-08, -0.829808, 0.08846)
+mesh = SubResource("BoxMesh_4lcqp")
+
+[node name="bas_entree_capitaine" type="CSGMesh3D" parent="bateau/arriere" unique_id=415913539]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2656217e-08, 0.20108086, 0.08846)
+mesh = SubResource("BoxMesh_ebrqu")
+
+[node name="bas_cale" type="CSGMesh3D" parent="bateau" unique_id=147228007]
+transform = Transform3D(3.5527137e-15, 4.371139e-08, 1, 1, -4.371139e-08, 0, 4.371139e-08, 1, -4.371139e-08, 1.1223198e-08, 0.06974819, 0.18700862)
+mesh = SubResource("BoxMesh_q7pjr")
+
+[node name="tour" type="CSGMesh3D" parent="bateau" unique_id=1571112249]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -1.0294569e-08, 0, -0.23551227)
+mesh = SubResource("CylinderMesh_ux6bd")
