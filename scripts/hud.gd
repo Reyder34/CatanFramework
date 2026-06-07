@@ -169,37 +169,91 @@ func reset_layout() -> void:
 # === HAUT-GAUCHE: ressources du joueur courant ===
 func _refresh_resources() -> void:
 	_clear(_res_box)
+	
 	var p := _view_player()
+	
+	# 1. Les infos du haut (Texte blanc/clair pour bien ressortir sur le fond sombre global)
 	var header := Label.new()
 	header.text = "%s — %s" % [p.label(), state.phase_label()]
 	header.modulate = p.color
+	# On lui donne un style un peu plus grand/vibrant si nécessaire
 	_res_box.add_child(header)
+	
 	if GameConfig.is_multiplayer:
 		var turn := Label.new()
 		turn.text = "Tour : %s%s" % [state.current_player().label(), "  (à toi)" if _net_my_turn() else ""]
+		turn.add_theme_color_override("font_color", Color.WHITE)
 		_res_box.add_child(turn)
+		
 	var mode := Label.new()
 	mode.text = "Mode: %s" % state.mode_label()
+	mode.add_theme_color_override("font_color", Color("#dfdfdf")) # Un gris-blanc propre
 	_res_box.add_child(mode)
+	
+	# 2. LE PANEL DES CARTES (Style Parchment / Chaleureux / Contrasté)
+	var bg_panel := PanelContainer.new()
+	var style_box := StyleBoxFlat.new()
+	
+	# Couleur de fond : Un ambré/parchemin très sombre et chaud, semi-transparent (Alpha = 0.6)
+	# Cela permet de voir subtilement l'océan ou la map derrière, façon UI moderne
+	style_box.bg_color = Color("#1e1a15", 0.65) 
+	
+	# Bordure fine pour donner du relief et de la structure (Style or/bois clair)
+	style_box.border_width_left = 1
+	style_box.border_width_top = 1
+	style_box.border_width_right = 1
+	style_box.border_width_bottom = 1
+	style_box.border_color = Color("#d3a058", 0.4) # Un doré cuivré discret
+	
+	# Marges internes et angles arrondis
+	style_box.set_content_margin_all(8)
+	style_box.corner_radius_top_left = 6
+	style_box.corner_radius_top_right = 6
+	style_box.corner_radius_bottom_left = 6
+	style_box.corner_radius_bottom_right = 6
+	
+	bg_panel.add_theme_stylebox_override("panel", style_box)
+	_res_box.add_child(bg_panel)
+	
+	# 3. Conteneur horizontal pour les ressources
+	var resources_hbox := HBoxContainer.new()
+	resources_hbox.add_theme_constant_override("separation", 20) # Un peu plus d'espace pour respirer
+	bg_panel.add_child(resources_hbox)
+	
+	# 4. Alignement des ressources
 	for res_id in registry.resources:
 		if registry.resources[res_id].get("is_desert", false):
 			continue
+			
 		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", 6)
+		row.add_theme_constant_override("separation", 8)
+		
 		var icon := registry.get_resource_icon(res_id)
 		if icon != null:
 			var tr := TextureRect.new()
 			tr.texture = icon
-			tr.custom_minimum_size = Vector2(20, 20)
+			tr.custom_minimum_size = Vector2(42, 42) # Légèrement agrandi pour valoriser l'artwork
 			tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			row.add_child(tr)
 		else:
-			row.add_child(_swatch(registry.get_resource_color(res_id)))  # repli: carré de couleur
+			row.add_child(_swatch(registry.get_resource_color(res_id)))
+			
+		# Le texte de la ressource (Ex: "Bois : 0")
 		var lbl := Label.new()
 		lbl.text = "%s : %d" % [registry.resources[res_id]["name"], int(p.resources.get(res_id, 0))]
+		
+		# Couleur du texte : Jaune sable / Crème chaud (#f3e5c8) 
+		# C'est ultra-lisible sur le marron/noir en fond, et ça rappelle les jeux de société en bois
+		lbl.add_theme_color_override("font_color", Color("#f3e5c8"))
+		
+		# Optionnel : Donne une légère ombre au texte pour détacher le chiffre du fond
+		lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
+		lbl.add_theme_constant_override("shadow_offset_x", 1)
+		lbl.add_theme_constant_override("shadow_offset_y", 1)
+		
 		row.add_child(lbl)
-		_res_box.add_child(row)
+		resources_hbox.add_child(row)
 
 # === HAUT-DROIT: joueurs, scores, échange, banque ===
 func _refresh_players() -> void:
