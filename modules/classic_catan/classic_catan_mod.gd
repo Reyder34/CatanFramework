@@ -524,10 +524,25 @@ func _create_port_visuals(board_view) -> void:
 	if board_view == null or board_view.tile_nodes.is_empty():
 		return
 	var parent: Node = board_view.tile_nodes.values()[0].get_parent()
+	var port_scene: PackedScene = load("res://modules/classic_catan/ports/port.glb")
+	var boat_scene: PackedScene = load("res://modules/classic_catan/ports/boat.glb")
+	var boat_script = load("res://modules/classic_catan/ports/boat.gd")
+
 	for info in _ports_info:
 		var res: String = info["resource"]
-		# Juste le ratio, coloré par la ressource (blanc pour le port générique 3:1),
-		# gardé au premier plan pour rester lisible même avec un bâtiment dessus.
+		var pos: Vector3 = info["pos"]
+		var outward := Vector3(pos.x, 0.0, pos.z).normalized()
+
+		# Modèle 3D du port
+		if port_scene != null:
+			var port_node := port_scene.instantiate()
+			port_node.position = Vector3(pos.x, 0.0, pos.z) - outward * 0.3
+			if outward.length() > 0.001:
+				port_node.rotation.y = atan2(outward.x, outward.z) - PI * 0.5
+			port_node.scale = Vector3(2.0, 2.0, 2.0)
+			parent.add_child(port_node)
+
+		# Label3D du ratio (billboard, toujours lisible)
 		var label := Label3D.new()
 		label.text = "%d:1" % int(info["ratio"])
 		label.font_size = 48
@@ -535,10 +550,25 @@ func _create_port_visuals(board_view) -> void:
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.no_depth_test = true
 		label.modulate = _registry.get_resource_color(res) if res != "" else Color.WHITE
-		var pos: Vector3 = info["pos"]
-		pos.y = 0.32
-		label.position = pos
+		label.position = Vector3(pos.x, 0.55, pos.z)
 		parent.add_child(label)
+
+	# Collecter les positions des tuiles terrestres pour la détection eau/terre
+	var land_positions: Array = []
+	for tile_node in board_view.tile_nodes.values():
+		var tp := (tile_node as Node3D).position
+		land_positions.append(Vector3(tp.x, 0.0, tp.z))
+
+	# 3 bateaux partagés — chacun choisit un port aléatoire et arrive en longeant la côte
+	if boat_scene != null and boat_script != null:
+		for i in 3:
+			var boat := boat_scene.instantiate()
+			boat.set_script(boat_script)
+			boat.ports_info     = _ports_info
+			boat.land_positions = land_positions
+			boat.start_delay    = i * 4.0 + randf_range(0.0, 2.5)
+			boat.scale          = Vector3(2.0, 2.0, 2.0)
+			parent.add_child(boat)
 
 func _register_actions(reg: GameRegistry) -> void:
 	# === Action: Lancer les dés ===
