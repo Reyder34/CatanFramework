@@ -7,6 +7,7 @@ signal lobby_changed
 signal connected
 signal connection_failed
 signal disconnected
+signal config_changed
 
 const DEFAULT_PORT := 24545
 const MAX_PLAYERS := 10
@@ -15,6 +16,11 @@ var my_name := "Joueur"
 var is_host := false
 # peer_id -> {"name": String}
 var players: Dictionary = {}
+
+# Config du salon (réglée par l'hôte, diffusée à tous les pairs).
+var lobby_mods: Array = []
+var lobby_map_size: int = 2
+var lobby_timer: int = 0
 
 # Réf au noeud main (défini au lancement) pour les panneaux réseau.
 var game: Node = null
@@ -87,6 +93,7 @@ func _register(pname: String) -> void:
 		return
 	players[multiplayer.get_remote_sender_id()] = {"name": pname}
 	_sync_lobby.rpc(players)
+	_sync_config.rpc(lobby_mods, lobby_map_size, lobby_timer)  # le nouveau venu reçoit la config
 	lobby_changed.emit()
 
 @rpc("authority", "reliable")
@@ -96,7 +103,7 @@ func _sync_lobby(p: Dictionary) -> void:
 
 # === LANCEMENT SYNCHRONISÉ ===
 
-func start_game(enabled_mods: Array, map_size: int) -> void:
+func start_game() -> void:
 	if not is_host:
 		return
 	var s := randi()
@@ -109,7 +116,36 @@ func start_game(enabled_mods: Array, map_size: int) -> void:
 	for i in ids.size():
 		mapping[ids[i]] = i
 		names.append(players[ids[i]].get("name", ""))
-	_launch.rpc(s, ids.size(), mapping, enabled_mods, map_size, names)
+	_launch.rpc(s, ids.size(), mapping, lobby_mods, lobby_map_size, names, lobby_timer)
+
+# Config du salon: l'hôte la règle, on la diffuse à tous (sync live des cases mods…).
+func set_lobby_config(mods: Array, map_size: int, timer: int) -> void:
+	if not is_host:
+		return
+	lobby_mods = mods
+	lobby_map_size = map_size
+	lobby_timer = timer
+	_sync_config.rpc(mods, map_size, timer)
+
+@rpc("authority", "reliable")
+func _sync_config(mods: Array, map_size: int, timer: int) -> void:
+	lobby_mods = mods
+	lobby_map_size = map_size
+	lobby_timer = timer
+	config_changed.emit()
+
+# Reprise d'une sauvegarde: l'hôte applique le snapshot au boot ; chaque joueur récupère
+# SON siège via son pseudo (mapping par nom), et tout le monde rejoue la MÊME seed.
+func resume_game(snapshot: Dictionary, mods: Array, map_size: int, timer: int, names: Array, saved_seed: int) -> void:
+	if not is_host:
+		return
+	var mapping := {}  # peer_id -> index (par pseudo)
+	for pid in players:
+		var who: String = players[pid].get("name", "")
+		var idx: int = names.find(who)
+		mapping[pid] = idx if idx >= 0 else 0
+	GameConfig.resume_snapshot = snapshot  # l'hôte l'applique après le boot
+	_launch.rpc(saved_seed, names.size(), mapping, mods, map_size, names, timer)
 
 # === PANNEAUX RÉSEAU (Phase 2b) ===
 # Affiche un panneau sur le client qui contrôle player_index, attend son résultat.
@@ -126,11 +162,13 @@ func show_panel_for(player_index: int, panel_id: String, raw: Dictionary) -> Var
 		return null
 	var req := _req_counter
 	_req_counter += 1
+	game.registry.ui.note_external_open()  # met le timer de tour en pause (pop-up distante)
 	_show_panel_rpc.rpc_id(peer, req, panel_id, raw, player_index)
 	while not _panel_results.has(req):
 		await game.get_tree().process_frame
 	var r = _panel_results[req]
 	_panel_results.erase(req)
+	game.registry.ui.note_external_close()
 	return r
 
 # Affiche plusieurs panneaux EN MÊME TEMPS (un par joueur) et attend TOUS les résultats.
@@ -189,7 +227,7 @@ func _panel_response(req: int, result: Variant) -> void:
 	_panel_results[req] = result
 
 @rpc("authority", "reliable", "call_local")
-func _launch(s: int, count: int, mapping: Dictionary, mods: Array, map_size: int, names: Array) -> void:
+func _launch(s: int, count: int, mapping: Dictionary, mods: Array, map_size: int, names: Array, timer: int) -> void:
 	GameConfig.is_multiplayer = true
 	GameConfig.game_seed = s
 	GameConfig.player_count = count
@@ -197,5 +235,6 @@ func _launch(s: int, count: int, mapping: Dictionary, mods: Array, map_size: int
 	GameConfig.map_size = map_size
 	GameConfig.player_names = names
 	GameConfig.peer_to_player = mapping
+	GameConfig.turn_timer = timer
 	GameConfig.local_player_index = int(mapping.get(multiplayer.get_unique_id(), 0))
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
