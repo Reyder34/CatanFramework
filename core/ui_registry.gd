@@ -132,3 +132,12 @@ func _place_top_center(c: Control) -> void:
 
 func is_any_panel_open() -> bool:
 	return _open_count > 0
+
+# Comptés comme "ouverts" même si le panneau s'affiche sur un AUTRE peer (réseau) :
+# Net appelle ceci autour d'un panneau distant en attente -> le timer de tour se met
+# en pause pendant qu'un joueur répond à une pop-up, où qu'elle soit.
+func note_external_open() -> void:
+	_open_count += 1
+
+func note_external_close() -> void:
+	_open_count = max(0, _open_count - 1)

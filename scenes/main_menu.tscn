@@ -41,95 +41,165 @@ theme_override_font_sizes/font_size = 40
 text = "CATAN 2"
 horizontal_alignment = 1
 
-[node name="ConnectBox" type="VBoxContainer" parent="Center/Panel/Margin/Root"]
+[node name="HomeBox" type="VBoxContainer" parent="Center/Panel/Margin/Root"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="NameRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/ConnectBox"]
+[node name="NameRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/HomeBox"]
 layout_mode = 2
 
-[node name="L" type="Label" parent="Center/Panel/Margin/Root/ConnectBox/NameRow"]
+[node name="L" type="Label" parent="Center/Panel/Margin/Root/HomeBox/NameRow"]
 layout_mode = 2
 text = "Pseudo :"
 
-[node name="NameEdit" type="LineEdit" parent="Center/Panel/Margin/Root/ConnectBox/NameRow"]
+[node name="NameEdit" type="LineEdit" parent="Center/Panel/Margin/Root/HomeBox/NameRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 text = "Joueur"
 
-[node name="ModsLabel" type="Label" parent="Center/Panel/Margin/Root/ConnectBox"]
+[node name="SoloBtn" type="Button" parent="Center/Panel/Margin/Root/HomeBox"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "Mods :"
+text = "Jouer en solo"
 
-[node name="ModList" type="VBoxContainer" parent="Center/Panel/Margin/Root/ConnectBox"]
+[node name="MultiBtn" type="Button" parent="Center/Panel/Margin/Root/HomeBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Multijoueur"
+
+[node name="QuitBtn" type="Button" parent="Center/Panel/Margin/Root/HomeBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Quitter"
+
+[node name="SoloBox" type="VBoxContainer" parent="Center/Panel/Margin/Root"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SoloTitle" type="Label" parent="Center/Panel/Margin/Root/SoloBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Partie solo"
+
+[node name="SoloConfigSlot" type="VBoxContainer" parent="Center/Panel/Margin/Root/SoloBox"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="PcRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/ConnectBox"]
+[node name="ConfigBox" type="VBoxContainer" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ConfigTitle" type="Label" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot/ConfigBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Options"
+
+[node name="ModsLabel" type="Label" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot/ConfigBox"]
+layout_mode = 2
+text = "Mods :"
+
+[node name="ModList" type="VBoxContainer" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot/ConfigBox"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="L" type="Label" parent="Center/Panel/Margin/Root/ConnectBox/PcRow"]
+[node name="PcRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot/ConfigBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="L" type="Label" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot/ConfigBox/PcRow"]
 layout_mode = 2
 text = "Joueurs (solo) :"
 
-[node name="PlayerSpin" type="SpinBox" parent="Center/Panel/Margin/Root/ConnectBox/PcRow"]
+[node name="PlayerSpin" type="SpinBox" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot/ConfigBox/PcRow"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 2.0
 max_value = 10.0
 value = 4.0
 
-[node name="MsRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/ConnectBox"]
+[node name="MsRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot/ConfigBox"]
 layout_mode = 2
 
-[node name="L" type="Label" parent="Center/Panel/Margin/Root/ConnectBox/MsRow"]
+[node name="L" type="Label" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot/ConfigBox/MsRow"]
 layout_mode = 2
 text = "Taille de la map :"
 
-[node name="MapSpin" type="SpinBox" parent="Center/Panel/Margin/Root/ConnectBox/MsRow"]
+[node name="MapSpin" type="SpinBox" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot/ConfigBox/MsRow"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 2.0
 max_value = 6.0
 value = 2.0
 
-[node name="SoloBtn" type="Button" parent="Center/Panel/Margin/Root/ConnectBox"]
+[node name="TsRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot/ConfigBox"]
+layout_mode = 2
+
+[node name="L" type="Label" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot/ConfigBox/TsRow"]
+layout_mode = 2
+text = "Temps/tour (s, 0=off) :"
+
+[node name="TimerSpin" type="SpinBox" parent="Center/Panel/Margin/Root/SoloBox/SoloConfigSlot/ConfigBox/TsRow"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Jouer en solo"
+min_value = 0.0
+max_value = 600.0
+step = 5.0
+value = 0.0
 
-[node name="Sep" type="HSeparator" parent="Center/Panel/Margin/Root/ConnectBox"]
+[node name="LancerSoloBtn" type="Button" parent="Center/Panel/Margin/Root/SoloBox"]
+unique_name_in_owner = true
 layout_mode = 2
+text = "Lancer la partie"
 
-[node name="HostBtn" type="Button" parent="Center/Panel/Margin/Root/ConnectBox"]
+[node name="RetourSoloBtn" type="Button" parent="Center/Panel/Margin/Root/SoloBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Retour"
+
+[node name="MultiBox" type="VBoxContainer" parent="Center/Panel/Margin/Root"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="MultiTitle" type="Label" parent="Center/Panel/Margin/Root/MultiBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Multijoueur"
+
+[node name="HostBtn" type="Button" parent="Center/Panel/Margin/Root/MultiBox"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Héberger une partie"
 
-[node name="JoinRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/ConnectBox"]
+[node name="JoinRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/MultiBox"]
 layout_mode = 2
 
-[node name="L" type="Label" parent="Center/Panel/Margin/Root/ConnectBox/JoinRow"]
+[node name="L" type="Label" parent="Center/Panel/Margin/Root/MultiBox/JoinRow"]
 layout_mode = 2
 text = "IP :"
 
-[node name="IpEdit" type="LineEdit" parent="Center/Panel/Margin/Root/ConnectBox/JoinRow"]
+[node name="IpEdit" type="LineEdit" parent="Center/Panel/Margin/Root/MultiBox/JoinRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "127.0.0.1"
 
-[node name="JoinBtn" type="Button" parent="Center/Panel/Margin/Root/ConnectBox/JoinRow"]
+[node name="JoinBtn" type="Button" parent="Center/Panel/Margin/Root/MultiBox/JoinRow"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Rejoindre"
 
-[node name="QuitBtn" type="Button" parent="Center/Panel/Margin/Root/ConnectBox"]
+[node name="RetourMultiBtn" type="Button" parent="Center/Panel/Margin/Root/MultiBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Quitter"
+text = "Retour"
 
 [node name="LobbyBox" type="VBoxContainer" parent="Center/Panel/Margin/Root"]
 unique_name_in_owner = true
@@ -147,6 +217,19 @@ layout_mode = 2
 text = "Joueurs connectés :"
 
 [node name="LobbyList" type="VBoxContainer" parent="Center/Panel/Margin/Root/LobbyBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LobbyConfigSlot" type="VBoxContainer" parent="Center/Panel/Margin/Root/LobbyBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SavesLabel" type="Label" parent="Center/Panel/Margin/Root/LobbyBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reprendre une partie sauvegardée :"
+
+[node name="SavesList" type="VBoxContainer" parent="Center/Panel/Margin/Root/LobbyBox"]
 unique_name_in_owner = true
 layout_mode = 2
 

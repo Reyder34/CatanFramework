@@ -64,10 +64,21 @@ func _ready() -> void:
 	add_child(turn_audio)
 	turn_audio.setup(state, GameConfig.local_player_index if GameConfig.is_multiplayer else -1)
 
+	# Timer de tour (core, réglé au lobby/solo ; 0 = off). À l'expiration -> "turn_timeout".
+	var turn_timer := TurnTimer.new()
+	add_child(turn_timer)
+	turn_timer.setup(state, registry, GameConfig.turn_timer, _authoritative())
+
 	# Réseau: panneaux + diffusion d'état (hôte) sur tout changement.
 	Net.game = self
 	if GameConfig.is_multiplayer and _authoritative():
 		_connect_broadcast_signals()
+
+	# Reprise de partie (autorité) : applique le snapshot chargé, puis il sera diffusé.
+	if _authoritative() and not GameConfig.resume_snapshot.is_empty():
+		_apply_snapshot(_snapshot_from_json(GameConfig.resume_snapshot))
+		GameConfig.resume_snapshot = {}
+		_snapshot_dirty = true
 
 	print("Jeu prêt. Mods chargés: ", registry._origin.size(), " entrées dans le registry")
 
@@ -283,17 +294,81 @@ func _build_snapshot() -> Dictionary:
 		"log": game_log.duplicate(),
 	}
 
+# === SAUVEGARDE / REPRISE ===
+# L'autorité écrit l'état complet (méta + snapshot) dans user://saves/<slot>.json.
+func save_game(slot: String) -> bool:
+	DirAccess.make_dir_recursive_absolute(GameConfig.SAVES_DIR)
+	var data := {
+		"meta": {
+			"mods": GameConfig.enabled_mod_ids,
+			"map_size": GameConfig.map_size,
+			"seed": GameConfig.game_seed,
+			"timer": GameConfig.turn_timer,
+			"names": GameConfig.player_names,
+			"turn": state.current_player_index,
+		},
+		"snapshot": _snapshot_to_json(_build_snapshot()),
+	}
+	var f := FileAccess.open("%s/%s.json" % [GameConfig.SAVES_DIR, slot], FileAccess.WRITE)
+	if f == null:
+		return false
+	f.store_string(JSON.stringify(data, "\t"))
+	f.close()
+	registry.emit("game_log", {"text": "💾 Partie sauvegardée : %s" % slot})
+	return true
+
+# JSON ne connaît pas Vector2 -> marqueurs en [x, y] (et inversement au chargement).
+func _snapshot_to_json(snap: Dictionary) -> Dictionary:
+	var s := snap.duplicate()
+	var m := {}
+	for id in snap.get("markers", {}):
+		var v: Vector2 = snap["markers"][id]
+		m[id] = [v.x, v.y]
+	s["markers"] = m
+	return s
+
+func _snapshot_from_json(j: Dictionary) -> Dictionary:
+	var s := j.duplicate(true)
+	var m := {}
+	for id in j.get("markers", {}):
+		var a = j["markers"][id]
+		m[id] = Vector2(float(a[0]), float(a[1]))
+	s["markers"] = m
+	# JSON ramène les entiers en float -> on réentier les champs indexés/sensibles.
+	for key in s.get("vertex_state", {}):
+		s["vertex_state"][key]["owner"] = int(s["vertex_state"][key]["owner"])
+	for key in s.get("edge_state", {}):
+		s["edge_state"][key]["owner"] = int(s["edge_state"][key]["owner"])
+	for pd in s.get("players", []):
+		var r := {}
+		for res in pd.get("resources", {}):
+			r[res] = int(pd["resources"][res])
+		pd["resources"] = r
+	return s
+
 @rpc("authority", "reliable")
 func _net_snapshot(snap: Dictionary) -> void:
 	_apply_snapshot(snap)
 
 func _apply_snapshot(snap: Dictionary) -> void:
-	board.vertex_state = snap["vertex_state"]
-	board.edge_state = snap["edge_state"]
-	board_view.refresh_all()
-	board.tile_markers = snap["markers"]
-	for mid in board.tile_markers:
-		board.marker_changed.emit(mid, board.tile_markers[mid])
+	# Incrémental: ne rafraîchir QUE les cases changées (sinon on ré-instancie tous les
+	# modèles 3D de bâtiments + re-rend les 126 sommets/arêtes à CHAQUE snapshot -> gros
+	# à-coups pendant les actions).
+	var new_v: Dictionary = snap["vertex_state"]
+	var new_e: Dictionary = snap["edge_state"]
+	var new_m: Dictionary = snap["markers"]
+	var changed_v := _diff_keys(board.vertex_state, new_v)
+	var changed_e := _diff_keys(board.edge_state, new_e)
+	var changed_m := _diff_keys(board.tile_markers, new_m)
+	board.vertex_state = new_v
+	board.edge_state = new_e
+	board.tile_markers = new_m
+	for key in changed_v:
+		board_view._refresh_vertex(key)
+	for key in changed_e:
+		board_view._refresh_edge(key)
+	for mid in changed_m:
+		board.marker_changed.emit(mid, board.tile_markers.get(mid, Vector2.INF))
 	state.current_player_index = snap["current_player"]
 	state.build_mode_id = snap["build_mode"]
 	state.winner_index = snap["winner"]
@@ -302,8 +377,10 @@ func _apply_snapshot(snap: Dictionary) -> void:
 	for i in state.players.size():
 		var pd: Dictionary = snap["players"][i]
 		var p: Player = state.players[i]
+		var res_changed: bool = p.resources != pd["resources"]
 		p.resources = pd["resources"]
-		p.resources_changed.emit(p.id)
+		if res_changed:
+			p.resources_changed.emit(p.id)
 		for k in pd.get("custom_data", {}):
 			p.custom_data[k] = pd["custom_data"][k]
 		_rebuild_buildings(p)
@@ -312,6 +389,17 @@ func _apply_snapshot(snap: Dictionary) -> void:
 	game_log = snap.get("log", [])
 	if hud != null:
 		hud.update()
+
+# Clés dont la valeur a changé (ajout / suppression / modif) entre deux dictionnaires.
+func _diff_keys(old: Dictionary, new: Dictionary) -> Array:
+	var out: Dictionary = {}
+	for k in old:
+		if not new.has(k) or new[k] != old[k]:
+			out[k] = true
+	for k in new:
+		if not old.has(k) or old[k] != new[k]:
+			out[k] = true
+	return out.keys()
 
 # Reconstruit player.buildings depuis l'état du board (pour les PV/affichage côté client).
 func _rebuild_buildings(p: Player) -> void:
