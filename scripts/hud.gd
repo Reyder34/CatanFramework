@@ -28,6 +28,8 @@ var _log_open: bool = false
 var _movers: Array = []  # un WindowMover (drag + redim + sauvegarde) par panneau du HUD
 var _selected_breakdown: int = -1  # joueur dont on affiche le détail des points (-1 = aucun)
 var _main: Node = null  # main (pour router les actions en réseau)
+var _journal: Array = []      # journal AFFICHÉ : entrées partagées + tes gains 🧾, interclassés
+var _last_shared: Array = []  # dernière copie vue du game_log partagé (pour n'ajouter que le neuf)
 
 # Actions à panneaux/cartes désactivées en réseau (Phase 2b).
 const _MP_DEFERRED := ["show_dev_cards"]
@@ -60,6 +62,9 @@ func setup(p_state: GameState, p_registry: GameRegistry, p_board: Board, p_main:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE  # laisse passer les clics vers le plateau 3D
 	_wire_windows()
 	_connect_signals()
+	# Récap PRIVÉ de production : se déclenche quand le marqueur de dés change (sur CHAQUE pair).
+	if not board.marker_changed.is_connected(_on_dice_recap):
+		board.marker_changed.connect(_on_dice_recap)
 	update()
 	_add_save_button()
 
@@ -472,9 +477,8 @@ func _toggle_log() -> void:
 func _refresh_log() -> void:
 	if _log_button == null:
 		return
-	var lines: Array = []
-	if _main != null:
-		lines = _main.game_log
+	_sync_shared()  # fait entrer les nouvelles entrées du journal partagé dans _journal, dans l'ordre
+	var lines: Array = _journal
 	_log_button.text = "📜 Journal (%d) %s" % [lines.size(), "▲" if _log_open else "▼"]
 	if not _log_open:
 		return  # menu fermé: rien à reconstruire
@@ -489,6 +493,82 @@ func _refresh_log() -> void:
 		var lab := Label.new()
 		lab.text = str(lines[i])
 		_log_box.add_child(lab)
+
+# === RÉCAP PRIVÉ DE PRODUCTION (local, à chaque lancer) ===
+# Le HUD = la vue locale -> on calcule ce que MOI (joueur local) je reçois, par source.
+func _on_dice_recap(marker_id: String, value: Vector2) -> void:
+	if marker_id != ClassicCatanMod.DICE_MARKER:
+		return
+	# IMPORTANT : ce handler tourne EN PLEIN MILIEU de set_marker, lui-même au milieu de
+	# l'action "lancer les dés" (qui pose ROLLED_KEY juste APRÈS). On DIFFÈRE donc le calcul
+	# à la fin de la frame pour ne jamais interrompre/retarder le lancer (sinon : tour bloqué).
+	call_deferred("_do_dice_recap", int(value.x) + int(value.y))
+
+func _do_dice_recap(number: int) -> void:
+	if number == 7:
+		return
+	_sync_shared()  # garantit que la ligne "🎲 ... a lancé" est déjà dans _journal, AVANT le récap
+	for l in _recap_lines(number):
+		_journal.append(l)
+	while _journal.size() > 40:
+		_journal.pop_front()
+	_refresh_log()
+
+# Recopie dans _journal les entrées du journal PARTAGÉ (game_log) pas encore vues, dans l'ordre.
+# -> les gains 🧾 restent à leur place chronologique (entre les événements), pas épinglés en haut.
+func _sync_shared() -> void:
+	var gl: Array = _main.game_log if _main != null else []
+	var start := 0
+	if not _last_shared.is_empty() and not gl.is_empty():
+		var idx := gl.rfind(_last_shared[_last_shared.size() - 1])
+		start = idx + 1 if idx >= 0 else 0
+	for i in range(start, gl.size()):
+		_journal.append(gl[i])
+	while _journal.size() > 40:
+		_journal.pop_front()
+	_last_shared = gl.duplicate()
+
+# Production du joueur local pour ce numéro -> ["🧾 2 Bois : Ville", "🧾 1 Minerai : Route mécanique"]
+func _recap_lines(number: int) -> Array:
+	var me := _view_player().id
+	var tally := {}  # "res|building" -> {res, building, amount}
+	for tile in board.tiles_by_number.get(number, []):
+		if board.has_marker_at("robber", tile):  # tuile bloquée par le voleur
+			continue
+		var res: String = board.tile_data.get(tile, {}).get("resource", "")
+		if res == "" or not registry.is_producing_resource(res):
+			continue
+		for v in board.tile_vertices.get(tile, []):  # colonies / villes (sommets)
+			if board.get_vertex_owner(v) == me:
+				_tally(tally, board.get_vertex_type(v), res)
+		for e in _edges_of_tile(tile):  # routes mécaniques… (arêtes)
+			if board.get_edge_owner(e) == me:
+				_tally(tally, board.get_edge_type(e), res)
+	var out: Array = []
+	for k in tally:
+		var t = tally[k]
+		var res_name: String = registry.resources.get(t["res"], {}).get("name", t["res"])
+		out.append("🧾 %d %s : %s" % [t["amount"], res_name, t["building"]])
+	return out
+
+func _tally(tally: Dictionary, building_id: String, res: String) -> void:
+	var b: BuildingType = registry.get_building(building_id)
+	if b == null or b.get_production_amount() <= 0:
+		return
+	var key := res + "|" + building_id
+	if not tally.has(key):
+		tally[key] = {"res": res, "building": b.display_name, "amount": 0}
+	tally[key]["amount"] += b.get_production_amount()
+
+# Arêtes d'une tuile = arêtes dont les 2 extrémités sont des sommets de cette tuile.
+func _edges_of_tile(tile: Vector2) -> Array:
+	var verts: Array = board.tile_vertices.get(tile, [])
+	var out: Array = []
+	for e in board.edge_endpoints:
+		var ep = board.edge_endpoints[e]
+		if ep[0] in verts and ep[1] in verts:
+			out.append(e)
+	return out
 
 # === HANDLERS ===
 func _on_trade_with(target_id: int) -> void:

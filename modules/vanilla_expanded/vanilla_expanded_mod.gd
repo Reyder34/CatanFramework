@@ -1,4 +1,4 @@
-class_name BalancedMapMod
+class_name vanilla_expanded
 extends GameMod
 
 var _state: GameState
@@ -25,7 +25,10 @@ func register(reg: GameRegistry) -> void:
 		return _state != null and _state.phase != GameState.Phase.GAME_OVER
 	reg.register_action(act)
 	
-	reg.on("game_start", func(ctx): _state = ctx["state"])  
+	reg.on("game_start", func(ctx): _state = ctx["state"])
+	# PRODUCTION SUR ARÊTE : à chaque distribution (sauf 7), les routes mécaniques récupèrent
+	# la ressource de leurs tuiles adjacentes. (C'était l'abonnement qui manquait !)
+	reg.on(ClassicCatanMod.EVT_AFTER_DICE, _produce_edges)  
 
 func _produce_edges(ctx) -> void:          
 	if ctx.result == 7 or ctx.cancel_production: return
@@ -39,7 +42,8 @@ func _produce_edges(ctx) -> void:
 			if board.get_edge_type(e) == "mech_road":
 				var owner := board.get_edge_owner(e)
 				if owner >= 0:
-					ClassicCatanMod.give_capped(state, state.players[owner], res, 1)  
+					var amt: int = state.registry.get_building("mech_road").get_production_amount()
+					ClassicCatanMod.give_capped(state, state.players[owner], res, amt)  
 
 func _edges_of_tile(board, tile) -> Array:
 	var verts: Array = board.tile_vertices.get(tile, [])

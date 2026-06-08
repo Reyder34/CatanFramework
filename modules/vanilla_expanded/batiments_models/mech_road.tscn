@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://ciwmo7ie6qdme"]
 
+[ext_resource type="Script" uid="uid://c7yelrfvtfbe5" path="res://modules/vanilla_expanded/batiments_models/mech_road.gd" id="1_eus0o"]
 [ext_resource type="PackedScene" uid="uid://bnlii8vkn32k6" path="res://modules/classic_catan/buildings_models/road.tscn" id="1_r4ali"]
 
 [sub_resource type="StandardMaterial3D" id="Metal"]
@@ -20,6 +21,7 @@ size = Vector3(0.03, 0.03, 0.16)
 size = Vector3(0.05, 0.06, 0.03)
 
 [node name="Node3D" type="Node3D" unique_id=49777106]
+script = ExtResource("1_eus0o")
 
 [node name="Road" parent="." unique_id=2031897177 instance=ExtResource("1_r4ali")]
 
@@ -31,17 +33,72 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
 material_override = SubResource("Metal")
 mesh = SubResource("Socle")
 
-[node name="Montant" type="MeshInstance3D" parent="RobotArm" unique_id=45537134]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11, 0)
+[node name="Montant" type="MeshInstance3D" parent="RobotArm/Socle" unique_id=45537134]
+transform = Transform3D(1, 0, -3.5444842e-05, 0, 1, 0, 3.5444842e-05, 0, 1, 0, 0.09, 0)
 material_override = SubResource("Metal")
 mesh = SubResource("Montant")
+skeleton = NodePath("../..")
 
-[node name="BrasHaut" type="MeshInstance3D" parent="RobotArm" unique_id=1379633000]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, -0.07)
+[node name="BrasHaut" type="MeshInstance3D" parent="RobotArm/Socle/Montant" unique_id=1379633000]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9604645e-08, 0.07000001, -0.06999999)
 material_override = SubResource("Metal")
 mesh = SubResource("BrasHaut")
+skeleton = NodePath("../../..")
 
-[node name="Pince" type="MeshInstance3D" parent="RobotArm" unique_id=796760909]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, -0.15)
+[node name="Pince" type="MeshInstance3D" parent="RobotArm/Socle/Montant" unique_id=796760909]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9604645e-08, 0.030000001, -0.14999996)
 material_override = SubResource("Metal")
 mesh = SubResource("Pince")
+skeleton = NodePath("../../..")
+
+[node name="RobotArm2" type="Node3D" parent="." unique_id=1479604265]
+transform = Transform3D(-0.5999994, 0, -0.00081683317, 0, 0.6000001, 0, 0.00081683317, 0, -0.5999994, -0.26650912, 0.0038388222, 0.12226237)
+
+[node name="Socle" type="MeshInstance3D" parent="RobotArm2" unique_id=731180581]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+material_override = SubResource("Metal")
+mesh = SubResource("Socle")
+
+[node name="Montant" type="MeshInstance3D" parent="RobotArm2/Socle" unique_id=1238680661]
+transform = Transform3D(-1, 0, 4.1794723e-05, 0, 1.0000001, 0, -4.1794723e-05, 0, -1, 0, 0.09, 0)
+material_override = SubResource("Metal")
+mesh = SubResource("Montant")
+skeleton = NodePath("../..")
+
+[node name="BrasHaut" type="MeshInstance3D" parent="RobotArm2/Socle/Montant" unique_id=1791703414]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0.070000015, -0.07000005)
+material_override = SubResource("Metal")
+mesh = SubResource("BrasHaut")
+skeleton = NodePath("../../..")
+
+[node name="Pince" type="MeshInstance3D" parent="RobotArm2/Socle/Montant" unique_id=344053632]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0.030000009, -0.15)
+material_override = SubResource("Metal")
+mesh = SubResource("Pince")
+skeleton = NodePath("../../..")
+
+[node name="RobotArm3" type="Node3D" parent="." unique_id=1077457212]
+transform = Transform3D(0.6999718, 0, 0.0062796883, 0, 0.7, 0, -0.0062796883, 0, 0.6999718, -0.13001496, 0, -0.12802964)
+
+[node name="Socle" type="MeshInstance3D" parent="RobotArm3" unique_id=1191467669]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+material_override = SubResource("Metal")
+mesh = SubResource("Socle")
+
+[node name="Montant" type="MeshInstance3D" parent="RobotArm3/Socle" unique_id=747461272]
+transform = Transform3D(1, 0, -3.5444842e-05, 0, 1, 0, 3.5444842e-05, 0, 1, 0, 0.09, 0)
+material_override = SubResource("Metal")
+mesh = SubResource("Montant")
+skeleton = NodePath("../..")
+
+[node name="BrasHaut" type="MeshInstance3D" parent="RobotArm3/Socle/Montant" unique_id=275860977]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9604645e-08, 0.07000001, -0.06999999)
+material_override = SubResource("Metal")
+mesh = SubResource("BrasHaut")
+skeleton = NodePath("../../..")
+
+[node name="Pince" type="MeshInstance3D" parent="RobotArm3/Socle/Montant" unique_id=2107046160]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9604645e-08, 0.030000001, -0.14999996)
+material_override = SubResource("Metal")
+mesh = SubResource("Pince")
+skeleton = NodePath("../../..")

@@ -25,3 +25,7 @@ func can_place(board: Board, player_id: int, key: String) -> bool:
 
 func on_placed(board: Board, player_id: int, key: String) -> void:
 	board.place_on_edge(key, player_id, id)
+
+# Combien de ressources elle récupère quand une de ses 2 tuiles adjacentes sort.
+func get_production_amount() -> int:
+	return 1
