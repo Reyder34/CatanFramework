@@ -50,13 +50,29 @@ func apply_player_color(node: Node, color: Color) -> void:
 	if node.has_method("set_player_color"):
 		node.call("set_player_color", color)
 		return
-	_tint_recursive(node, color)
+	# CONVENTION STRICTE : CHAQUE nœud nommé "Corps" (+ tout son sous-arbre) prend la couleur
+	# du joueur — FORCÉE (CSG, MeshInstance3D, .glb…). On gère PLUSIEURS "Corps" dans un même
+	# modèle. Aucun "Corps" -> on ne colore RIEN (le modèle garde ses propres matériaux).
+	_color_corps(node, color)
 
-func _tint_recursive(node: Node, color: Color) -> void:
-	if node is MeshInstance3D and node.material_override == null:
-		node.material_override = _colored_mat(color)
+# Parcourt l'arbre et colore le sous-arbre de CHAQUE nœud dont le nom commence par "corp"
+# (insensible à la casse). Permet plusieurs "Corps" répartis dans le modèle.
+func _color_corps(node: Node, color: Color) -> void:
+	if node.name.to_lower().begins_with("corp"):
+		_force_color(node, color)
+		return  # tout son sous-arbre est déjà coloré, inutile de descendre plus
 	for c in node.get_children():
-		_tint_recursive(c, color)
+		_color_corps(c, color)
+
+# Force la couleur joueur sur TOUS les meshes sous ce nœud (MeshInstance3D ET CSG),
+# en écrasant le matériau existant.
+func _force_color(node: Node, color: Color) -> void:
+	if node is MeshInstance3D:
+		node.material_override = _colored_mat(color)
+	elif node is CSGPrimitive3D or node is CSGMesh3D:
+		node.material = _colored_mat(color)
+	for c in node.get_children():
+		_force_color(c, color)
 
 func _colored_mat(color: Color) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()

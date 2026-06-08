@@ -71,76 +71,78 @@ size = Vector3(0.03, 0.26, 0.03)
 [node name="Node3D" type="Node3D" unique_id=782757038]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
 
-[node name="maison" type="CSGMesh3D" parent="." unique_id=915377543]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.101613134, 0)
+[node name="Corp" type="Node3D" parent="." unique_id=1831503617]
+
+[node name="maison" type="CSGMesh3D" parent="Corp" unique_id=915377543]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0.10161313, 0)
 mesh = SubResource("BoxMesh_oa2yk")
 
-[node name="subhouse" type="CSGMesh3D" parent="maison" unique_id=1665044321]
+[node name="subhouse" type="CSGMesh3D" parent="Corp/maison" unique_id=1665044321]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.009439766, 0)
 operation = 2
 mesh = SubResource("BoxMesh_hwmy7")
 
-[node name="subwindow" type="CSGMesh3D" parent="maison" unique_id=491393538]
+[node name="subwindow" type="CSGMesh3D" parent="Corp/maison" unique_id=491393538]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09717634, -0.0058489144, -0.044106457)
 operation = 2
 mesh = SubResource("BoxMesh_e0et3")
 
-[node name="subdoor" type="CSGMesh3D" parent="maison" unique_id=389775865]
+[node name="subdoor" type="CSGMesh3D" parent="Corp/maison" unique_id=389775865]
 transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0.09484339, -0.030105978, 0.0555307)
 operation = 2
 mesh = SubResource("BoxMesh_ce2i1")
 
-[node name="door" type="CSGMesh3D" parent="maison" unique_id=360095724]
+[node name="door" type="CSGMesh3D" parent="Corp/maison" unique_id=360095724]
 transform = Transform3D(0.9999998, 0, 0, 0, 0.9999998, 0, 0, 0, 0.9999998, 0.09355446, -0.03178414, 0.05584137)
 mesh = SubResource("BoxMesh_gy7qo")
 
-[node name="barre_window1" type="CSGMesh3D" parent="maison" unique_id=51680399]
+[node name="barre_window1" type="CSGMesh3D" parent="Corp/maison" unique_id=51680399]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09717634, -0.005782366, -0.044106457)
 mesh = SubResource("BoxMesh_h1u6q")
 
-[node name="barre_window2" type="CSGMesh3D" parent="maison" unique_id=467743538]
+[node name="barre_window2" type="CSGMesh3D" parent="Corp/maison" unique_id=467743538]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0.09717634, -0.0053829104, -0.044106457)
 mesh = SubResource("BoxMesh_npoh1")
 
-[node name="poignee" type="CSGMesh3D" parent="maison" unique_id=2046903267]
+[node name="poignee" type="CSGMesh3D" parent="Corp/maison" unique_id=2046903267]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.1010175, -0.033049792, 0.04114407)
 mesh = SubResource("SphereMesh_uk0nx")
 
-[node name="toit_cote_gauche" type="CSGMesh3D" parent="maison" unique_id=316702113]
+[node name="toit_cote_gauche" type="CSGMesh3D" parent="Corp/maison" unique_id=316702113]
 transform = Transform3D(2.8097139e-08, -3.3484863e-08, -1, -0.7660444, -0.6427876, 0, -0.6427876, 0.7660444, -4.371139e-08, 0.0023933575, 0.13331029, 0.0567571)
 mesh = SubResource("BoxMesh_eh2vw")
 
-[node name="toit_cote_droit" type="CSGMesh3D" parent="maison" unique_id=1991589697]
+[node name="toit_cote_droit" type="CSGMesh3D" parent="Corp/maison" unique_id=1991589697]
 transform = Transform3D(2.8097139e-08, -3.3484863e-08, 1, -0.7660444, -0.6427876, 0, 0.6427876, -0.7660444, -4.371139e-08, 0.002, 0.133, -0.057)
 mesh = SubResource("BoxMesh_eh2vw")
 
-[node name="cylinder_toit" type="CSGMesh3D" parent="maison" unique_id=805359245]
+[node name="cylinder_toit" type="CSGMesh3D" parent="Corp/maison" unique_id=805359245]
 transform = Transform3D(-3.090862e-08, 3.090862e-08, 1, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, -4.371139e-08, 0.002514094, 0.17840832, 7.030368e-05)
 mesh = SubResource("BoxMesh_iv5pv")
 
-[node name="toit_avant" type="CSGMesh3D" parent="maison" unique_id=348565408]
+[node name="toit_avant" type="CSGMesh3D" parent="Corp/maison" unique_id=348565408]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.09535963, 0.13850638, 0)
 mesh = SubResource("PrismMesh_ircr3")
 
-[node name="toit_arriere" type="CSGMesh3D" parent="maison" unique_id=124400753]
+[node name="toit_arriere" type="CSGMesh3D" parent="Corp/maison" unique_id=124400753]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -0.095297866, 0.13850638, 0)
 mesh = SubResource("PrismMesh_ircr3")
 
-[node name="trou_haut_avant" type="CSGMesh3D" parent="maison" unique_id=1782844435]
+[node name="trou_haut_avant" type="CSGMesh3D" parent="Corp/maison" unique_id=1782844435]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.1010175, 0.108158395, 0.00047229975)
 operation = 2
 mesh = SubResource("SphereMesh_ys8i3")
 
-[node name="trou_haut_arriere" type="CSGMesh3D" parent="maison" unique_id=633961172]
+[node name="trou_haut_arriere" type="CSGMesh3D" parent="Corp/maison" unique_id=633961172]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.097, 0.108, 0)
 operation = 2
 mesh = SubResource("SphereMesh_ys8i3")
 
-[node name="cheminee" type="CSGMesh3D" parent="maison" unique_id=403907288]
+[node name="cheminee" type="CSGMesh3D" parent="Corp/maison" unique_id=403907288]
 transform = Transform3D(0.99999976, 0, 0, 0, 0.99999976, 0, 0, 0, 0.99999976, -0.058014315, 0.055656053, -0.05447828)
 mesh = SubResource("BoxMesh_uk0nx")
 
-[node name="GPUParticles3D" type="GPUParticles3D" parent="maison/cheminee" unique_id=365549311]
+[node name="GPUParticles3D" type="GPUParticles3D" parent="Corp/maison/cheminee" unique_id=365549311]
 transform = Transform3D(0.9999999, 0, 0, 0, 0.9999999, 0, 0, 0, 0.9999999, 0, 0.027068406, 0)
 amount_ratio = 0.5701
 lifetime = 0.8
@@ -150,7 +152,7 @@ randomness = 0.2
 process_material = SubResource("ParticleProcessMaterial_ircr3")
 draw_pass_1 = SubResource("SphereMesh_hsedy")
 
-[node name="sub_cheminee" type="CSGMesh3D" parent="maison" unique_id=24036417]
+[node name="sub_cheminee" type="CSGMesh3D" parent="Corp/maison" unique_id=24036417]
 transform = Transform3D(0.99999976, 0, 0, 0, 0.99999976, 0, 0, 0, 0.99999976, -0.058014315, 0.08031327, -0.05447828)
 operation = 2
 mesh = SubResource("BoxMesh_8kdog")

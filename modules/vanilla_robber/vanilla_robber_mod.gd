@@ -126,8 +126,12 @@ func _run_robber_sequence(state: GameState) -> void:
 		if result != null:
 			var p: Player = state.players[discarders[k]]
 			var discarded: Dictionary = result["to_discard"]
+			var total_discarded := 0
 			for res_id in discarded:
 				p.add_resource(res_id, -discarded[res_id])
+				total_discarded += int(discarded[res_id])
+			if total_discarded > 0:
+				_registry.emit("game_log", {"text": "🗑️ %s a défaussé %d ressources" % [p.label(), total_discarded]})
 	state.sub_phase = SP_MOVE
 
 # === DÉPLACEMENT (via clic tuile) ===
@@ -142,8 +146,14 @@ func _on_tile_clicked(ctx: ClickContext) -> void:
 	if board.has_marker_at("robber", coords):
 		print("Le voleur doit être déplacé ailleurs")
 		return
+	var from_coords: Vector2 = board.get_marker("robber")  # position AVANT le déplacement
 	board.set_marker("robber", coords)
 	ctx.handled = true
+	var mover: String = ctx.state.players[_roller_index].label()
+	if from_coords != Vector2.INF and from_coords != coords:
+		_registry.emit("game_log", {"text": "🦹 %s a déplacé le voleur de %s à %s" % [mover, _tile_label(from_coords), _tile_label(coords)]})
+	else:
+		_registry.emit("game_log", {"text": "🦹 %s a déplacé le voleur sur %s" % [mover, _tile_label(coords)]})
 	var targets := _get_steal_targets(board, ctx.state, coords)
 	if targets.is_empty():
 		ctx.state.sub_phase = ""
@@ -177,6 +187,16 @@ func _get_steal_targets(board: Board, state: GameState, coords: Vector2) -> Arra
 			targets.append(owner_id)
 	return targets
 
+# Libellé lisible d'une tuile pour le journal : "Bois (8)", "Minerai (5)", "Désert".
+func _tile_label(coords: Vector2) -> String:
+	var t: Dictionary = _board.tile_data.get(coords, {})
+	var res_id: String = t.get("resource", "")
+	var res_name: String = res_id
+	if _registry != null and _registry.resources.has(res_id):
+		res_name = _registry.resources[res_id].get("name", res_id)
+	var num: int = int(t.get("number", 0))
+	return "%s (%d)" % [res_name, num] if num > 0 else res_name
+
 func _perform_steal(state: GameState, target_id: int) -> void:
 	var target: Player = state.players[target_id]
 	var thief: Player = state.players[_roller_index]
@@ -189,7 +209,10 @@ func _perform_steal(state: GameState, target_id: int) -> void:
 	var stolen: String = pool.pick_random()
 	target.add_resource(stolen, -1)
 	thief.add_resource(stolen, 1)
-	print("Joueur %d vole %s à Joueur %d" % [thief.id, stolen, target.id])
+	var res_name: String = stolen
+	if _registry != null and _registry.resources.has(stolen):
+		res_name = _registry.resources[stolen].get("name", stolen)
+	_registry.emit("game_log", {"text": "🦹 %s a volé 1 %s à %s" % [thief.label(), res_name, target.label()]})
 
 # === CARTE CHEVALIER / PLUS GRANDE ARMÉE ===
 
@@ -230,5 +253,5 @@ func _update_largest_army() -> void:
 		eff.victory_points = 2
 		eff.data = {"knights": best_count}
 		_state.players[best_id].add_effect(eff)
-		print("Plus grande armée -> Joueur %d (%d chevaliers)" % [best_id, best_count])
+		_registry.emit("game_log", {"text": "🛡️ Plus grande armée pour %s (%d chevaliers)" % [_state.players[best_id].label(), best_count]})
 	_registry.check_victory(_state)

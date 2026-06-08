@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://ciwmo7ie6qdme"]
+
+[ext_resource type="PackedScene" uid="uid://bnlii8vkn32k6" path="res://modules/classic_catan/buildings_models/road.tscn" id="1_r4ali"]
+
+[sub_resource type="StandardMaterial3D" id="Metal"]
+albedo_color = Color(0.5, 0.52, 0.57, 1)
+metallic = 0.9
+roughness = 0.35
+
+[sub_resource type="BoxMesh" id="Socle"]
+size = Vector3(0.07, 0.04, 0.07)
+
+[sub_resource type="BoxMesh" id="Montant"]
+size = Vector3(0.03, 0.14, 0.03)
+
+[sub_resource type="BoxMesh" id="BrasHaut"]
+size = Vector3(0.03, 0.03, 0.16)
+
+[sub_resource type="BoxMesh" id="Pince"]
+size = Vector3(0.05, 0.06, 0.03)
+
+[node name="Node3D" type="Node3D" unique_id=49777106]
+
+[node name="Road" parent="." unique_id=2031897177 instance=ExtResource("1_r4ali")]
+
+[node name="RobotArm" type="Node3D" parent="." unique_id=98064430]
+transform = Transform3D(-0.6999863, 0, 0.004373733, 0, 0.7, 0, -0.004373733, 0, -0.6999863, 0.18, 0, 0.1260556)
+
+[node name="Socle" type="MeshInstance3D" parent="RobotArm" unique_id=274223327]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+material_override = SubResource("Metal")
+mesh = SubResource("Socle")
+
+[node name="Montant" type="MeshInstance3D" parent="RobotArm" unique_id=45537134]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11, 0)
+material_override = SubResource("Metal")
+mesh = SubResource("Montant")
+
+[node name="BrasHaut" type="MeshInstance3D" parent="RobotArm" unique_id=1379633000]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, -0.07)
+material_override = SubResource("Metal")
+mesh = SubResource("BrasHaut")
+
+[node name="Pince" type="MeshInstance3D" parent="RobotArm" unique_id=796760909]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, -0.15)
+material_override = SubResource("Metal")
+mesh = SubResource("Pince")

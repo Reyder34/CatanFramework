@@ -110,12 +110,21 @@ func _render_mod_node(id: String, depth: int, children: Dictionary, rendered: Di
 		spacer.custom_minimum_size = Vector2(depth * 26, 0)
 		row.add_child(spacer)
 	var cb := CheckBox.new()
-	cb.text = "%s — %s" % [_mods[id].mod_name, _mods[id].description]
-	if not _mods[id].provides.is_empty():
-		cb.tooltip_text = "Fournit: %s (un seul mod par slot à la fois)" % ", ".join(_mods[id].provides)
+	cb.text = _mods[id].mod_name           # le nom seul ; la description passe en infobulle
 	cb.button_pressed = _enabled[id]
 	cb.toggled.connect(_on_mod_toggled.bind(id))
 	row.add_child(cb)
+	# Pastille "(i)" : description (et slot éventuel) affichés au survol de la souris.
+	var info := Label.new()
+	info.text = " (i)"
+	info.modulate = Color(0.55, 0.75, 1.0)
+	info.mouse_filter = Control.MOUSE_FILTER_STOP   # nécessaire pour recevoir le survol -> infobulle
+	info.mouse_default_cursor_shape = Control.CURSOR_HELP
+	var tip: String = _mods[id].description
+	if not _mods[id].provides.is_empty():
+		tip += "\n(Fournit : %s — un seul mod par slot à la fois)" % ", ".join(_mods[id].provides)
+	info.tooltip_text = tip
+	row.add_child(info)
 	_mod_list.add_child(row)
 	_checkboxes[id] = cb
 	for child in children.get(id, []):

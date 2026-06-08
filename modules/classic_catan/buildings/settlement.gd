@@ -35,11 +35,11 @@ func get_production_amount() -> int:
 
 # Modèle: petite maison (corps + toit). Gabarit — assigner model_scene pour remplacer.
 func create_visual(player_color: Color) -> Node3D:
-	var custom := super.create_visual(player_color)  # model_scene si assigné
-	var color := get_color(player_color)
+	var custom := super.create_visual(player_color)  # model_scene + convention "Corps"
 	if custom != null:
-		_apply_color_to_model(custom, color)
 		return custom
+	# Repli procédural (uniquement si aucun model_scene n'est assigné)
+	var color := get_color(player_color)
 	var root := Node3D.new()
 	var body := MeshInstance3D.new()
 	var bm := BoxMesh.new()
@@ -56,18 +56,3 @@ func create_visual(player_color: Color) -> Node3D:
 	roof.material_override = _colored_mat(color.darkened(0.25))
 	root.add_child(roof)
 	return root
-
-func _apply_color_to_model(node: Node, color: Color) -> void:
-	# Si c'est un MeshInstance3D standard
-	if node is MeshInstance3D:
-		node.material_override = _colored_mat(color)
-		if node.mesh:
-			for i in range(node.get_mesh_material_count()):
-				node.set_surface_override_material(i, _colored_mat(color))
-				
-	# Si c'est un nœud CSG (Comme dans ton modèle actuel)
-	elif node is CSGPrimitive3D or node is CSGMesh3D:
-		node.material = _colored_mat(color)
-		
-	for child in node.get_children():
-		_apply_color_to_model(child, color)
