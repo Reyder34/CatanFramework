@@ -2,7 +2,7 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://boon8g0tvtvt0"
+uid="uid://dufwsrd6yfqim"
 path="res://.godot/imported/your_turn.wav-160c4106b9ca798fc9e9dbe424a48b6d.sample"
 
 [deps]
@@ -21,4 +21,4 @@ edit/normalize=false
 edit/loop_mode=0
 edit/loop_begin=0
 edit/loop_end=-1
-compress/mode=0
+compress/mode=2
