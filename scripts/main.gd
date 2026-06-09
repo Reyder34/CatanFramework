@@ -15,6 +15,7 @@ const OPTIONS_MENU := preload("res://scenes/options_menu.tscn")
 var _sun: DirectionalLight3D = null   # soleil : arc est->ouest, intensité ~ hauteur, ombres mobiles
 var _moon: DirectionalLight3D = null  # lune : faible lumière blanche la nuit
 var _env: Environment = null          # ambiance (remplissage) modulée jour/nuit
+var _sky_mat: ShaderMaterial = null   # matériau du ciel (fige cycle_duration si jour/nuit off)
 var _clean_view := false  # F12 : masque HUD + labels 3D pour les screenshots
 
 func _ready() -> void:
@@ -94,6 +95,8 @@ func _ready() -> void:
 	# Éclairage jour/nuit : cycle long en jeu (10 min jour + 10 min nuit), puis collecte des lampes.
 	DayNight.cycle_seconds = 1200.0
 	_collect_lights()
+	Settings.graphics_changed.connect(_apply_graphics)
+	_apply_graphics()
 
 func _load_mods() -> void:
 	# Mods choisis dans le menu (GameConfig), + expansion des dépendances par sécurité.
@@ -530,6 +533,9 @@ func _collect_lights() -> void:
 	var we := get_node_or_null("WorldEnvironment") as WorldEnvironment
 	if we != null:
 		_env = we.environment
+	var sky_rect := get_node_or_null("Sky/ColorRect") as ColorRect
+	if sky_rect != null:
+		_sky_mat = sky_rect.material as ShaderMaterial
 
 func _apply_day_night() -> void:
 	# Soleil : on l'oriente selon l'arc du cycle (ombres qui balayent est-ouest), intensité + couleur.
@@ -548,6 +554,14 @@ func _apply_day_night() -> void:
 	if _env != null:
 		_env.ambient_light_color = DayNight.ambient_color
 		_env.ambient_light_energy = DayNight.ambient_energy
+
+# Réglages graphiques (preset + cycle jour/nuit). Au démarrage et sur Settings.graphics_changed.
+func _apply_graphics() -> void:
+	Settings.apply_world(_env, _sun, get_viewport())
+	if _sky_mat != null:
+		# Cycle jour/nuit off -> ciel figé à midi (cycle_duration énorme).
+		var cd := 1200.0 if Settings.day_night_enabled else 1.0e9
+		_sky_mat.set_shader_parameter("cycle_duration", cd)
 
 # F12 : mode "screenshot" — masque le HUD (2D) + tous les Label3D (numéros de tuiles, ratios de ports).
 func _toggle_clean_view() -> void:

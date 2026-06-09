@@ -26,6 +26,12 @@ background_canvas_max_layer = -10
 ambient_light_source = 2
 ambient_light_color = Color(0.62, 0.7, 0.85, 1)
 ambient_light_energy = 0.3
+glow_enabled = true
+glow_intensity = 1.0
+glow_strength = 1.1
+glow_bloom = 0.0
+glow_blend_mode = 1
+glow_hdr_threshold = 1.5
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_20qpi")

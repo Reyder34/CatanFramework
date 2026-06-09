@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://bnlii8vkn32k6"]
 
+[ext_resource type="Shader" uid="uid://dg0orr3hnorf0" path="res://ui/shader/lamp_glow.gdshader" id="1_lamp"]
+
 [sub_resource type="BoxMesh" id="BoxMesh_ar5h7"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qn66j"]
@@ -9,6 +11,22 @@ albedo_color = Color(0, 0, 0, 1)
 material = SubResource("StandardMaterial3D_qn66j")
 
 [sub_resource type="BoxMesh" id="BoxMesh_g1k4u"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ar5h7"]
+albedo_color = Color(0.32915837, 0.3291584, 0.3291584, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qn66j"]
+material = SubResource("StandardMaterial3D_ar5h7")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lamp"]
+render_priority = 0
+shader = ExtResource("1_lamp")
+shader_parameter/lamp_color = Color(1, 0.82, 0.45, 1)
+shader_parameter/glow_strength = 3.0
+shader_parameter/day_albedo = 0.55
+
+[sub_resource type="BoxMesh" id="BoxMesh_7nuea"]
+material = SubResource("ShaderMaterial_lamp")
 
 [node name="Road" type="Node3D" unique_id=537162140]
 transform = Transform3D(-1.3113417e-08, 0, 0.3, 0, 0.3, 0, -0.3, 0, -1.3113417e-08, 0, 0, 0)
@@ -43,3 +61,14 @@ skeleton = NodePath("../..")
 transform = Transform3D(0.22003137, 0, 0, 0, 0.5565712, 0, 0, 0, 0.26036793, 0, 0.5032338, -0.32161394)
 mesh = SubResource("BoxMesh_g1k4u")
 skeleton = NodePath("../..")
+
+[node name="Lampadaire" type="Node3D" parent="." unique_id=218071363]
+transform = Transform3D(0.9999998, 0, 0, 0, 0.9999998, 0, 0, 0, 0.9999998, -3.8364178e-08, 0, 0.87767005)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Lampadaire" unique_id=736363942]
+transform = Transform3D(0.050018635, 0, -4.440892e-16, 0, 0.8900883, 0, 4.440892e-16, 0, 0.046497006, -0.4003483, 0.40368855, -1.3394845)
+mesh = SubResource("BoxMesh_qn66j")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Lampadaire" unique_id=473585742]
+transform = Transform3D(0.1588648, 0, 0, 0, 0.21369684, 0, 4.8849813e-15, 0, 0.17394404, -0.4014039, 0.89915764, -1.343142)
+mesh = SubResource("BoxMesh_7nuea")

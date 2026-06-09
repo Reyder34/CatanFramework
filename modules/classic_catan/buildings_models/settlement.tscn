@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://bg5yhekwgmqak"]
 
+[ext_resource type="Shader" uid="uid://dg0orr3hnorf0" path="res://ui/shader/lamp_glow.gdshader" id="1_hwmy7"]
+
 [sub_resource type="BoxMesh" id="BoxMesh_oa2yk"]
 size = Vector3(0.2, 0.2, 0.2)
 
@@ -67,6 +69,16 @@ height = 0.025
 
 [sub_resource type="BoxMesh" id="BoxMesh_8kdog"]
 size = Vector3(0.03, 0.26, 0.03)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_e0et3"]
+render_priority = 0
+shader = ExtResource("1_hwmy7")
+shader_parameter/lamp_color = Color(1, 0.82, 0.45, 1)
+shader_parameter/glow_strength = 3.0
+shader_parameter/day_albedo = 0.55
+
+[sub_resource type="BoxMesh" id="BoxMesh_ircr3"]
+material = SubResource("ShaderMaterial_e0et3")
 
 [node name="Node3D" type="Node3D" unique_id=782757038]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
@@ -156,3 +168,9 @@ draw_pass_1 = SubResource("SphereMesh_hsedy")
 transform = Transform3D(0.99999976, 0, 0, 0, 0.99999976, 0, 0, 0, 0.99999976, -0.058014315, 0.08031327, -0.05447828)
 operation = 2
 mesh = SubResource("BoxMesh_8kdog")
+
+[node name="lamp" type="Node3D" parent="." unique_id=2024810866]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="lamp" unique_id=61656270]
+transform = Transform3D(0.021182775, 0, 0, 0, 0.008082807, 0, 0, 0, 0.012335544, 0, 0.20741051, 0)
+mesh = SubResource("BoxMesh_ircr3")

@@ -22,8 +22,11 @@ config/icon="uid://q6ds6lhotgd0"
 [autoload]
 
 Net="*res://scripts/net.gd"
-Settings="*res://scripts/settings.gd"
+UISound="*res://scripts/ui_sound.gd"
 DayNight="*res://scripts/day_night.gd"
+Settings="*res://scripts/settings.gd"
+LampLights="*res://scripts/lamp_lights.gd"
+FpsCounter="*res://scripts/fps_counter.gd"
 
 [gui]
 

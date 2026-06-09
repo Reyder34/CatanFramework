@@ -11,6 +11,21 @@ extends CanvasLayer
 @onready var _fps: OptionButton = %FpsCap
 @onready var _close_btn: Button = %CloseBtn
 
+# Sliders de volume par bus (en plus du master = volume général). Ordre = ordre des bus.
+@onready var _ui_slider: HSlider = %UISlider
+@onready var _ui_value: Label = %UIValue
+@onready var _sfx_slider: HSlider = %SfxSlider
+@onready var _sfx_value: Label = %SfxValue
+@onready var _notif_slider: HSlider = %NotifSlider
+@onready var _notif_value: Label = %NotifValue
+@onready var _music_slider: HSlider = %MusicSlider
+@onready var _music_value: Label = %MusicValue
+
+# Graphismes : preset de qualité (Low/Medium/Ultra) + toggle cycle jour/nuit.
+@onready var _gfx: OptionButton = %GfxPreset
+@onready var _daynight: CheckButton = %DayNightToggle
+@onready var _fps_toggle: CheckButton = %FpsToggle
+
 # Résolutions proposées en mode Fenêtré (l'index du menu -> la taille).
 const RESOLUTIONS := [
 	Vector2i(1280, 720), Vector2i(1366, 768), Vector2i(1600, 900),
@@ -23,10 +38,14 @@ const FPS_LABELS := ["Illimité", "30", "60", "120", "144", "240"]
 func _ready() -> void:
 	layer = 128  # au-dessus du HUD et de tout le reste
 
-	# Volume master
+	# Volume général (master) + un slider par bus secondaire.
 	_slider.value = Settings.master_volume
 	_update_value(Settings.master_volume)
 	_slider.value_changed.connect(_on_slider)
+	_wire_bus(_ui_slider, _ui_value, "UI")
+	_wire_bus(_sfx_slider, _sfx_value, "SFX")
+	_wire_bus(_notif_slider, _notif_value, "Notification")
+	_wire_bus(_music_slider, _music_value, "Musique")
 
 	# Mode d'affichage (l'ordre des items correspond à l'enum de Settings : 0/1/2)
 	_display.clear()
@@ -53,6 +72,20 @@ func _ready() -> void:
 	_fps.selected = maxi(FPS_VALUES.find(Settings.max_fps), 0)
 	_fps.item_selected.connect(func(i: int) -> void: Settings.set_max_fps(FPS_VALUES[i]))
 
+	# Graphismes : preset (l'ordre Low/Medium/Ultra = enum GFX_LOW/MEDIUM/ULTRA = 0/1/2).
+	_gfx.clear()
+	_gfx.add_item("Low")
+	_gfx.add_item("Medium")
+	_gfx.add_item("Ultra")
+	_gfx.selected = Settings.graphics_preset
+	_gfx.item_selected.connect(func(i: int) -> void: Settings.set_graphics_preset(i))
+	# Cycle jour/nuit (décoché = toujours midi).
+	_daynight.button_pressed = Settings.day_night_enabled
+	_daynight.toggled.connect(func(on: bool) -> void: Settings.set_day_night_enabled(on))
+	# Affichage des FPS (haut à droite).
+	_fps_toggle.button_pressed = Settings.show_fps
+	_fps_toggle.toggled.connect(func(on: bool) -> void: Settings.set_show_fps(on))
+
 	_close_btn.pressed.connect(close)
 	_update_res_enabled()
 
@@ -70,6 +103,17 @@ func _on_slider(v: float) -> void:
 
 func _update_value(v: float) -> void:
 	_value.text = "%d %%" % roundi(v * 100.0)
+
+# Branche un slider de bus sur Settings : init depuis la valeur sauvegardée + maj du %.
+func _wire_bus(slider: HSlider, value_label: Label, bus: String) -> void:
+	var v: float = float(Settings.bus_volumes.get(bus, 1.0))
+	slider.value = v
+	value_label.text = "%d %%" % roundi(v * 100.0)
+	slider.value_changed.connect(_on_bus_slider.bind(bus, value_label))
+
+func _on_bus_slider(v: float, bus: String, value_label: Label) -> void:
+	Settings.set_bus_volume(bus, v)
+	value_label.text = "%d %%" % roundi(v * 100.0)
 
 func close() -> void:
 	queue_free()

@@ -51,7 +51,7 @@ theme_override_constants/separation = 12
 [node name="MasterLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/MasterRow" unique_id=835782103]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-text = "Volume master"
+text = "Général"
 
 [node name="MasterSlider" type="HSlider" parent="Dim/Center/Panel/Margin/VBox/MasterRow" unique_id=1123942646]
 unique_name_in_owner = true
@@ -64,6 +64,110 @@ step = 0.01
 value = 1.0
 
 [node name="MasterValue" type="Label" parent="Dim/Center/Panel/Margin/VBox/MasterRow" unique_id=1313381044]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
+text = "100 %"
+horizontal_alignment = 2
+
+[node name="UIRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=710000001]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="UILabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/UIRow" unique_id=710000002]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Interface"
+
+[node name="UISlider" type="HSlider" parent="Dim/Center/Panel/Margin/VBox/UIRow" unique_id=710000003]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="UIValue" type="Label" parent="Dim/Center/Panel/Margin/VBox/UIRow" unique_id=710000004]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
+text = "100 %"
+horizontal_alignment = 2
+
+[node name="SfxRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=710000005]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SfxLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/SfxRow" unique_id=710000006]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Effets"
+
+[node name="SfxSlider" type="HSlider" parent="Dim/Center/Panel/Margin/VBox/SfxRow" unique_id=710000007]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="SfxValue" type="Label" parent="Dim/Center/Panel/Margin/VBox/SfxRow" unique_id=710000008]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
+text = "100 %"
+horizontal_alignment = 2
+
+[node name="NotifRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=710000009]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="NotifLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/NotifRow" unique_id=710000010]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Notifications"
+
+[node name="NotifSlider" type="HSlider" parent="Dim/Center/Panel/Margin/VBox/NotifRow" unique_id=710000011]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="NotifValue" type="Label" parent="Dim/Center/Panel/Margin/VBox/NotifRow" unique_id=710000012]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
+text = "100 %"
+horizontal_alignment = 2
+
+[node name="MusicRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=710000013]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="MusicLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/MusicRow" unique_id=710000014]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Musique"
+
+[node name="MusicSlider" type="HSlider" parent="Dim/Center/Panel/Margin/VBox/MusicRow" unique_id=710000015]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="MusicValue" type="Label" parent="Dim/Center/Panel/Margin/VBox/MusicRow" unique_id=710000016]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(54, 0)
 layout_mode = 2
@@ -108,6 +212,57 @@ layout_mode = 2
 text = "Limite FPS"
 
 [node name="FpsCap" type="OptionButton" parent="Dim/Center/Panel/Margin/VBox/FpsRow" unique_id=127538840]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GfxSep" type="HSeparator" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000001]
+layout_mode = 2
+
+[node name="GfxTitle" type="Label" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000002]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Graphismes"
+horizontal_alignment = 1
+
+[node name="GfxRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000003]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="GfxLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/GfxRow" unique_id=720000004]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Qualité"
+
+[node name="GfxPreset" type="OptionButton" parent="Dim/Center/Panel/Margin/VBox/GfxRow" unique_id=720000005]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DayNightRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000006]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="DayNightLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/DayNightRow" unique_id=720000007]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Cycle jour/nuit"
+
+[node name="DayNightToggle" type="CheckButton" parent="Dim/Center/Panel/Margin/VBox/DayNightRow" unique_id=720000008]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FpsShowRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000009]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="FpsShowLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/FpsShowRow" unique_id=720000010]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Afficher les FPS"
+
+[node name="FpsToggle" type="CheckButton" parent="Dim/Center/Panel/Margin/VBox/FpsShowRow" unique_id=720000011]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

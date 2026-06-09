@@ -11,6 +11,7 @@ const EFF_LARGEST_ARMY := "largest_army"
 const KNIGHTS_KEY := "vanilla_robber:knights"
 
 var _robber_node: Node3D
+var _robber_audio: AudioStreamPlayer  # son joué quand on place le voleur
 var _board: Board
 var _registry: GameRegistry
 var _state: GameState
@@ -51,6 +52,12 @@ func _on_game_start(ctx) -> void:
 	if desert != Vector2.INF:
 		_board.set_marker("robber", desert)
 	_create_robber_visual(board_view)
+	_robber_audio = AudioStreamPlayer.new()
+	_robber_audio.stream = load("res://modules/vanilla_robber/sounds/place_robber.mp3")
+	_robber_audio.volume_db = -5.0
+	_robber_audio.bus = "SFX"
+	if _robber_node != null:
+		_robber_node.add_child(_robber_audio)
 	_board.marker_changed.connect(_on_marker_changed)
 
 func _create_robber_visual(board_view: BoardView) -> void:
@@ -79,6 +86,8 @@ func _create_robber_visual(board_view: BoardView) -> void:
 func _on_marker_changed(marker_id: String, _coords: Vector2) -> void:
 	if marker_id == "robber":
 		_refresh_robber_visual()
+		if _robber_audio != null:
+			_robber_audio.play()
 
 func _refresh_robber_visual() -> void:
 	if _robber_node == null or _board == null:

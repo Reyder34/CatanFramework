@@ -8,6 +8,7 @@ var board_view: BoardView
 var _sun: DirectionalLight3D
 var _moon: DirectionalLight3D
 var _env: Environment
+var _sky_mat: ShaderMaterial
 var _cam: Camera3D
 var _angle := 0.0
 
@@ -17,6 +18,8 @@ func _ready() -> void:
 	_build_camera()
 	_build_board()
 	_apply_day_night()
+	Settings.graphics_changed.connect(_apply_graphics)
+	_apply_graphics()
 
 func _build_lighting() -> void:
 	# Ciel : le shader sky.gdshader sur un ColorRect (CanvasLayer -10), comme dans le jeu.
@@ -26,10 +29,10 @@ func _build_lighting() -> void:
 	var sky_rect := ColorRect.new()
 	sky_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	sky_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var sky_mat := ShaderMaterial.new()
-	sky_mat.shader = load("res://ui/shader/sky.gdshader")
-	sky_mat.set_shader_parameter("cycle_duration", 120.0)  # = DayNight.cycle_seconds du menu (sync)
-	sky_rect.material = sky_mat
+	_sky_mat = ShaderMaterial.new()
+	_sky_mat.shader = load("res://ui/shader/sky.gdshader")
+	_sky_mat.set_shader_parameter("cycle_duration", 120.0)  # = DayNight.cycle_seconds du menu (sync)
+	sky_rect.material = _sky_mat
 	sky_layer.add_child(sky_rect)
 	# Environnement : fond = le canvas (ciel), + ambiance modulée jour/nuit.
 	var we := WorldEnvironment.new()
@@ -37,6 +40,14 @@ func _build_lighting() -> void:
 	_env.background_mode = Environment.BG_CANVAS
 	_env.background_canvas_max_layer = -10
 	_env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	# Glow à seuil HDR : seules les ampoules émissives (lampadaires la nuit) bloomment ;
+	# l'eau / le plateau (LDR < seuil) ne changent pas.
+	_env.glow_enabled = true
+	_env.glow_blend_mode = Environment.GLOW_BLEND_MODE_SCREEN
+	_env.glow_hdr_threshold = 1.5
+	_env.glow_bloom = 0.0
+	_env.glow_intensity = 1.0
+	_env.glow_strength = 1.1
 	we.environment = _env
 	add_child(we)
 	_sun = DirectionalLight3D.new()
@@ -134,3 +145,10 @@ func _apply_day_night() -> void:
 	if _env != null:
 		_env.ambient_light_color = DayNight.ambient_color
 		_env.ambient_light_energy = DayNight.ambient_energy
+
+# Réglages graphiques (preset + cycle jour/nuit) appliqués au SubViewport du menu.
+func _apply_graphics() -> void:
+	Settings.apply_world(_env, _sun, get_viewport())
+	if _sky_mat != null:
+		var cd := 120.0 if Settings.day_night_enabled else 1.0e9
+		_sky_mat.set_shader_parameter("cycle_duration", cd)

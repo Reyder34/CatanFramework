@@ -36,6 +36,7 @@ var _dev_deck: Array = []  # Array[DevelopmentCard]
 # Placement initial (règle de setup Catan, pilotée par ce mod)
 var _initial_placements: Array = []
 var _initial_direction: int = 1
+var _build_audio: AudioStreamPlayer  # son "buildPop" à la pose d'un bâtiment
 var _last_initial_settlement_key: String = ""
 
 # Ports: vertex_key -> {"ratio": int, "resource": String}  (resource "" = générique 3:1)
@@ -105,6 +106,7 @@ func _subscribe_hooks(reg: GameRegistry) -> void:
 	reg.on(EVT_ROAD_BUILDING_PLAYED, _on_road_building_played, 0)
 	reg.on(EVT_REQUEST_TRADE_WITH, _on_request_trade_with, 0)
 	reg.on(EVT_REQUEST_PLAY_CARD, _on_request_play_card, 0)
+	reg.on(EVT_AFTER_PLACE, _on_build_placed_sound, 0)
 
 # Lancer 2d6 si personne n'a fourni de résultat
 func _on_dice_roll(ctx: RollContext) -> void:
@@ -210,6 +212,7 @@ func _handle_initial_settlement(ctx: ClickContext) -> void:
 		return
 	settlement.on_placed(board, state.current_player().id, key)
 	_register_building_for_player(state.current_player(), settlement, key)
+	_on_build_placed_sound(null)  # son aussi au placement initial
 	_last_initial_settlement_key = key
 	# Sur la 2e colonie: ressources adjacentes
 	var placement_index: int = _initial_placements[state.current_player_index]
@@ -236,6 +239,7 @@ func _handle_initial_road(ctx: ClickContext) -> void:
 	var road: Road = state.registry.get_building("road")
 	road.on_placed(board, state.current_player().id, key)
 	_register_building_for_player(state.current_player(), road, key)
+	_on_build_placed_sound(null)  # son aussi au placement initial
 	_advance_initial_placement()
 	state.build_mode_id = "settlement"
 
@@ -461,6 +465,21 @@ func _on_game_start_for_actions(ctx) -> void:
 	_state.build_mode_id = "settlement"  # on démarre en pose de colonie
 	_compute_ports()
 	_create_port_visuals(ctx["board_view"])
+	_setup_build_audio(ctx["board_view"])
+
+# Son "buildPop" : créé une fois (au game_start), joué à chaque EVT_AFTER_PLACE (pose réussie).
+func _setup_build_audio(board_view) -> void:
+	if board_view == null or board_view.tile_nodes.is_empty():
+		return
+	_build_audio = AudioStreamPlayer.new()
+	_build_audio.stream = load("res://modules/classic_catan/sounds/buildPop.mp3")
+	_build_audio.volume_db = -5.0
+	_build_audio.bus = "SFX"
+	board_view.tile_nodes.values()[0].get_parent().add_child(_build_audio)
+
+func _on_build_placed_sound(_ctx) -> void:
+	if _build_audio != null:
+		_build_audio.play()
 
 # === PORTS (commerce réduit si on a une colonie/ville sur un sommet de port) ===
 

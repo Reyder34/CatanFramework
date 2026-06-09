@@ -61,3 +61,11 @@ func _recompute() -> void:
 	RenderingServer.global_shader_parameter_set(&"day_night_time", time_of_day)
 	RenderingServer.global_shader_parameter_set(&"day_night_factor", day_factor)
 	cycle_changed.emit()
+
+# Active/désactive le cycle. Désactivé -> FIGÉ À MIDI (time_of_day=0), utilisé par le réglage
+# graphique "cycle jour/nuit". (Le ciel est figé séparément par les scènes : cycle_duration énorme.)
+func set_running(running: bool) -> void:
+	paused = not running
+	if not running:
+		time_of_day = 0.0  # midi
+		_recompute()
