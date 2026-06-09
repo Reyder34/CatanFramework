@@ -34,7 +34,7 @@ material_override = SubResource("Metal")
 mesh = SubResource("Socle")
 
 [node name="Montant" type="MeshInstance3D" parent="RobotArm/Socle" unique_id=45537134]
-transform = Transform3D(1, 0, -3.5444842e-05, 0, 1, 0, 3.5444842e-05, 0, 1, 0, 0.09, 0)
+transform = Transform3D(-1, 0, 3.6215773e-05, 0, 1, 0, -3.6215773e-05, 0, -1, 0, 0.09, 0)
 material_override = SubResource("Metal")
 mesh = SubResource("Montant")
 skeleton = NodePath("../..")
@@ -60,7 +60,7 @@ material_override = SubResource("Metal")
 mesh = SubResource("Socle")
 
 [node name="Montant" type="MeshInstance3D" parent="RobotArm2/Socle" unique_id=1238680661]
-transform = Transform3D(-1, 0, 4.1794723e-05, 0, 1.0000001, 0, -4.1794723e-05, 0, -1, 0, 0.09, 0)
+transform = Transform3D(-1, 0, 4.5100835e-05, 0, 1.0000001, 0, -4.5100835e-05, 0, -1, 0, 0.09, 0)
 material_override = SubResource("Metal")
 mesh = SubResource("Montant")
 skeleton = NodePath("../..")
@@ -86,7 +86,7 @@ material_override = SubResource("Metal")
 mesh = SubResource("Socle")
 
 [node name="Montant" type="MeshInstance3D" parent="RobotArm3/Socle" unique_id=747461272]
-transform = Transform3D(1, 0, -3.5444842e-05, 0, 1, 0, 3.5444842e-05, 0, 1, 0, 0.09, 0)
+transform = Transform3D(1, 0, -3.5889934e-05, 0, 1, 0, 3.5889934e-05, 0, 1, 0, 0.09, 0)
 material_override = SubResource("Metal")
 mesh = SubResource("Montant")
 skeleton = NodePath("../..")

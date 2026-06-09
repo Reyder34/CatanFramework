@@ -10,9 +10,9 @@ extends GameMod
 #
 # ============================ CONFIG (édite ici) ============================
 # La TAILLE de la map vient du LOBBY (GameConfig.map_size -> reg.board_radius).
-const LAND_RATIO := 0.5     # part de TERRE: 0.5 => 50% terre / 50% eau
-const ISLAND_SEEDS := 2     # foyers d'îles: 1 = une île reliée; 2+ = archipel
-const MIN_SEED_DIST := 3    # écart minimal entre deux foyers d'archipel
+const LAND_RATIO := 0.4     # part de TERRE: 0.5 => 50% terre / 50% eau
+const ISLAND_SEEDS := 3     # foyers d'îles: 1 = une île reliée; 2+ = archipel
+const MIN_SEED_DIST := 4    # écart minimal entre deux foyers d'archipel
 const ROUGHNESS := 0.35     # 0 = côtes rondes/lisses ; 1 = côtes très découpées
 # ===========================================================================
 

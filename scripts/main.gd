@@ -11,6 +11,12 @@ var _snapshot_dirty := false  # réseau (hôte): un changement à diffuser
 var _authority_lost := false  # réseau: l'autorité a quitté (évite un double retour menu)
 var game_log: Array = []  # derniers événements (dés, actions...), synchronisé en réseau
 
+const OPTIONS_MENU := preload("res://scenes/options_menu.tscn")
+var _sun: DirectionalLight3D = null   # soleil : arc est->ouest, intensité ~ hauteur, ombres mobiles
+var _moon: DirectionalLight3D = null  # lune : faible lumière blanche la nuit
+var _env: Environment = null          # ambiance (remplissage) modulée jour/nuit
+var _clean_view := false  # F12 : masque HUD + labels 3D pour les screenshots
+
 func _ready() -> void:
 	# Seed partagée (réseau) -> plateau + ports identiques chez tous les joueurs.
 	if GameConfig.game_seed != 0:
@@ -85,6 +91,10 @@ func _ready() -> void:
 
 	print("Jeu prêt. Mods chargés: ", registry._origin.size(), " entrées dans le registry")
 
+	# Éclairage jour/nuit : cycle long en jeu (10 min jour + 10 min nuit), puis collecte des lampes.
+	DayNight.cycle_seconds = 1200.0
+	_collect_lights()
+
 func _load_mods() -> void:
 	# Mods choisis dans le menu (GameConfig), + expansion des dépendances par sécurité.
 	var catalog: Array = ModCatalog.create_all()
@@ -125,6 +135,19 @@ func _input(event: InputEvent) -> void:
 		if hud != null:
 			hud.reset_layout()  # réinitialise position + taille de l'UI
 		return
+	if event.keycode == KEY_F12:
+		_toggle_clean_view()  # masque HUD + numéros/ratios pour les screenshots
+		return
+	# Échap : menu d'options, accessible à tout moment.
+	# Exception : si un mode construction est actif, Échap l'annule d'abord (cancel_build, même touche).
+	if event.keycode == KEY_ESCAPE and not event.echo:
+		if has_node("OptionsMenu"):
+			return  # overlay déjà ouvert : il gère lui-même sa fermeture
+		if state.build_mode_id == "":
+			add_child(OPTIONS_MENU.instantiate())
+			get_viewport().set_input_as_handled()
+			return
+		# sinon : laisser l'action cancel_build s'exécuter (flux normal ci-dessous)
 	if state.phase == GameState.Phase.GAME_OVER:
 		return
 	if not _can_local_act():
@@ -495,9 +518,48 @@ func _connect_broadcast_signals() -> void:
 	state.status_changed.connect(func(): _snapshot_dirty = true)
 
 func _process(_delta: float) -> void:
+	_apply_day_night()
 	if _snapshot_dirty and GameConfig.is_multiplayer and _authoritative():
 		_snapshot_dirty = false
 		_send_snapshot_to_clients(_build_snapshot())
+
+# Éclairage jour/nuit (cycle global DayNight) : module énergie + couleur des lampes du plateau.
+func _collect_lights() -> void:
+	_sun = get_node_or_null("Sun") as DirectionalLight3D
+	_moon = get_node_or_null("Moon") as DirectionalLight3D
+	var we := get_node_or_null("WorldEnvironment") as WorldEnvironment
+	if we != null:
+		_env = we.environment
+
+func _apply_day_night() -> void:
+	# Soleil : on l'oriente selon l'arc du cycle (ombres qui balayent est-ouest), intensité + couleur.
+	if _sun != null:
+		var dir: Vector3 = DayNight.sun_direction
+		var up := Vector3.UP if absf(dir.dot(Vector3.UP)) < 0.99 else Vector3.BACK
+		_sun.look_at(_sun.global_position + dir, up)
+		_sun.light_energy = DayNight.sun_energy
+		_sun.light_color = DayNight.sun_color
+		_sun.visible = DayNight.sun_energy > 0.001  # éteint sous l'horizon
+	# Lune : faible lumière blanche la nuit.
+	if _moon != null:
+		_moon.light_energy = DayNight.moon_energy
+		_moon.visible = DayNight.moon_energy > 0.001
+	# Ambiance : remplissage clair le jour, sombre bleuté la nuit (évite le noir total).
+	if _env != null:
+		_env.ambient_light_color = DayNight.ambient_color
+		_env.ambient_light_energy = DayNight.ambient_energy
+
+# F12 : mode "screenshot" — masque le HUD (2D) + tous les Label3D (numéros de tuiles, ratios de ports).
+func _toggle_clean_view() -> void:
+	_clean_view = not _clean_view
+	$UI.visible = not _clean_view
+	_set_labels_3d_visible(self, not _clean_view)
+
+func _set_labels_3d_visible(node: Node, vis: bool) -> void:
+	for child in node.get_children():
+		if child is Label3D:
+			child.visible = vis
+		_set_labels_3d_visible(child, vis)
 
 # Envoi CIBLÉ à chaque joueur (sauf soi) plutôt qu'un rpc() global : en mode relais le
 # serveur n'est pas un joueur, il ne doit jamais recevoir de RPC de jeu (il relaie seulement).

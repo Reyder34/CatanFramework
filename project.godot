@@ -17,12 +17,29 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 config/name="Catan 2"
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="uid://q6ds6lhotgd0"
 
 [autoload]
 
 Net="*res://scripts/net.gd"
+Settings="*res://scripts/settings.gd"
+DayNight="*res://scripts/day_night.gd"
 
 [gui]
 
 theme/default_font_multichannel_signed_distance_field=true
+
+[rendering]
+
+textures/vram_compression/import_etc2_astc=true
+
+[shader_globals]
+
+day_night_factor={
+"type": "float",
+"value": 1.0
+}
+day_night_time={
+"type": "float",
+"value": 0.0
+}

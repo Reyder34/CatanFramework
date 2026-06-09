@@ -285,6 +285,9 @@ func _create_water_tile(parent: Node3D, q: int, r: int) -> void:
 	var mat := ShaderMaterial.new()
 	var water_shader = load("res://ui/shader/water.gdshader")
 	mat.shader = water_shader
+	# Dessine l'eau AVANT les Label3D des numéros (dont le contour est à priorité -1) : sinon
+	# l'eau transparente passe par-dessus le contour (il disparaît) et "aspire" les chiffres.
+	mat.render_priority = -10
 	mesh_inst.material_override = mat
 	parent.add_child(mesh_inst)
 

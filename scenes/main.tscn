@@ -6,6 +6,7 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_d3bry"]
 shader = ExtResource("3_lpto3")
+shader_parameter/cycle_duration = 1200.0
 shader_parameter/background_color = Color(0.02, 0.04, 0.12, 1)
 shader_parameter/aspect_ratio = 2.0
 shader_parameter/density = 0.3
@@ -22,6 +23,9 @@ shader_parameter/pixelate_count = 1000.0
 [sub_resource type="Environment" id="Environment_gp4rb"]
 background_mode = 3
 background_canvas_max_layer = -10
+ambient_light_source = 2
+ambient_light_color = Color(0.62, 0.7, 0.85, 1)
+ambient_light_energy = 0.3
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_20qpi")
@@ -59,18 +63,14 @@ mouse_filter = 2
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_gp4rb")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.707107, -0.353553, 0.612373, 0, 0.866026, 0.5, -0.707107, -0.353553, 0.612373, -4, 10, 0)
-light_energy = 0.4
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 10, 0)
+shadow_enabled = true
+shadow_blur = 1.0
+directional_shadow_mode = 0
+directional_shadow_max_distance = 40.0
 
-[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.0669873, -0.772692, 0.631236, -0.353553, 0.573224, 0.739199, -0.933013, -0.272693, -0.234789, 5, 10, 0)
-light_energy = 0.4
-
-[node name="DirectionalLight3D3" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.311276, -0.66682, -0.677096, -0.916031, 0.400199, 0.0269947, 0.252973, 0.628643, -0.7354, 0, 10, -5)
-light_energy = 0.4
-
-[node name="DirectionalLight3D4" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.0669873, -0.772692, 0.631236, -0.353553, 0.573224, 0.739199, -0.933013, -0.272693, -0.234789, 0, 10, 5)
-light_energy = 0.4
+[node name="Moon" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 0, 10, 0)
+light_energy = 0.0
+light_color = Color(0.66, 0.74, 1, 1)

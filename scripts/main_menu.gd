@@ -1,5 +1,7 @@
 extends Control
 
+const OPTIONS_MENU := preload("res://scenes/options_menu.tscn")
+
 # Menu à 4 écrans distincts :
 #   ACCUEIL : Solo / Multijoueur / Quitter
 #   SOLO    : toutes les options (mods, joueurs, taille, timer) + Lancer
@@ -52,6 +54,7 @@ func _ready() -> void:
 	_timer_spin.value = clampi(GameConfig.turn_timer, 0, 600)
 	%SoloBtn.pressed.connect(_show_solo)
 	%MultiBtn.pressed.connect(_show_multi)
+	%OptionsBtn.pressed.connect(_open_options)
 	%QuitBtn.pressed.connect(func() -> void: get_tree().quit())
 	%LancerSoloBtn.pressed.connect(_on_solo)
 	%RetourSoloBtn.pressed.connect(_show_home)
@@ -71,6 +74,11 @@ func _ready() -> void:
 	Net.connection_failed.connect(_on_failed)
 	Net.disconnected.connect(_on_disconnected)
 	Net.config_changed.connect(_on_config_received)
+
+func _open_options() -> void:
+	if has_node("OptionsMenu"):
+		return  # déjà ouvert
+	add_child(OPTIONS_MENU.instantiate())
 
 # === MODS ===
 

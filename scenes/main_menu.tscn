@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cf7725tcggtcp" path="res://scripts/main_menu.gd" id="1_menu"]
 [ext_resource type="Theme" uid="uid://dgp2ysc4sadf4" path="res://ui/theme.tres" id="2_theme"]
+[ext_resource type="PackedScene" path="res://scenes/menu_background.tscn" id="3_bg"]
 
 [node name="MainMenu" type="Control" unique_id=1809514109]
 layout_mode = 3
@@ -13,10 +14,27 @@ grow_vertical = 2
 theme = ExtResource("2_theme")
 script = ExtResource("1_menu")
 
-[node name="Center" type="CenterContainer" parent="." unique_id=1432192375]
+[node name="Background" type="SubViewportContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Background"]
+own_world_3d = true
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="MenuBackground" parent="Background/SubViewport" instance=ExtResource("3_bg")]
+
+[node name="Center" type="CenterContainer" parent="." unique_id=1432192375]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 0.45
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -68,6 +86,11 @@ text = "Jouer en solo"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Multijoueur"
+
+[node name="OptionsBtn" type="Button" parent="Center/Panel/Margin/Root/HomeBox" unique_id=1500042077]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Options"
 
 [node name="QuitBtn" type="Button" parent="Center/Panel/Margin/Root/HomeBox" unique_id=293075704]
 unique_name_in_owner = true
