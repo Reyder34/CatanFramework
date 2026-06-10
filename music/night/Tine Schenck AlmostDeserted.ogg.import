@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://b531vujss62kq"
+path="res://.godot/imported/Tine Schenck AlmostDeserted.ogg-8a36c63f51f42dc73b83258da68450e3.oggvorbisstr"
+
+[deps]
+
+source_file="res://music/night/Tine Schenck AlmostDeserted.ogg"
+dest_files=["res://.godot/imported/Tine Schenck AlmostDeserted.ogg-8a36c63f51f42dc73b83258da68450e3.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
