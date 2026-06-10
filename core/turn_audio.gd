@@ -24,7 +24,6 @@ func setup(state: GameState, local_index: int) -> void:
 	_state = state
 	_local_index = local_index
 	stream = _load_sound()
-	volume_db = -25.0
 	bus = "Notification"
 	_last_index = state.current_player_index
 	state.status_changed.connect(_on_status_changed)

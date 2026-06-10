@@ -1,5 +1,6 @@
 {
 	"autumn.ogg":                      { "title": "Autumn",          "artist": "maou" },
 	"When The Wind Blows.mp3":         { "title": "When The Wind Blows", "artist": "Kevin MacLeod", "source": "incompetech.com — CC BY 3.0" },
-	"Tine Schenck AlmostDeserted.wav": { "title": "Almost Deserted", "artist": "Tine Schenck" }
+	"Tine Schenck AlmostDeserted.wav": { "title": "Almost Deserted", "artist": "Tine Schenck" },
+	"Expeditionary.mp3" : {"title" : "Expeditionary", "artist":"Kevin MacLeod"}
 }
