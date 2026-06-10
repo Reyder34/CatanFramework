@@ -97,6 +97,14 @@ func _ready() -> void:
 	_collect_lights()
 	Settings.graphics_changed.connect(_apply_graphics)
 	_apply_graphics()
+	# On intercepte la fermeture (Alt+F4 / croix) pour proposer la sauvegarde à l'hôte.
+	get_tree().set_auto_accept_quit(false)
+	# Au chargement en multi (lancement OU rejoin), un client demande l'état complet à l'autorité.
+	# INDISPENSABLE au RETOUR : le revenant repart d'un plateau initial -> ce resync le rattrape.
+	# Différé pour que la scène + le réseau soient prêts ; silencieux pour ne pas spammer le journal.
+	if GameConfig.is_multiplayer and not _authoritative():
+		_request_resync.call_deferred(true)
+	Music.set_context("game")  # bascule sur les playlists jour/nuit
 
 func _load_mods() -> void:
 	# Mods choisis dans le menu (GameConfig), + expansion des dépendances par sécurité.
@@ -147,7 +155,9 @@ func _input(event: InputEvent) -> void:
 		if has_node("OptionsMenu"):
 			return  # overlay déjà ouvert : il gère lui-même sa fermeture
 		if state.build_mode_id == "":
-			add_child(OPTIONS_MENU.instantiate())
+			var opt := OPTIONS_MENU.instantiate()
+			add_child(opt)
+			opt.set_game(self)  # affiche le bouton "Quitter la partie"
 			get_viewport().set_input_as_handled()
 			return
 		# sinon : laisser l'action cancel_build s'exécuter (flux normal ci-dessous)
@@ -229,21 +239,22 @@ func _net_command(cmd: Dictionary) -> void:
 
 # Anti-désync (touche F5): force l'hôte à re-diffuser l'état complet à tous.
 # N'importe qui peut le déclencher: si client, on demande à l'hôte de rediffuser.
-func _request_resync() -> void:
+func _request_resync(silent := false) -> void:
 	if not GameConfig.is_multiplayer:
 		return
 	if _authoritative():
-		_do_resync()
+		_do_resync(silent)
 	else:
-		_ask_resync.rpc_id(GameConfig.authority_peer_id)
+		_ask_resync.rpc_id(GameConfig.authority_peer_id, silent)
 
 @rpc("any_peer", "reliable")
-func _ask_resync() -> void:
+func _ask_resync(silent := false) -> void:
 	if _authoritative():
-		_do_resync()
+		_do_resync(silent)
 
-func _do_resync() -> void:
-	registry.emit("game_log", {"text": "🔄 Resynchronisation"})
+func _do_resync(silent := false) -> void:
+	if not silent:
+		registry.emit("game_log", {"text": "🔄 Resynchronisation"})
 	_snapshot_dirty = true
 	if hud != null:
 		hud.update()
@@ -260,6 +271,65 @@ func on_authority_lost() -> void:
 		hud.update()
 	await get_tree().create_timer(2.0).timeout
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
+# === QUITTER LA PARTIE / FERMETURE DE LA FENÊTRE ===
+
+# Bouton "Quitter la partie" du menu d'options (Échap). Client (non-autorité) : on quitte vers le
+# menu (on pourra REVENIR via Rejoindre, même pseudo). Hôte/solo : confirmation de sauvegarde.
+func request_quit_to_menu() -> void:
+	if _authoritative():
+		_show_quit_confirmation(false)  # -> menu après (ou sans) sauvegarde
+	else:
+		_leave_to_menu()
+
+# Alt+F4 / croix de la fenêtre (set_auto_accept_quit(false) en _ready -> on intercepte).
+func _notification(what: int) -> void:
+	if what != NOTIFICATION_WM_CLOSE_REQUEST:
+		return
+	if _authoritative():
+		_show_quit_confirmation(true)   # proposer la sauvegarde, puis fermer l'appli
+	else:
+		Net.leave()
+		get_tree().quit()
+
+func _leave_to_menu() -> void:
+	Net.leave()  # client : se déconnecte (l'hôte continue) ; hôte : ferme le serveur (fin de partie)
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
+# Confirmation pour l'autorité : sauvegarder ou non avant de quitter.
+# quit_app = true -> fermer l'appli (Alt+F4) ; false -> revenir au menu.
+func _show_quit_confirmation(quit_app: bool) -> void:
+	if has_node("QuitDialog"):
+		return
+	var dlg := ConfirmationDialog.new()
+	dlg.name = "QuitDialog"
+	dlg.title = "Quitter la partie"
+	dlg.dialog_text = "Sauvegarder la partie avant de quitter ?"
+	dlg.ok_button_text = "💾 Sauvegarder et quitter"
+	dlg.add_button("Quitter sans sauvegarder", false, "no_save")
+	dlg.get_cancel_button().text = "Annuler"
+	dlg.confirmed.connect(func() -> void:
+		_do_save_game()
+		_finish_quit(quit_app))
+	dlg.custom_action.connect(func(action: StringName) -> void:
+		if action == "no_save":
+			dlg.hide()
+			_finish_quit(quit_app))
+	dlg.canceled.connect(dlg.queue_free)
+	dlg.close_requested.connect(dlg.queue_free)
+	add_child(dlg)
+	dlg.popup_centered()
+
+func _do_save_game() -> void:
+	var stamp := Time.get_datetime_string_from_system().replace(":", "-").replace("T", "_")
+	save_game("partie_" + stamp)
+
+func _finish_quit(quit_app: bool) -> void:
+	if quit_app:
+		Net.leave()
+		get_tree().quit()
+	else:
+		_leave_to_menu()
 
 # Expiration du timer (émise sur l'autorité uniquement) : on annule les pop-ups optionnelles
 # (échange/banque) ouvertes ici ET chez chaque client, pour ne pas laisser un échange traîner.

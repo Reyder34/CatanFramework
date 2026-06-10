@@ -5,7 +5,8 @@ const OPTIONS_MENU := preload("res://scenes/options_menu.tscn")
 # Menu à 4 écrans distincts :
 #   ACCUEIL : Solo / Multijoueur / Quitter
 #   SOLO    : toutes les options (mods, joueurs, taille, timer) + Lancer
-#   MULTI   : Héberger / Rejoindre
+#   MULTI   : 2 sections — Héberger direct (port réglable, IP à envoyer + état du port
+#             via UPnP affichés au salon) / Serveur relais (adresse + port + mot de passe)
 #   SALON   : joueurs + options (l'HÔTE règle, tout le monde voit EN DIRECT) + Lancer
 # La même ConfigBox (options) est DÉPLACÉE dans l'écran Solo ou dans le Salon.
 
@@ -33,6 +34,12 @@ const OPTIONS_MENU := preload("res://scenes/options_menu.tscn")
 @onready var _relay_addr: LineEdit = %RelayAddrEdit
 @onready var _relay_port: SpinBox = %RelayPortSpin
 @onready var _relay_token: LineEdit = %RelayTokenEdit
+@onready var _host_port_spin: SpinBox = %HostPortSpin
+@onready var _host_ip_label: Label = %HostIpLabel
+@onready var _net_info: Label = %NetInfo
+@onready var _code_panel: PanelContainer = %CodePanel
+@onready var _code_value: Label = %CodeValue
+@onready var _copy_code_btn: Button = %CopyCodeBtn
 
 var _mods: Dictionary = {}        # id -> GameMod
 var _enabled: Dictionary = {}     # id -> bool
@@ -44,6 +51,8 @@ var _config_published := false    # l'autorité a-t-elle déjà publié sa confi
 func _ready() -> void:
 	if Net.is_relay:
 		return  # process relais (--relay) : pas de menu, on laisse Net faire serveur
+	get_tree().set_auto_accept_quit(true)  # au menu : Alt+F4 ferme normalement (en jeu main.gd intercepte)
+	Music.set_context("menu")
 	GameConfig.is_multiplayer = false
 	Net.leave()
 	get_window().content_scale_factor = 1.0
@@ -65,6 +74,7 @@ func _ready() -> void:
 	%RetourMultiBtn.pressed.connect(_show_home)
 	%StartBtn.pressed.connect(_on_start)
 	%LeaveBtn.pressed.connect(_on_leave)
+	_copy_code_btn.pressed.connect(_on_copy_code)
 	_map_spin.value_changed.connect(_on_config_edited)
 	_timer_spin.value_changed.connect(_on_config_edited)
 	_build_mod_list()
@@ -74,6 +84,7 @@ func _ready() -> void:
 	Net.connection_failed.connect(_on_failed)
 	Net.disconnected.connect(_on_disconnected)
 	Net.config_changed.connect(_on_config_received)
+	Net.host_info_updated.connect(_update_net_info)
 
 func _open_options() -> void:
 	if has_node("OptionsMenu"):
@@ -232,18 +243,33 @@ func _on_solo() -> void:
 
 func _on_host() -> void:
 	Net.my_name = _name_edit.text
-	if Net.host():
+	var port := int(_host_port_spin.value)
+	if Net.host(port):
 		_enter_lobby(true)
+		Net.begin_host_diagnostics()  # IP à envoyer + ouverture du port (UPnP), en arrière-plan
 		_set_status("Tu héberges. En attente de joueurs…")
 	else:
-		_set_status("Impossible d'héberger (port occupé ?).")
+		_set_status("Impossible d'héberger (port %d occupé ?)." % port)
 
 func _on_join() -> void:
 	Net.my_name = _name_edit.text
-	if Net.join(_ip_edit.text):
-		_set_status("Connexion à %s…" % _ip_edit.text)
+	# Accepte un CODE de partie (priorité), sinon "ip" ou "ip:port".
+	var raw := _ip_edit.text.strip_edges()
+	var addr := raw
+	var port := Net.DEFAULT_PORT
+	var decoded := Net.code_to_address(raw)
+	if not decoded.is_empty():
+		addr = decoded["ip"]
+		port = int(decoded["port"])
 	else:
-		_set_status("Adresse invalide.")
+		var sep := raw.rfind(":")
+		if sep > 0 and raw.substr(sep + 1).is_valid_int() and not raw.substr(0, sep).contains(":"):
+			port = int(raw.substr(sep + 1))
+			addr = raw.substr(0, sep)
+	if Net.join(addr, port):
+		_set_status("Connexion à %s:%d…" % [addr, port])
+	else:
+		_set_status("Code ou adresse invalide.")
 
 # Connexion à un serveur-relais distant (token requis ; le 1er connecté devient l'autorité).
 func _on_relay_connect() -> void:
@@ -306,6 +332,7 @@ func _show_solo() -> void:
 func _show_multi() -> void:
 	_in_lobby = false
 	_hide_all_screens()
+	_host_ip_label.text = "IP locale (LAN) : %s" % Net.local_ipv4()
 	_multi_box.visible = true
 
 func _enter_lobby(_as_host: bool) -> void:
@@ -318,6 +345,42 @@ func _enter_lobby(_as_host: bool) -> void:
 	_pc_row.visible = false  # en multi: nb joueurs = nb connectés
 	_lobby_box.visible = true
 	_refresh_lobby()
+	_update_net_info()
+
+# Bloc "IP à envoyer + état du port" du salon — uniquement pour l'HÔTE DIRECT (pas relais,
+# pas client). Rafraîchi par Net.host_info_updated au fil des découvertes (UPnP, IP publique).
+func _update_net_info() -> void:
+	var is_direct_host := _in_lobby and Net.is_host and not Net.is_relay
+	var code := Net.host_code() if is_direct_host else ""
+	# Panneau CODE proéminent : visible seulement quand un code est prêt.
+	_code_panel.visible = code != ""
+	if code != "":
+		_code_value.text = code
+	# Détails secondaires (port + réseau local) sous le code.
+	_net_info.visible = is_direct_host
+	if not is_direct_host:
+		return
+	var port := Net.host_port
+	var lines: Array[String] = []
+	if code == "" and Net.host_public_ip == "":
+		lines.append("🔑 Code : calcul en cours…")
+	match Net.host_port_open:
+		1:
+			lines.append("Port %d : ✓ ouvert automatiquement (UPnP)" % port)
+		0:
+			lines.append("UPnP indisponible — une redirection manuelle du port %d (UDP) peut être nécessaire" % port)
+		_:
+			lines.append("Port %d : vérification UPnP…" % port)
+	lines.append("Réseau local : %s:%d" % [Net.host_lan_ip, port])
+	_net_info.text = "\n".join(lines)
+
+# Copie le code dans le presse-papier (+ retour visuel via la barre de statut).
+func _on_copy_code() -> void:
+	var code := Net.host_code()
+	if code == "":
+		return
+	DisplayServer.clipboard_set(code)
+	_set_status("📋 Code « %s » copié !" % code)
 
 func _refresh_saves_list() -> void:
 	for c in _saves_list.get_children():

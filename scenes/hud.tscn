@@ -74,9 +74,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -90.0
-offset_top = 8.0
+offset_top = 88.0
 offset_right = 90.0
-offset_bottom = 60.0
+offset_bottom = 140.0
 grow_horizontal = 2
 
 [node name="V" type="VBoxContainer" parent="Journal" unique_id=146360284]
@@ -209,3 +209,33 @@ text = "Ma main"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
+
+[node name="StatusBanner" type="PanelContainer" parent="." unique_id=740000001]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 8.0
+offset_right = 180.0
+offset_bottom = 80.0
+grow_horizontal = 2
+
+[node name="V" type="VBoxContainer" parent="StatusBanner" unique_id=740000002]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TurnLabel" type="Label" parent="StatusBanner/V" unique_id=740000003]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Tour"
+horizontal_alignment = 1
+
+[node name="TaskLabel" type="Label" parent="StatusBanner/V" unique_id=740000004]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+horizontal_alignment = 1
+autowrap_mode = 3

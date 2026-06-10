@@ -27,6 +27,7 @@ DayNight="*res://scripts/day_night.gd"
 Settings="*res://scripts/settings.gd"
 LampLights="*res://scripts/lamp_lights.gd"
 FpsCounter="*res://scripts/fps_counter.gd"
+Music="*res://scripts/music.gd"
 
 [gui]
 

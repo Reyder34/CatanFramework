@@ -19,7 +19,9 @@ var max_fps: int = 0               # 0 = illimité
 # volume général, tous ces bus y sont routés. Les bus sont créés par l'autoload UISound,
 # placé AVANT Settings dans project.godot pour qu'ils existent au moment de l'application.
 const EXTRA_BUSES := ["UI", "SFX", "Notification", "Musique"]
-var bus_volumes := {"UI": 1.0, "SFX": 1.0, "Notification": 1.0, "Musique": 1.0}
+# Volumes par défaut des bus secondaires. La musique démarre à 50 % pour ne pas couvrir le reste.
+const DEFAULT_BUS_VOLUMES := {"UI": 1.0, "SFX": 1.0, "Notification": 1.0, "Musique": 0.5}
+var bus_volumes := DEFAULT_BUS_VOLUMES.duplicate()
 
 # === GRAPHISMES (perf) ===
 # Émis quand un réglage graphique change ; LampLight + les scènes 3D (main/menu) s'y abonnent
@@ -208,7 +210,7 @@ func _load() -> void:
 		return  # pas encore de fichier : on garde les valeurs par défaut
 	master_volume = clampf(float(cfg.get_value("audio", "master", 1.0)), 0.0, 1.0)
 	for b in EXTRA_BUSES:
-		bus_volumes[b] = clampf(float(cfg.get_value("audio", b.to_lower(), 1.0)), 0.0, 1.0)
+		bus_volumes[b] = clampf(float(cfg.get_value("audio", b.to_lower(), DEFAULT_BUS_VOLUMES[b])), 0.0, 1.0)
 	display_mode = clampi(int(cfg.get_value("video", "display_mode", DISPLAY_WINDOWED)), DISPLAY_WINDOWED, DISPLAY_BORDERLESS)
 	resolution = Vector2i(
 		maxi(int(cfg.get_value("video", "res_w", 1280)), 320),

@@ -8,6 +8,7 @@ signal connected
 signal connection_failed
 signal disconnected
 signal config_changed
+signal host_info_updated  # diagnostics hôte : relire host_lan_ip / host_public_ip / host_port_open
 
 const DEFAULT_PORT := 24545
 const MAX_PLAYERS := 10
@@ -32,6 +33,14 @@ var in_game := false           # true après lancement (distingue déconnexion s
 var lobby_mods: Array = []
 var lobby_map_size: int = 2
 var lobby_timer: int = 0
+
+# Diagnostics hôte direct (IP à communiquer + ouverture du port, voir begin_host_diagnostics).
+var host_port: int = DEFAULT_PORT
+var host_lan_ip := ""       # IPv4 locale (LAN)
+var host_public_ip := ""    # IPv4 publique (UPnP, sinon repli HTTP)
+var host_port_open := -1    # -1 = vérification en cours, 0 = fermé (UPnP KO), 1 = ouvert (UPnP)
+var _upnp_thread: Thread = null
+var _upnp_mapped_port := -1 # port redirigé via UPnP (à libérer au leave)
 
 # Réf au noeud main (défini au lancement) pour les panneaux réseau.
 var game: Node = null
@@ -61,6 +70,7 @@ func host(port := DEFAULT_PORT) -> bool:
 		return false
 	multiplayer.multiplayer_peer = peer
 	is_host = true
+	host_port = port
 	players = {1: {"name": my_name}}  # l'hôte est le peer 1
 	lobby_changed.emit()
 	return true
@@ -72,6 +82,165 @@ func join(ip: String, port := DEFAULT_PORT) -> bool:
 	multiplayer.multiplayer_peer = peer
 	is_host = false
 	return true
+
+# === DIAGNOSTICS HÔTE (IP à communiquer + ouverture du port) ===
+
+# Meilleure IPv4 locale (LAN) : adresse privée de préférence (192.168.x / 10.x / 172.16-31).
+func local_ipv4() -> String:
+	var fallback := ""
+	for a in IP.get_local_addresses():
+		var ip := String(a)
+		if ip.contains(":") or ip.begins_with("127."):
+			continue  # IPv6 / loopback
+		if ip.begins_with("192.168.") or ip.begins_with("10."):
+			return ip
+		if ip.begins_with("172."):
+			var b := int(ip.get_slice(".", 1))
+			if b >= 16 and b <= 31:
+				return ip
+		if fallback == "":
+			fallback = ip
+	return fallback if fallback != "" else "127.0.0.1"
+
+# Lance le diagnostic en arrière-plan (jamais bloquant) : tente d'OUVRIR le port sur la box
+# via UPnP + récupère l'IP publique. Résultats -> host_lan_ip / host_public_ip / host_port_open,
+# signal host_info_updated à chaque progrès (le menu affiche ça dans le salon).
+func begin_host_diagnostics() -> void:
+	host_lan_ip = local_ipv4()
+	host_public_ip = ""
+	host_port_open = -1
+	host_info_updated.emit()
+	_join_upnp_thread()
+	_upnp_thread = Thread.new()
+	_upnp_thread.start(_upnp_worker.bind(host_port))
+
+# (thread) Découverte de la box (UPnP), redirection UDP du port (ENet = UDP), IP publique.
+func _upnp_worker(port: int) -> void:
+	var ok := false
+	var ext := ""
+	var upnp := UPNP.new()
+	if upnp.discover() == UPNP.UPNP_RESULT_SUCCESS:
+		var gw := upnp.get_gateway()
+		if gw != null and gw.is_valid_gateway():
+			ok = upnp.add_port_mapping(port, port, "Catan2", "UDP", 0) == UPNP.UPNP_RESULT_SUCCESS
+			ext = upnp.query_external_address()
+	_on_upnp_result.call_deferred(ok, ext, port)
+
+func _on_upnp_result(ok: bool, ext: String, port: int) -> void:
+	_join_upnp_thread()
+	if not is_host or port != host_port:
+		return  # on a quitté (ou changé de port) entre-temps
+	host_port_open = 1 if ok else 0
+	if ok:
+		_upnp_mapped_port = port
+	if ext.is_valid_ip_address():
+		host_public_ip = ext
+	elif host_public_ip == "":
+		_fetch_public_ip()  # repli : la box ne donne pas l'IP publique
+	host_info_updated.emit()
+
+# Repli HTTP pour l'IP publique (utile quand UPnP est désactivé sur la box).
+func _fetch_public_ip() -> void:
+	var req := HTTPRequest.new()
+	add_child(req)
+	req.request_completed.connect(func(_r: int, code: int, _h: PackedStringArray, body: PackedByteArray) -> void:
+		var ip := body.get_string_from_utf8().strip_edges()
+		if code == 200 and ip.is_valid_ip_address():
+			host_public_ip = ip
+			host_info_updated.emit()
+		req.queue_free())
+	if req.request("https://api.ipify.org") != OK:
+		req.queue_free()
+
+func _join_upnp_thread() -> void:
+	if _upnp_thread != null and _upnp_thread.is_started():
+		_upnp_thread.wait_to_finish()
+	_upnp_thread = null
+
+func _exit_tree() -> void:
+	_join_upnp_thread()
+
+# === CODE DE PARTIE (IP:port <-> code court, SANS serveur) ===
+# Un "code" encode l'adresse PUBLIQUE de l'hôte (IPv4 + port) en base32 lisible (alphabet
+# Crockford, sans I/L/O/U ambigus). 7 caractères si port par défaut, 10 sinon. Aucun serveur :
+# le code EST l'adresse, juste compactée -> bien moins effrayant qu'une IP, et unique par hôte.
+const _CODE_ALPHABET := "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+
+# Code de la partie hébergée (vide tant que l'IP publique n'est pas connue).
+func host_code() -> String:
+	if not is_host or is_relay or host_public_ip == "":
+		return ""
+	return address_to_code(host_public_ip, host_port)
+
+func address_to_code(ip: String, port: int) -> String:
+	var u := _ip_to_u32(ip)
+	if u < 0:
+		return ""
+	if port == DEFAULT_PORT:
+		return _b32_encode(u, 7)                          # IP seule -> 7 car.
+	return _b32_encode((u << 16) | (port & 0xFFFF), 10)   # IP + port -> 10 car.
+
+# Décode un code -> {"ip", "port"} ; {} si ce n'est pas un code valide (l'appelant traite alors
+# l'entrée comme une IP/hostname classique).
+func code_to_address(code: String) -> Dictionary:
+	var c := _clean_code(code)
+	if c.length() == 7:
+		var u := _b32_decode(c)
+		if u < 0 or u > 0xFFFFFFFF:
+			return {}
+		return {"ip": _u32_to_ip(u), "port": DEFAULT_PORT}
+	if c.length() == 10:
+		var v := _b32_decode(c)
+		if v < 0:
+			return {}
+		return {"ip": _u32_to_ip((v >> 16) & 0xFFFFFFFF), "port": int(v & 0xFFFF)}
+	return {}
+
+func _b32_encode(value: int, length: int) -> String:
+	var s := ""
+	for i in length:
+		s += _CODE_ALPHABET[(value >> ((length - 1 - i) * 5)) & 31]
+	return s
+
+func _b32_decode(code: String) -> int:
+	var v := 0
+	for ch in code:
+		var idx := _CODE_ALPHABET.find(ch)
+		if idx < 0:
+			return -1
+		v = (v << 5) | idx
+	return v
+
+# Normalise un code saisi : majuscules, sans espaces/tirets, I/L->1, O->0 (anti-confusion).
+func _clean_code(s: String) -> String:
+	var out := ""
+	for ch in s.strip_edges().to_upper():
+		if ch == "-" or ch == " ":
+			continue
+		elif ch == "I" or ch == "L":
+			out += "1"
+		elif ch == "O":
+			out += "0"
+		else:
+			out += ch
+	return out
+
+func _ip_to_u32(ip: String) -> int:
+	var parts := ip.split(".")
+	if parts.size() != 4:
+		return -1
+	var u := 0
+	for p in parts:
+		if not p.is_valid_int():
+			return -1
+		var n := int(p)
+		if n < 0 or n > 255:
+			return -1
+		u = (u << 8) | n
+	return u
+
+func _u32_to_ip(u: int) -> String:
+	return "%d.%d.%d.%d" % [(u >> 24) & 255, (u >> 16) & 255, (u >> 8) & 255, u & 255]
 
 # === RELAIS (serveur passif) + AUTH PAR TOKEN ===
 
@@ -155,6 +324,19 @@ func leave() -> void:
 	if multiplayer.multiplayer_peer != null:
 		multiplayer.multiplayer_peer.close()
 		multiplayer.multiplayer_peer = null
+	# Libère la redirection UPnP éventuelle (best effort, en thread pour ne pas bloquer).
+	if _upnp_mapped_port > 0:
+		var p := _upnp_mapped_port
+		_upnp_mapped_port = -1
+		_join_upnp_thread()
+		_upnp_thread = Thread.new()
+		_upnp_thread.start(func() -> void:
+			var u := UPNP.new()
+			if u.discover() == UPNP.UPNP_RESULT_SUCCESS:
+				u.delete_port_mapping(p, "UDP"))
+	host_lan_ip = ""
+	host_public_ip = ""
+	host_port_open = -1
 	# Réinitialise l'auth pour ne pas casser une partie LAN suivante (sans token).
 	var sm := multiplayer as SceneMultiplayer
 	if sm != null:
@@ -229,6 +411,9 @@ func _register(pname: String) -> void:
 	if not is_host:
 		return
 	var sender := multiplayer.get_remote_sender_id()
+	if in_game:
+		_handle_rejoin(sender, pname)  # partie en cours -> retour d'un joueur (par pseudo)
+		return
 	players[sender] = {"name": pname}
 	if is_relay and authority_peer_id == 0:
 		authority_peer_id = sender  # le 1er client enregistré devient l'autorité
@@ -450,6 +635,12 @@ func _authority_left() -> void:
 
 @rpc("authority", "reliable", "call_local")
 func _launch(s: int, count: int, mapping: Dictionary, mods: Array, map_size: int, names: Array, timer: int, authority: int) -> void:
+	_enter_game(s, count, mapping, mods, map_size, names, timer, authority)
+
+# Charge la scène de jeu + pose la config réseau. Partagé par _launch (lancement initial,
+# call_local) et _rejoin_launch (retour CIBLÉ d'un seul joueur, SANS call_local pour ne pas
+# relancer l'émetteur déjà en partie).
+func _enter_game(s: int, count: int, mapping: Dictionary, mods: Array, map_size: int, names: Array, timer: int, authority: int) -> void:
 	if is_relay:
 		return  # le relais reste au salon : il ne charge JAMAIS la scène de jeu
 	in_game = true
@@ -464,3 +655,66 @@ func _launch(s: int, count: int, mapping: Dictionary, mods: Array, map_size: int
 	GameConfig.authority_peer_id = authority  # qui fait tourner la logique (direct: l'hôte=1)
 	GameConfig.local_player_index = int(mapping.get(multiplayer.get_unique_id(), 0))
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
+
+# === REJOIN (revenir dans une partie en cours) ===
+# Un joueur qui était parti se reconnecte AVEC LE MÊME PSEUDO. L'autorité le remet dans SON siège
+# et lui renvoie un launch ciblé ; le snapshot suivant le remet à jour. Marche en direct ET relais.
+
+# Reçu sur l'hôte (direct) ou le relais quand un pair s'enregistre pendant une partie.
+func _handle_rejoin(peer: int, pname: String) -> void:
+	if is_relay:
+		# Le relais ne connaît pas les sièges -> il délègue à l'autorité (un client).
+		if authority_peer_id > 0:
+			_notify_rejoin.rpc_id(authority_peer_id, peer, pname)
+	else:
+		_do_rejoin(peer, pname)  # direct : l'hôte EST l'autorité
+
+# Le relais prévient l'autorité qu'un joueur revient.
+@rpc("any_peer", "reliable")
+func _notify_rejoin(peer: int, pname: String) -> void:
+	if multiplayer.get_remote_sender_id() != 1:
+		return  # doit venir du relais (pair 1)
+	_do_rejoin(peer, pname)
+
+# Exécuté sur l'AUTORITÉ : retrouve le siège par pseudo, réassigne le pair, relance ce joueur.
+func _do_rejoin(peer: int, pname: String) -> void:
+	if not am_authority():
+		return
+	var seat := _seat_for_name(pname)
+	if seat < 0:
+		return  # pseudo inconnu -> pas un retour (nouveau venu en cours de partie : ignoré)
+	# Réassigne le siège : enlève l'ancien pair (mort) puis mappe le nouveau.
+	for pid in GameConfig.peer_to_player.keys():
+		if int(GameConfig.peer_to_player[pid]) == seat:
+			GameConfig.peer_to_player.erase(pid)
+	GameConfig.peer_to_player[peer] = seat
+	players[peer] = {"name": pname}
+	var count: int = GameConfig.player_names.size()
+	if is_relay_client:
+		# Autorité-client : passe par le relais (pair 1) qui émettra le launch (@rpc authority).
+		_request_rejoin.rpc_id(1, peer, GameConfig.game_seed, count, GameConfig.peer_to_player, GameConfig.enabled_mod_ids, GameConfig.map_size, GameConfig.player_names, GameConfig.turn_timer)
+	else:
+		# Direct : l'hôte (pair 1) émet directement.
+		_rejoin_launch.rpc_id(peer, GameConfig.game_seed, count, GameConfig.peer_to_player, GameConfig.enabled_mod_ids, GameConfig.map_size, GameConfig.player_names, GameConfig.turn_timer, GameConfig.authority_peer_id)
+	if game != null:
+		game._snapshot_dirty = true  # rediffuse l'état complet pour rattraper le revenant
+
+func _seat_for_name(pname: String) -> int:
+	for i in GameConfig.player_names.size():
+		if String(GameConfig.player_names[i]) == pname:
+			return i
+	return -1
+
+# Autorité-client -> relais : le relais (pair 1) émet le launch ciblé au revenant.
+@rpc("any_peer", "reliable")
+func _request_rejoin(peer: int, s: int, count: int, mapping: Dictionary, mods: Array, map_size: int, names: Array, timer: int) -> void:
+	if not is_relay:
+		return
+	if multiplayer.get_remote_sender_id() != authority_peer_id:
+		return
+	_rejoin_launch.rpc_id(peer, s, count, mapping, mods, map_size, names, timer, authority_peer_id)
+
+# Launch ciblé d'un seul revenant (PAS de call_local : l'émetteur est déjà en partie).
+@rpc("authority", "reliable")
+func _rejoin_launch(s: int, count: int, mapping: Dictionary, mods: Array, map_size: int, names: Array, timer: int, authority: int) -> void:
+	_enter_game(s, count, mapping, mods, map_size, names, timer, authority)

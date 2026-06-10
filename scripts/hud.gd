@@ -23,6 +23,10 @@ const _HIDDEN_ACTIONS := ["show_dev_cards", "propose_trade", "bank_trade"]
 @onready var _log_box: VBoxContainer = %JournalContent
 @onready var _log_button: Button = %JournalButton
 @onready var _log_scroll: ScrollContainer = %JournalScroll
+# Bannière haut-centre : à QUI de jouer + ce qu'il DOIT faire (sous-phase / construction).
+@onready var _status_banner: PanelContainer = %StatusBanner
+@onready var _turn_label: Label = %TurnLabel
+@onready var _task_label: Label = %TaskLabel
 var _log_open: bool = false
 # Panneaux déplaçables (barre de titre) + redimensionnables (poignée bas-droite) + persistance.
 var _movers: Array = []  # un WindowMover (drag + redim + sauvegarde) par panneau du HUD
@@ -137,6 +141,7 @@ func _clear(node: Node) -> void:
 func update() -> void:
 	if state == null:
 		return
+	_refresh_status_banner()
 	_refresh_resources()
 	_refresh_players()
 	_refresh_build()
@@ -171,29 +176,73 @@ func reset_layout() -> void:
 		m.reset_visual()
 	WindowMover.forget_all()  # efface les positions sauvegardées (HUD + pop-ups)
 
-# === HAUT-GAUCHE: ressources du joueur courant ===
+# === HAUT-CENTRE: bannière "à qui de jouer + que faire" ===
+# Le cœur de la lisibilité du tour : qui joue (ligne 1, couleur du joueur) + l'instruction
+# en cours (ligne 2 : sous-phase d'un mod comme "Déplace le voleur", ou construction en cours).
+func _refresh_status_banner() -> void:
+	if _status_banner == null:
+		return
+	var accent: Color
+	if state.phase == GameState.Phase.GAME_OVER:
+		var w := state.winner_index
+		if w >= 0:
+			_turn_label.text = "🏆 %s remporte la partie !" % state.players[w].label()
+			accent = state.players[w].color
+		else:
+			_turn_label.text = "Partie terminée"
+			accent = Color(0.82, 0.82, 0.82)
+		_turn_label.modulate = accent
+		_task_label.visible = false
+	else:
+		var cur := state.current_player()
+		accent = cur.color
+		# En multi, "À toi de jouer" quand c'est mon siège ; sinon "Tour de <joueur>".
+		# En solo (je contrôle tout le monde) : toujours "Tour de <joueur courant>".
+		if GameConfig.is_multiplayer and state.current_player_index == GameConfig.local_player_index:
+			_turn_label.text = "▶ À toi de jouer"
+		else:
+			_turn_label.text = "Tour de %s" % cur.label()
+		_turn_label.modulate = cur.color
+		var task := _current_task_text()
+		_task_label.text = task
+		_task_label.visible = task != ""
+	_status_banner.add_theme_stylebox_override("panel", _banner_style(accent))
+
+# Ce que le joueur courant doit faire MAINTENANT. Générique : la sous-phase (posée par un mod,
+# ex. voleur) ou la construction en cours priment ; sinon repli sur la phase.
+func _current_task_text() -> String:
+	if state.sub_phase != "":
+		return registry.get_sub_phase_label(state.sub_phase)
+	if state.build_mode_id != "":
+		return "Pose : %s (clique le plateau)" % state.mode_label()
+	if state.phase == GameState.Phase.SETUP:
+		return "Mise en place"
+	return ""  # tour normal : les boutons du panneau "Tour" guident (dés, échange, fin de tour)
+
+func _banner_style(accent: Color) -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.08, 0.09, 0.12, 0.92)
+	sb.set_corner_radius_all(10)
+	sb.content_margin_left = 14
+	sb.content_margin_right = 14
+	sb.content_margin_top = 8
+	sb.content_margin_bottom = 8
+	sb.border_color = accent
+	sb.border_width_top = 4  # liseré supérieur à la couleur du joueur courant
+	return sb
+
+# === HAUT-GAUCHE: ressources (du joueur local en multi, du joueur courant en solo) ===
 func _refresh_resources() -> void:
 	_clear(_res_box)
-	
+
 	var p := _view_player()
-	
-	# 1. Les infos du haut
+
+	# En-tête léger : à QUI sont ces ressources (le "tour / phase" est dans la bannière).
 	var header := Label.new()
-	header.text = "%s — %s" % [p.label(), state.phase_label()]
+	header.text = p.label()
 	header.modulate = p.color
 	_res_box.add_child(header)
-	
-	if GameConfig.is_multiplayer:
-		var turn := Label.new()
-		turn.text = "Tour : %s%s" % [state.current_player().label(), "  (à toi)" if _net_my_turn() else ""]
-		turn.add_theme_color_override("font_color", Color.WHITE)
-		_res_box.add_child(turn)
-		
-	var mode := Label.new()
-	mode.text = "Mode: %s" % state.mode_label()
-	mode.add_theme_color_override("font_color", Color("#dfdfdf"))
-	_res_box.add_child(mode)
-	
+
 	# 2. Conteneur horizontal pour les ressources (sans panel encadré)
 	var resources_hbox := HBoxContainer.new()
 	resources_hbox.add_theme_constant_override("separation", 14)

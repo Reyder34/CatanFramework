@@ -25,6 +25,9 @@ extends CanvasLayer
 @onready var _gfx: OptionButton = %GfxPreset
 @onready var _daynight: CheckButton = %DayNightToggle
 @onready var _fps_toggle: CheckButton = %FpsToggle
+@onready var _quit_game_btn: Button = %QuitGameBtn
+
+var _game: Node = null  # défini par main.gd en jeu -> affiche le bouton "Quitter la partie"
 
 # Résolutions proposées en mode Fenêtré (l'index du menu -> la taille).
 const RESOLUTIONS := [
@@ -86,8 +89,22 @@ func _ready() -> void:
 	_fps_toggle.button_pressed = Settings.show_fps
 	_fps_toggle.toggled.connect(func(on: bool) -> void: Settings.set_show_fps(on))
 
+	_quit_game_btn.pressed.connect(_on_quit_game)
 	_close_btn.pressed.connect(close)
 	_update_res_enabled()
+
+# Appelé par main.gd à l'ouverture en jeu : passe la réf au jeu + affiche "Quitter la partie".
+func set_game(g: Node) -> void:
+	_game = g
+	if _quit_game_btn != null:
+		_quit_game_btn.visible = g != null
+
+func _on_quit_game() -> void:
+	if _game == null or not _game.has_method("request_quit_to_menu"):
+		return
+	var g := _game
+	close()  # ferme l'overlay options
+	g.request_quit_to_menu()
 
 func _on_display_selected(i: int) -> void:
 	Settings.set_display_mode(i)

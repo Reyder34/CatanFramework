@@ -194,28 +194,65 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Multijoueur"
 
+[node name="HostSep" type="HSeparator" parent="Center/Panel/Margin/Root/MultiBox" unique_id=730000001]
+layout_mode = 2
+
+[node name="HostTitle" type="Label" parent="Center/Panel/Margin/Root/MultiBox" unique_id=730000002]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Héberger (connexion directe)"
+
+[node name="PortRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/MultiBox" unique_id=730000003]
+layout_mode = 2
+
+[node name="PortL" type="Label" parent="Center/Panel/Margin/Root/MultiBox/PortRow" unique_id=730000004]
+layout_mode = 2
+text = "Port :"
+
+[node name="HostPortSpin" type="SpinBox" parent="Center/Panel/Margin/Root/MultiBox/PortRow" unique_id=730000005]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1024.0
+max_value = 65535.0
+value = 24545.0
+
 [node name="HostBtn" type="Button" parent="Center/Panel/Margin/Root/MultiBox" unique_id=310906969]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Héberger une partie"
+
+[node name="HostIpLabel" type="Label" parent="Center/Panel/Margin/Root/MultiBox" unique_id=730000006]
+unique_name_in_owner = true
+layout_mode = 2
+modulate = Color(0.75, 0.82, 0.92, 1)
+theme_override_font_sizes/font_size = 13
+text = "IP locale (LAN) : ?"
 
 [node name="JoinRow" type="HBoxContainer" parent="Center/Panel/Margin/Root/MultiBox" unique_id=1354348221]
 layout_mode = 2
 
 [node name="L" type="Label" parent="Center/Panel/Margin/Root/MultiBox/JoinRow" unique_id=1681506564]
 layout_mode = 2
-text = "IP :"
+text = "Code/IP :"
 
 [node name="IpEdit" type="LineEdit" parent="Center/Panel/Margin/Root/MultiBox/JoinRow" unique_id=1024872693]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
-text = "127.0.0.1"
+placeholder_text = "code de partie, ou IP / IP:port"
 
 [node name="JoinBtn" type="Button" parent="Center/Panel/Margin/Root/MultiBox/JoinRow" unique_id=164512577]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Rejoindre"
+
+[node name="RelaySep" type="HSeparator" parent="Center/Panel/Margin/Root/MultiBox" unique_id=730000007]
+layout_mode = 2
+
+[node name="RelayTitle" type="Label" parent="Center/Panel/Margin/Root/MultiBox" unique_id=730000008]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Serveur relais"
 
 [node name="RelayBtn" type="Button" parent="Center/Panel/Margin/Root/MultiBox" unique_id=448542775]
 unique_name_in_owner = true
@@ -272,6 +309,9 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Se connecter"
 
+[node name="RetourSep" type="HSeparator" parent="Center/Panel/Margin/Root/MultiBox" unique_id=730000010]
+layout_mode = 2
+
 [node name="RetourMultiBtn" type="Button" parent="Center/Panel/Margin/Root/MultiBox" unique_id=1551848030]
 unique_name_in_owner = true
 layout_mode = 2
@@ -287,6 +327,49 @@ theme_override_constants/separation = 8
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Salon"
+
+[node name="CodePanel" type="PanelContainer" parent="Center/Panel/Margin/Root/LobbyBox" unique_id=731000001]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="V" type="VBoxContainer" parent="Center/Panel/Margin/Root/LobbyBox/CodePanel" unique_id=731000002]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Caption" type="Label" parent="Center/Panel/Margin/Root/LobbyBox/CodePanel/V" unique_id=731000003]
+layout_mode = 2
+modulate = Color(0.78, 0.86, 0.96, 1)
+theme_override_font_sizes/font_size = 13
+text = "🔑 Code de la partie — envoie-le à tes amis"
+
+[node name="Row" type="HBoxContainer" parent="Center/Panel/Margin/Root/LobbyBox/CodePanel/V" unique_id=731000004]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CodeValue" type="Label" parent="Center/Panel/Margin/Root/LobbyBox/CodePanel/V/Row" unique_id=731000005]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 30
+text = "—"
+vertical_alignment = 1
+
+[node name="CopyCodeBtn" type="Button" parent="Center/Panel/Margin/Root/LobbyBox/CodePanel/V/Row" unique_id=731000006]
+unique_name_in_owner = true
+layout_mode = 2
+text = "📋 Copier"
+
+[node name="NetInfo" type="Label" parent="Center/Panel/Margin/Root/LobbyBox" unique_id=730000009]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+modulate = Color(0.75, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = ""
+autowrap_mode = 3
 
 [node name="ConnLabel" type="Label" parent="Center/Panel/Margin/Root/LobbyBox" unique_id=123795594]
 layout_mode = 2
