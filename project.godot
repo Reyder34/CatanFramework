@@ -28,6 +28,7 @@ Settings="*res://scripts/settings.gd"
 LampLights="*res://scripts/lamp_lights.gd"
 FpsCounter="*res://scripts/fps_counter.gd"
 Music="*res://scripts/music.gd"
+MusicBanner="*res://scripts/music_banner.gd"
 
 [gui]
 

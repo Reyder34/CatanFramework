@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://68x4grkik1k6"
+path="res://.godot/imported/Tine Schenck AlmostDeserted.wav-90681aabde90eb78d4753e626134921a.sample"
+
+[deps]
+
+source_file="res://music/night/Tine Schenck AlmostDeserted.wav"
+dest_files=["res://.godot/imported/Tine Schenck AlmostDeserted.wav-90681aabde90eb78d4753e626134921a.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

@@ -16,11 +16,15 @@ const AUDIO_EXT := ["ogg", "mp3", "wav"]
 const FADE_TIME := 1.5
 const QUIET_DB := -40.0
 
+signal track_changed(title: String)   # nouvelle piste -> pour la banderole MusicBanner
+signal paused_changed(paused: bool)
+
 var weather := "normal"   # futur : "rain"/"snow"/"wind" -> playlist prioritaire si != "normal"
 
 var _context := "menu"
 var _current := ""               # nom de la playlist en cours
 var _lists: Dictionary = {}      # nom -> Array[AudioStream]
+var _credits: Dictionary = {}    # nom_fichier -> {title?, artist, source?} (music/credits.json)
 var _order: Array = []           # ordre mélangé de la playlist en cours
 var _i := 0
 var _a: AudioStreamPlayer
@@ -38,6 +42,7 @@ func _ready() -> void:
 	_b.finished.connect(_on_finished.bind(_b))
 	_active = _a
 	_scan()
+	_load_credits()
 
 func _make_player() -> AudioStreamPlayer:
 	var p := AudioStreamPlayer.new()
@@ -96,18 +101,99 @@ func _crossfade(stream: AudioStream) -> void:
 	_fade.tween_property(nxt, "volume_db", 0.0, FADE_TIME)
 	_fade.tween_property(prev, "volume_db", QUIET_DB, FADE_TIME)
 	_fade.chain().tween_callback(prev.stop)
+	paused_changed.emit(false)
+	_emit_track()
 
-# Fin d'une piste -> piste suivante de la MÊME playlist (re-mélange à chaque tour).
+# Fin d'une piste -> piste suivante de la MÊME playlist.
 func _on_finished(who: AudioStreamPlayer) -> void:
-	if who != _active or _order.is_empty():
+	if who != _active:
+		return
+	_advance()
+
+# === CONTRÔLES (utilisés par la banderole MusicBanner) ===
+
+# Piste suivante de la playlist courante (re-mélange à chaque tour).
+func skip() -> void:
+	_advance()
+
+func _advance() -> void:
+	if _order.is_empty():
 		return
 	_i += 1
 	if _i >= _order.size():
 		_i = 0
 		_order.shuffle()
-	_active.stream = _order[_i]
+	_play_track(_order[_i])
+
+# Joue une piste sur le lecteur actif (instantané, même playlist).
+func _play_track(stream: AudioStream) -> void:
+	if _fade != null and _fade.is_valid():
+		_fade.kill()
+	var other := _b if _active == _a else _a
+	other.stop()
+	_active.stream = stream
 	_active.volume_db = 0.0
+	_active.stream_paused = false
 	_active.play()
+	paused_changed.emit(false)
+	_emit_track()
+
+func toggle_pause() -> void:
+	var p := not is_paused()
+	if _a != null:
+		_a.stream_paused = p
+	if _b != null:
+		_b.stream_paused = p
+	paused_changed.emit(p)
+
+func is_paused() -> bool:
+	return _active != null and _active.stream_paused
+
+# Nom de fichier de la piste active ("autumn.ogg"), "" si aucune.
+func _active_file() -> String:
+	if _active == null or _active.stream == null:
+		return ""
+	return _active.stream.resource_path.get_file()
+
+# Titre (du manifeste credits.json sinon joli nom de fichier).
+func current_title() -> String:
+	var fn := _active_file()
+	if fn == "":
+		return ""
+	var c: Dictionary = _credits.get(fn, {})
+	if str(c.get("title", "")) != "":
+		return str(c["title"])
+	return _pretty(fn)
+
+# Auteur (depuis credits.json), "" si inconnu.
+func current_artist() -> String:
+	return str(_credits.get(_active_file(), {}).get("artist", ""))
+
+# "Titre — Artiste" (ou juste le titre si l'auteur est inconnu) -> affiché par la banderole.
+func current_credit() -> String:
+	var t := current_title()
+	var a := current_artist()
+	return "%s — %s" % [t, a] if a != "" else t
+
+func _pretty(path: String) -> String:
+	var base := path.get_file().get_basename()
+	return base.capitalize() if base != "" else "♪"
+
+func _emit_track() -> void:
+	track_changed.emit(current_credit())
+
+# Crédits des musiques (music/credits.json) : nom_fichier -> {title?, artist, source?}.
+func _load_credits() -> void:
+	_credits = {}
+	var path := MUSIC_DIR + "/credits.json"
+	if not FileAccess.file_exists(path):
+		return
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		return
+	var data = JSON.parse_string(f.get_as_text())
+	if data is Dictionary:
+		_credits = data
 
 # === SCAN DES DOSSIERS (au démarrage) ===
 func _scan() -> void:
