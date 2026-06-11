@@ -62,7 +62,7 @@ func _on_game_start(ctx) -> void:
 
 func _create_robber_visual(board_view: BoardView) -> void:
 	# Modèle 3D du voleur (robber.glb) ; repli sur un cône sombre si le .glb est absent.
-	var path := "res://modules/vanilla_robber/robber.glb"
+	var path := "res://modules/vanilla_robber/robber.tscn"
 	var scene: PackedScene = load(path) if ResourceLoader.exists(path) else null
 	if scene != null:
 		_robber_node = scene.instantiate()
@@ -98,8 +98,9 @@ func _refresh_robber_visual() -> void:
 		return
 	_robber_node.visible = true
 	var world := HexMath.hex_to_world(int(pos.x), int(pos.y))
-	world.y = HexMath.TILE_HEIGHT / 2 + 0.3
+	world.y = HexMath.TILE_HEIGHT / 2 + 0.1
 	_robber_node.position = world
+	_robber_node.scale = Vector3(1.5, 1.5, 1.5)
 
 # === BLOCAGE DE PRODUCTION ===
 

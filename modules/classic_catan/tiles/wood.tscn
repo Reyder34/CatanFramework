@@ -1,52 +1,52 @@
-[gd_scene load_steps=77 format=3]
+[gd_scene format=3 uid="uid://ckri7kwdywbi2"]
 
 [sub_resource type="CylinderMesh" id="Mesh_1"]
-top_radius = 1.00000
-bottom_radius = 1.00000
-height = 0.13500
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.135
 radial_segments = 6
 rings = 1
 
 [sub_resource type="StandardMaterial3D" id="Mat_2"]
-albedo_color = Color(0.2471, 0.3529, 0.1412, 1)
 cull_mode = 2
-roughness = 0.950
+albedo_color = Color(0.2471, 0.3529, 0.1412, 1)
+roughness = 0.95
 
 [sub_resource type="CylinderMesh" id="Mesh_3"]
-top_radius = 1.00000
-bottom_radius = 1.00000
-height = 0.06200
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.062
 radial_segments = 6
 rings = 1
 
 [sub_resource type="StandardMaterial3D" id="Mat_4"]
-albedo_color = Color(0.1725, 0.4196, 0.2039, 1)
 cull_mode = 2
-roughness = 0.900
+albedo_color = Color(0.1725, 0.4196, 0.2039, 1)
+roughness = 0.9
 
 [sub_resource type="CylinderMesh" id="Mesh_5"]
-top_radius = 0.03750
-bottom_radius = 0.03750
-height = 0.13750
+top_radius = 0.0375
+bottom_radius = 0.0375
+height = 0.1375
 radial_segments = 8
 rings = 1
 
 [sub_resource type="StandardMaterial3D" id="Mat_6"]
-albedo_color = Color(0.4863, 0.3294, 0.2118, 1)
 cull_mode = 2
-roughness = 0.900
+albedo_color = Color(0.4863, 0.3294, 0.2118, 1)
+roughness = 0.9
 
 [sub_resource type="CylinderMesh" id="Mesh_7"]
 top_radius = 0.0
 bottom_radius = 0.26875
-height = 0.33750
+height = 0.3375
 radial_segments = 9
 rings = 1
 
 [sub_resource type="StandardMaterial3D" id="Mat_8"]
-albedo_color = Color(0.2353, 0.4941, 0.2667, 1)
 cull_mode = 2
-roughness = 0.850
+albedo_color = Color(0.2353, 0.4941, 0.2667, 1)
+roughness = 0.85
 
 [sub_resource type="CylinderMesh" id="Mesh_9"]
 top_radius = 0.0
@@ -63,44 +63,44 @@ radial_segments = 9
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_11"]
-top_radius = 0.03000
-bottom_radius = 0.03000
-height = 0.11000
+top_radius = 0.03
+bottom_radius = 0.03
+height = 0.11
 radial_segments = 8
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_12"]
 top_radius = 0.0
-bottom_radius = 0.21500
-height = 0.27000
+bottom_radius = 0.215
+height = 0.27
 radial_segments = 9
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_13"]
 top_radius = 0.0
-bottom_radius = 0.16500
-height = 0.22500
+bottom_radius = 0.165
+height = 0.225
 radial_segments = 9
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_14"]
 top_radius = 0.0
-bottom_radius = 0.11500
-height = 0.19500
+bottom_radius = 0.115
+height = 0.195
 radial_segments = 9
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_15"]
-top_radius = 0.03450
-bottom_radius = 0.03450
-height = 0.12650
+top_radius = 0.0345
+bottom_radius = 0.0345
+height = 0.1265
 radial_segments = 8
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_16"]
 top_radius = 0.0
 bottom_radius = 0.24725
-height = 0.31050
+height = 0.3105
 radial_segments = 9
 rings = 1
 
@@ -119,770 +119,800 @@ radial_segments = 9
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_19"]
-top_radius = 0.02700
-bottom_radius = 0.02700
-height = 0.09900
+top_radius = 0.027
+bottom_radius = 0.027
+height = 0.099
 radial_segments = 8
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_20"]
 top_radius = 0.0
-bottom_radius = 0.19350
-height = 0.24300
+bottom_radius = 0.1935
+height = 0.243
 radial_segments = 9
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_21"]
 top_radius = 0.0
-bottom_radius = 0.14850
-height = 0.20250
+bottom_radius = 0.1485
+height = 0.2025
 radial_segments = 9
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_22"]
 top_radius = 0.0
-bottom_radius = 0.10350
-height = 0.17550
+bottom_radius = 0.1035
+height = 0.1755
 radial_segments = 9
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_23"]
-top_radius = 0.03910
-bottom_radius = 0.03910
-height = 0.20700
+top_radius = 0.0391
+bottom_radius = 0.0391
+height = 0.207
 radial_segments = 8
 rings = 1
 
 [sub_resource type="SphereMesh" id="Mesh_24"]
 radius = 0.17825
-height = 0.35650
+height = 0.3565
 radial_segments = 16
 rings = 8
 
 [sub_resource type="StandardMaterial3D" id="Mat_25"]
-albedo_color = Color(0.3412, 0.6510, 0.2314, 1)
 cull_mode = 2
-roughness = 0.850
+albedo_color = Color(0.3412, 0.651, 0.2314, 1)
+roughness = 0.85
 
 [sub_resource type="SphereMesh" id="Mesh_26"]
 radius = 0.10925
-height = 0.21850
+height = 0.2185
 radial_segments = 16
 rings = 8
 
 [sub_resource type="SphereMesh" id="Mesh_27"]
 radius = 0.12075
-height = 0.24150
+height = 0.2415
 radial_segments = 16
 rings = 8
 
 [sub_resource type="StandardMaterial3D" id="Mat_28"]
-albedo_color = Color(0.6196, 0.8314, 0.3059, 1)
 cull_mode = 2
-roughness = 0.850
+albedo_color = Color(0.6196, 0.8314, 0.3059, 1)
+roughness = 0.85
 
 [sub_resource type="SphereMesh" id="Mesh_29"]
-radius = 0.10580
-height = 0.21160
+radius = 0.1058
+height = 0.2116
 radial_segments = 16
 rings = 8
 
 [sub_resource type="CylinderMesh" id="Mesh_30"]
-top_radius = 0.03400
-bottom_radius = 0.03400
-height = 0.18000
+top_radius = 0.034
+bottom_radius = 0.034
+height = 0.18
 radial_segments = 8
 rings = 1
 
 [sub_resource type="SphereMesh" id="Mesh_31"]
-radius = 0.15500
-height = 0.31000
+radius = 0.155
+height = 0.31
 radial_segments = 16
 rings = 8
 
 [sub_resource type="SphereMesh" id="Mesh_32"]
-radius = 0.09500
-height = 0.19000
+radius = 0.095
+height = 0.19
 radial_segments = 16
 rings = 8
 
 [sub_resource type="SphereMesh" id="Mesh_33"]
-radius = 0.10500
-height = 0.21000
+radius = 0.105
+height = 0.21
 radial_segments = 16
 rings = 8
 
 [sub_resource type="SphereMesh" id="Mesh_34"]
-radius = 0.09200
-height = 0.18400
+radius = 0.092
+height = 0.184
 radial_segments = 16
 rings = 8
 
 [sub_resource type="CylinderMesh" id="Mesh_35"]
-top_radius = 0.02890
-bottom_radius = 0.02890
-height = 0.15300
+top_radius = 0.0289
+bottom_radius = 0.0289
+height = 0.153
 radial_segments = 8
 rings = 1
 
 [sub_resource type="SphereMesh" id="Mesh_36"]
 radius = 0.13175
-height = 0.26350
+height = 0.2635
 radial_segments = 16
 rings = 8
 
 [sub_resource type="SphereMesh" id="Mesh_37"]
 radius = 0.08075
-height = 0.16150
+height = 0.1615
 radial_segments = 16
 rings = 8
 
 [sub_resource type="SphereMesh" id="Mesh_38"]
 radius = 0.08925
-height = 0.17850
+height = 0.1785
 radial_segments = 16
 rings = 8
 
 [sub_resource type="SphereMesh" id="Mesh_39"]
-radius = 0.07820
-height = 0.15640
+radius = 0.0782
+height = 0.1564
 radial_segments = 16
 rings = 8
 
 [sub_resource type="CylinderMesh" id="Mesh_40"]
-top_radius = 0.04700
-bottom_radius = 0.04700
-height = 0.06200
+top_radius = 0.047
+bottom_radius = 0.047
+height = 0.062
 radial_segments = 9
 rings = 1
 
 [sub_resource type="StandardMaterial3D" id="Mat_41"]
-albedo_color = Color(0.6510, 0.4706, 0.2471, 1)
 cull_mode = 2
-roughness = 0.820
+albedo_color = Color(0.651, 0.4706, 0.2471, 1)
+roughness = 0.82
 
 [sub_resource type="CylinderMesh" id="Mesh_42"]
-top_radius = 0.04100
-bottom_radius = 0.04100
-height = 0.01000
+top_radius = 0.041
+bottom_radius = 0.041
+height = 0.01
 radial_segments = 9
 rings = 1
 
 [sub_resource type="StandardMaterial3D" id="Mat_43"]
-albedo_color = Color(0.8039, 0.6275, 0.3882, 1)
 cull_mode = 2
-roughness = 0.820
+albedo_color = Color(0.8039, 0.6275, 0.3882, 1)
+roughness = 0.82
 
 [sub_resource type="CylinderMesh" id="Mesh_44"]
-top_radius = 0.03600
-bottom_radius = 0.03600
-height = 0.27000
+top_radius = 0.036
+bottom_radius = 0.036
+height = 0.27
 radial_segments = 9
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_45"]
-top_radius = 0.03100
-bottom_radius = 0.03100
-height = 0.01000
+top_radius = 0.031
+bottom_radius = 0.031
+height = 0.01
 radial_segments = 9
 rings = 1
 
 [sub_resource type="SphereMesh" id="Mesh_46"]
-radius = 0.07500
-height = 0.15000
+radius = 0.075
+height = 0.15
 radial_segments = 6
 rings = 5
 
 [sub_resource type="StandardMaterial3D" id="Mat_47"]
-albedo_color = Color(0.6196, 0.6275, 0.6667, 1)
 cull_mode = 2
-roughness = 0.920
+albedo_color = Color(0.6196, 0.6275, 0.6667, 1)
+roughness = 0.92
 
 [sub_resource type="SphereMesh" id="Mesh_48"]
-radius = 0.06000
-height = 0.12000
+radius = 0.06
+height = 0.12
 radial_segments = 6
 rings = 5
 
 [sub_resource type="SphereMesh" id="Mesh_49"]
-radius = 0.05500
-height = 0.11000
+radius = 0.055
+height = 0.11
 radial_segments = 6
 rings = 5
 
 [sub_resource type="CylinderMesh" id="Mesh_50"]
 top_radius = 0.0
-bottom_radius = 0.01260
+bottom_radius = 0.0126
 height = 0.06219
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_51"]
 top_radius = 0.0
-bottom_radius = 0.01260
+bottom_radius = 0.0126
 height = 0.04486
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_52"]
 top_radius = 0.0
-bottom_radius = 0.01260
+bottom_radius = 0.0126
 height = 0.06601
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_53"]
 top_radius = 0.0
-bottom_radius = 0.01260
+bottom_radius = 0.0126
 height = 0.04323
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_54"]
 top_radius = 0.0
-bottom_radius = 0.01260
+bottom_radius = 0.0126
 height = 0.05068
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_55"]
 top_radius = 0.0
-bottom_radius = 0.01190
+bottom_radius = 0.0119
 height = 0.04991
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_56"]
 top_radius = 0.0
-bottom_radius = 0.01190
+bottom_radius = 0.0119
 height = 0.04023
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_57"]
 top_radius = 0.0
-bottom_radius = 0.01190
+bottom_radius = 0.0119
 height = 0.04032
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_58"]
 top_radius = 0.0
-bottom_radius = 0.01120
+bottom_radius = 0.0112
 height = 0.05088
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_59"]
 top_radius = 0.0
-bottom_radius = 0.01120
+bottom_radius = 0.0112
 height = 0.05306
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_60"]
 top_radius = 0.0
-bottom_radius = 0.01120
+bottom_radius = 0.0112
 height = 0.05218
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_61"]
 top_radius = 0.0
-bottom_radius = 0.01260
+bottom_radius = 0.0126
 height = 0.04769
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_62"]
 top_radius = 0.0
-bottom_radius = 0.01260
+bottom_radius = 0.0126
 height = 0.04548
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_63"]
 top_radius = 0.0
-bottom_radius = 0.01260
+bottom_radius = 0.0126
 height = 0.06586
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_64"]
 top_radius = 0.0
-bottom_radius = 0.01120
+bottom_radius = 0.0112
 height = 0.04043
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_65"]
 top_radius = 0.0
-bottom_radius = 0.01120
+bottom_radius = 0.0112
 height = 0.04508
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_66"]
 top_radius = 0.0
-bottom_radius = 0.01120
-height = 0.04530
+bottom_radius = 0.0112
+height = 0.0453
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_67"]
 top_radius = 0.0
-bottom_radius = 0.01120
+bottom_radius = 0.0112
 height = 0.05807
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_68"]
 top_radius = 0.0
-bottom_radius = 0.01120
-height = 0.05310
+bottom_radius = 0.0112
+height = 0.0531
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_69"]
 top_radius = 0.0
-bottom_radius = 0.01120
+bottom_radius = 0.0112
 height = 0.05971
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_70"]
 top_radius = 0.0
-bottom_radius = 0.01120
+bottom_radius = 0.0112
 height = 0.05401
 radial_segments = 5
 rings = 1
 
 [sub_resource type="CylinderMesh" id="Mesh_71"]
-top_radius = 0.01000
-bottom_radius = 0.01000
-height = 0.03000
+top_radius = 0.01
+bottom_radius = 0.01
+height = 0.03
 radial_segments = 7
 rings = 1
 
 [sub_resource type="StandardMaterial3D" id="Mat_72"]
-albedo_color = Color(0.9647, 0.9373, 0.8667, 1)
 cull_mode = 2
-roughness = 1.000
+albedo_color = Color(0.9647, 0.9373, 0.8667, 1)
 
 [sub_resource type="SphereMesh" id="Mesh_73"]
-radius = 0.02300
-height = 0.04600
+radius = 0.023
+height = 0.046
 radial_segments = 16
 rings = 8
 
 [sub_resource type="StandardMaterial3D" id="Mat_74"]
-albedo_color = Color(0.7608, 0.2902, 0.1725, 1)
 cull_mode = 2
-roughness = 0.780
+albedo_color = Color(0.7608, 0.2902, 0.1725, 1)
+roughness = 0.78
 
 [sub_resource type="CylinderMesh" id="Mesh_75"]
-top_radius = 0.00850
-bottom_radius = 0.00850
-height = 0.02550
+top_radius = 0.0085
+bottom_radius = 0.0085
+height = 0.0255
 radial_segments = 7
 rings = 1
 
 [sub_resource type="SphereMesh" id="Mesh_76"]
 radius = 0.01955
-height = 0.03910
+height = 0.0391
 radial_segments = 16
 rings = 8
 
-[node name="Wood" type="Node3D"]
+[node name="Wood" type="Node3D" unique_id=1536012212]
 
-[node name="Pivot" type="Node3D" parent="."]
+[node name="Pivot" type="Node3D" parent="." unique_id=947085966]
 transform = Transform3D(0.86603, -0.5, 0, 0, 0, 1, -0.5, -0.86603, 0, 0, 0.1, 0)
 
-[node name="base_earth" type="MeshInstance3D" parent="Pivot"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, -0.06000)
+[node name="base_earth" type="MeshInstance3D" parent="Pivot" unique_id=2041105795]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, -0.06)
 mesh = SubResource("Mesh_1")
 surface_material_override/0 = SubResource("Mat_2")
 
-[node name="base_top" type="MeshInstance3D" parent="Pivot"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000)
+[node name="base_top" type="MeshInstance3D" parent="Pivot" unique_id=1078166503]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0)
 mesh = SubResource("Mesh_3")
 surface_material_override/0 = SubResource("Mat_4")
 
-[node name="Pine_1" type="Node3D" parent="Pivot"]
-transform = Transform3D(-0.41347, -0.91052, 0.00000, 0.91052, -0.41347, 0.00000, 0.00000, 0.00000, 1.00000, -0.40000, 0.34000, 0.00000)
+[node name="AV_Pine_1" type="Node3D" parent="Pivot" unique_id=836156536]
+transform = Transform3D(-0.41347, -0.91052, 0, 0.91052, -0.41347, 0, 0, 0, 1, -0.4, 0.34, 0)
 
-[node name="trunk" type="MeshInstance3D" parent="Pivot/Pine_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06875)
+[node name="trunk" type="MeshInstance3D" parent="Pivot/AV_Pine_1" unique_id=398038655]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.06875)
 mesh = SubResource("Mesh_5")
 surface_material_override/0 = SubResource("Mat_6")
 
-[node name="tier_1" type="MeshInstance3D" parent="Pivot/Pine_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.26250)
+[node name="tier_1" type="MeshInstance3D" parent="Pivot/AV_Pine_1" unique_id=999034188]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.2625)
 mesh = SubResource("Mesh_7")
 surface_material_override/0 = SubResource("Mat_8")
 
-[node name="tier_2" type="MeshInstance3D" parent="Pivot/Pine_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.40937)
+[node name="tier_2" type="MeshInstance3D" parent="Pivot/AV_Pine_1" unique_id=1318115848]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.40937)
 mesh = SubResource("Mesh_9")
 surface_material_override/0 = SubResource("Mat_8")
 
-[node name="tier_3" type="MeshInstance3D" parent="Pivot/Pine_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.55312)
+[node name="tier_3" type="MeshInstance3D" parent="Pivot/AV_Pine_1" unique_id=521305167]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.55312)
 mesh = SubResource("Mesh_10")
 surface_material_override/0 = SubResource("Mat_8")
 
-[node name="Pine_2" type="Node3D" parent="Pivot"]
-transform = Transform3D(0.75975, -0.65021, 0.00000, 0.65021, 0.75975, 0.00000, 0.00000, 0.00000, 1.00000, 0.10000, 0.52000, 0.00000)
+[node name="AV_Pine_2" type="Node3D" parent="Pivot" unique_id=2076012496]
+transform = Transform3D(0.75975, -0.65021, 0, 0.65021, 0.75975, 0, 0, 0, 1, 0.1, 0.52, 0)
 
-[node name="trunk" type="MeshInstance3D" parent="Pivot/Pine_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05500)
+[node name="trunk" type="MeshInstance3D" parent="Pivot/AV_Pine_2" unique_id=371304329]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.055)
 mesh = SubResource("Mesh_11")
 surface_material_override/0 = SubResource("Mat_6")
 
-[node name="tier_1" type="MeshInstance3D" parent="Pivot/Pine_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21000)
+[node name="tier_1" type="MeshInstance3D" parent="Pivot/AV_Pine_2" unique_id=672242603]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.21)
 mesh = SubResource("Mesh_12")
 surface_material_override/0 = SubResource("Mat_8")
 
-[node name="tier_2" type="MeshInstance3D" parent="Pivot/Pine_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.32750)
+[node name="tier_2" type="MeshInstance3D" parent="Pivot/AV_Pine_2" unique_id=635601866]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.3275)
 mesh = SubResource("Mesh_13")
 surface_material_override/0 = SubResource("Mat_8")
 
-[node name="tier_3" type="MeshInstance3D" parent="Pivot/Pine_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.44250)
+[node name="tier_3" type="MeshInstance3D" parent="Pivot/AV_Pine_2" unique_id=814834896]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.4425)
 mesh = SubResource("Mesh_14")
 surface_material_override/0 = SubResource("Mat_8")
 
-[node name="Pine_3" type="Node3D" parent="Pivot"]
-transform = Transform3D(-0.70133, 0.71283, 0.00000, -0.71283, -0.70133, 0.00000, 0.00000, 0.00000, 1.00000, 0.42000, 0.18000, 0.00000)
+[node name="AV_Pine_3" type="Node3D" parent="Pivot" unique_id=1125430814]
+transform = Transform3D(-0.70133, 0.71283, 0, -0.71283, -0.70133, 0, 0, 0, 1, 0.42, 0.18, 0)
 
-[node name="trunk" type="MeshInstance3D" parent="Pivot/Pine_3"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06325)
+[node name="trunk" type="MeshInstance3D" parent="Pivot/AV_Pine_3" unique_id=30487667]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.06325)
 mesh = SubResource("Mesh_15")
 surface_material_override/0 = SubResource("Mat_6")
 
-[node name="tier_1" type="MeshInstance3D" parent="Pivot/Pine_3"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.24150)
+[node name="tier_1" type="MeshInstance3D" parent="Pivot/AV_Pine_3" unique_id=1523843398]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.2415)
 mesh = SubResource("Mesh_16")
 surface_material_override/0 = SubResource("Mat_8")
 
-[node name="tier_2" type="MeshInstance3D" parent="Pivot/Pine_3"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.37662)
+[node name="tier_2" type="MeshInstance3D" parent="Pivot/AV_Pine_3" unique_id=1036636877]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.37662)
 mesh = SubResource("Mesh_17")
 surface_material_override/0 = SubResource("Mat_8")
 
-[node name="tier_3" type="MeshInstance3D" parent="Pivot/Pine_3"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.50887)
+[node name="tier_3" type="MeshInstance3D" parent="Pivot/AV_Pine_3" unique_id=1946062797]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.50887)
 mesh = SubResource("Mesh_18")
 surface_material_override/0 = SubResource("Mat_8")
 
-[node name="Pine_4" type="Node3D" parent="Pivot"]
-transform = Transform3D(0.29136, 0.95661, 0.00000, -0.95661, 0.29136, 0.00000, 0.00000, 0.00000, 1.00000, -0.10000, 0.16000, 0.00000)
+[node name="AV_Pine_4" type="Node3D" parent="Pivot" unique_id=1161613818]
+transform = Transform3D(0.29136, 0.95661, 0, -0.95661, 0.29136, 0, 0, 0, 1, -0.1, 0.16, 0)
 
-[node name="trunk" type="MeshInstance3D" parent="Pivot/Pine_4"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.04950)
+[node name="trunk" type="MeshInstance3D" parent="Pivot/AV_Pine_4" unique_id=214259972]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0495)
 mesh = SubResource("Mesh_19")
 surface_material_override/0 = SubResource("Mat_6")
 
-[node name="tier_1" type="MeshInstance3D" parent="Pivot/Pine_4"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18900)
+[node name="tier_1" type="MeshInstance3D" parent="Pivot/AV_Pine_4" unique_id=1632991057]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.189)
 mesh = SubResource("Mesh_20")
 surface_material_override/0 = SubResource("Mat_8")
 
-[node name="tier_2" type="MeshInstance3D" parent="Pivot/Pine_4"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.29475)
+[node name="tier_2" type="MeshInstance3D" parent="Pivot/AV_Pine_4" unique_id=1618223528]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.29475)
 mesh = SubResource("Mesh_21")
 surface_material_override/0 = SubResource("Mat_8")
 
-[node name="tier_3" type="MeshInstance3D" parent="Pivot/Pine_4"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.39825)
+[node name="tier_3" type="MeshInstance3D" parent="Pivot/AV_Pine_4" unique_id=2094862074]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.39825)
 mesh = SubResource("Mesh_22")
 surface_material_override/0 = SubResource("Mat_8")
 
-[node name="Tree_1" type="Node3D" parent="Pivot"]
-transform = Transform3D(-0.38884, -0.92130, 0.00000, 0.92130, -0.38884, 0.00000, 0.00000, 0.00000, 1.00000, -0.46000, -0.18000, 0.00000)
+[node name="Tree_1" type="Node3D" parent="Pivot" unique_id=1646515219]
+transform = Transform3D(-0.38884, -0.9213, 0, 0.9213, -0.38884, 0, 0, 0, 1, -0.46, -0.18, 0)
 
-[node name="trunk" type="MeshInstance3D" parent="Pivot/Tree_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.10350)
+[node name="trunk" type="MeshInstance3D" parent="Pivot/Tree_1" unique_id=1031080696]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.1035)
 mesh = SubResource("Mesh_23")
 surface_material_override/0 = SubResource("Mat_6")
 
-[node name="leaf_main" type="MeshInstance3D" parent="Pivot/Tree_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.31625)
+[node name="AV_leaf" type="Node3D" parent="Pivot/Tree_1" unique_id=1874907366]
+
+[node name="leaf_main" type="MeshInstance3D" parent="Pivot/Tree_1/AV_leaf" unique_id=1571878891]
+transform = Transform3D(1.0000001, 2.9802322e-08, 0, -2.9802322e-08, 1.0000001, 0, 0, 0, 1, 0, 0, 0.31625)
 mesh = SubResource("Mesh_24")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("Mat_25")
 
-[node name="leaf_top" type="MeshInstance3D" parent="Pivot/Tree_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.01150, -0.06900, 0.44275)
+[node name="leaf_top" type="MeshInstance3D" parent="Pivot/Tree_1/AV_leaf" unique_id=773145446]
+transform = Transform3D(1.0000001, 2.9802322e-08, 0, -2.9802322e-08, 1.0000001, 0, 0, 0, 1, 0.011499971, -0.069000006, 0.44275)
 mesh = SubResource("Mesh_26")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("Mat_25")
 
-[node name="leaf_b1" type="MeshInstance3D" parent="Pivot/Tree_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.12075, 0.06325, 0.27025)
+[node name="leaf_b1" type="MeshInstance3D" parent="Pivot/Tree_1/AV_leaf" unique_id=63179026]
+transform = Transform3D(1.0000001, 2.9802322e-08, 0, -2.9802322e-08, 1.0000001, 0, 0, 0, 1, 0.12075001, 0.063250005, 0.27025)
 mesh = SubResource("Mesh_27")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="leaf_b2" type="MeshInstance3D" parent="Pivot/Tree_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -0.11500, -0.07475, 0.28750)
+[node name="leaf_b2" type="MeshInstance3D" parent="Pivot/Tree_1/AV_leaf" unique_id=694359630]
+transform = Transform3D(1.0000001, 2.9802322e-08, 0, -2.9802322e-08, 1.0000001, 0, 0, 0, 1, -0.11500004, -0.074750006, 0.2875)
 mesh = SubResource("Mesh_29")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="Tree_2" type="Node3D" parent="Pivot"]
-transform = Transform3D(0.64884, 0.76093, 0.00000, -0.76093, 0.64884, 0.00000, 0.00000, 0.00000, 1.00000, 0.10000, -0.30000, 0.00000)
+[node name="Tree_2" type="Node3D" parent="Pivot" unique_id=1051923850]
+transform = Transform3D(0.64884, 0.76093, 0, -0.76093, 0.64884, 0, 0, 0, 1, 0.1, -0.3, 0)
 
-[node name="trunk" type="MeshInstance3D" parent="Pivot/Tree_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.09000)
+[node name="trunk" type="MeshInstance3D" parent="Pivot/Tree_2" unique_id=597639127]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.09)
 mesh = SubResource("Mesh_30")
 surface_material_override/0 = SubResource("Mat_6")
 
-[node name="leaf_main" type="MeshInstance3D" parent="Pivot/Tree_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.27500)
+[node name="AV_leaf" type="Node3D" parent="Pivot/Tree_2" unique_id=578984459]
+
+[node name="leaf_main" type="MeshInstance3D" parent="Pivot/Tree_2/AV_leaf" unique_id=1079966066]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 1, 0, 0, 0.275)
 mesh = SubResource("Mesh_31")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("Mat_25")
 
-[node name="leaf_top" type="MeshInstance3D" parent="Pivot/Tree_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.01000, -0.06000, 0.38500)
+[node name="leaf_top" type="MeshInstance3D" parent="Pivot/Tree_2/AV_leaf" unique_id=1461853509]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 1, 0.01000002, -0.059999995, 0.385)
 mesh = SubResource("Mesh_32")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("Mat_25")
 
-[node name="leaf_b1" type="MeshInstance3D" parent="Pivot/Tree_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.10500, 0.05500, 0.23500)
+[node name="leaf_b1" type="MeshInstance3D" parent="Pivot/Tree_2/AV_leaf" unique_id=125059952]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 1, 0.10500002, 0.054999977, 0.23500001)
 mesh = SubResource("Mesh_33")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="leaf_b2" type="MeshInstance3D" parent="Pivot/Tree_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -0.10000, -0.06500, 0.25000)
+[node name="leaf_b2" type="MeshInstance3D" parent="Pivot/Tree_2/AV_leaf" unique_id=391398151]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 1, -0.09999998, -0.065000005, 0.25)
 mesh = SubResource("Mesh_34")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="Tree_3" type="Node3D" parent="Pivot"]
-transform = Transform3D(0.28937, 0.95722, 0.00000, -0.95722, 0.28937, 0.00000, 0.00000, 0.00000, 1.00000, 0.52000, -0.30000, 0.00000)
+[node name="Tree_3" type="Node3D" parent="Pivot" unique_id=894743011]
+transform = Transform3D(0.28937, 0.95722, 0, -0.95722, 0.28937, 0, 0, 0, 1, 0.52, -0.3, 0)
 
-[node name="trunk" type="MeshInstance3D" parent="Pivot/Tree_3"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07650)
+[node name="trunk" type="MeshInstance3D" parent="Pivot/Tree_3" unique_id=1407308082]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0765)
 mesh = SubResource("Mesh_35")
 surface_material_override/0 = SubResource("Mat_6")
 
-[node name="leaf_main" type="MeshInstance3D" parent="Pivot/Tree_3"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.23375)
+[node name="AV_leaf" type="Node3D" parent="Pivot/Tree_3" unique_id=1290701357]
+
+[node name="leaf_main" type="MeshInstance3D" parent="Pivot/Tree_3/AV_leaf" unique_id=1762160333]
+transform = Transform3D(1, 2.9802322e-08, 0, -2.9802322e-08, 1, 0, 0, 0, 1, 0, 0, 0.23375002)
 mesh = SubResource("Mesh_36")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("Mat_25")
 
-[node name="leaf_top" type="MeshInstance3D" parent="Pivot/Tree_3"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00850, -0.05100, 0.32725)
+[node name="leaf_top" type="MeshInstance3D" parent="Pivot/Tree_3/AV_leaf" unique_id=1176023066]
+transform = Transform3D(1, 2.9802322e-08, 0, -2.9802322e-08, 1, 0, 0, 0, 1, 0.00850001, -0.051, 0.32725)
 mesh = SubResource("Mesh_37")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("Mat_25")
 
-[node name="leaf_b1" type="MeshInstance3D" parent="Pivot/Tree_3"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.08925, 0.04675, 0.19975)
+[node name="leaf_b1" type="MeshInstance3D" parent="Pivot/Tree_3/AV_leaf" unique_id=518144714]
+transform = Transform3D(1, 2.9802322e-08, 0, -2.9802322e-08, 1, 0, 0, 0, 1, 0.08925003, 0.04674998, 0.19975)
 mesh = SubResource("Mesh_38")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="leaf_b2" type="MeshInstance3D" parent="Pivot/Tree_3"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -0.08500, -0.05525, 0.21250)
+[node name="leaf_b2" type="MeshInstance3D" parent="Pivot/Tree_3/AV_leaf" unique_id=599436997]
+transform = Transform3D(1, 2.9802322e-08, 0, -2.9802322e-08, 1, 0, 0, 0, 1, -0.08499998, -0.05524999, 0.2125)
 mesh = SubResource("Mesh_39")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="Stump_1" type="Node3D" parent="Pivot"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -0.12000, -0.55000, 0.00000)
+[node name="Stump_1" type="Node3D" parent="Pivot" unique_id=409049457]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, -0.55, 0)
 
-[node name="body" type="MeshInstance3D" parent="Pivot/Stump_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.03100)
+[node name="body" type="MeshInstance3D" parent="Pivot/Stump_1" unique_id=1218351867]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.031)
 mesh = SubResource("Mesh_40")
 surface_material_override/0 = SubResource("Mat_41")
 
-[node name="top" type="MeshInstance3D" parent="Pivot/Stump_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06700)
+[node name="top" type="MeshInstance3D" parent="Pivot/Stump_1" unique_id=177312510]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.067)
 mesh = SubResource("Mesh_42")
 surface_material_override/0 = SubResource("Mat_43")
 
-[node name="Stump_2" type="Node3D" parent="Pivot"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.30000, -0.06000, 0.00000)
+[node name="Stump_2" type="Node3D" parent="Pivot" unique_id=1104072633]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.06, 0)
 
-[node name="body" type="MeshInstance3D" parent="Pivot/Stump_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.03100)
+[node name="body" type="MeshInstance3D" parent="Pivot/Stump_2" unique_id=1966909001]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.031)
 mesh = SubResource("Mesh_40")
 surface_material_override/0 = SubResource("Mat_41")
 
-[node name="top" type="MeshInstance3D" parent="Pivot/Stump_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06700)
+[node name="top" type="MeshInstance3D" parent="Pivot/Stump_2" unique_id=90450355]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.067)
 mesh = SubResource("Mesh_42")
 surface_material_override/0 = SubResource("Mat_43")
 
-[node name="Log" type="Node3D" parent="Pivot"]
-transform = Transform3D(0.92718, 0.37461, 0.00000, -0.37461, 0.92718, 0.00000, 0.00000, 0.00000, 1.00000, 0.30000, -0.58000, 0.00000)
+[node name="Log" type="Node3D" parent="Pivot" unique_id=956689676]
+transform = Transform3D(0.92718, 0.37460995, 0, -0.37460995, 0.92718, 0, 0, 0, 1, 0.16018747, -0.49927962, 0.006025344)
 
-[node name="body" type="MeshInstance3D" parent="Pivot/Log"]
-transform = Transform3D(0.00000, 1.00000, 0.00000, 0.00000, 0.00000, -1.00000, -1.00000, 0.00000, 0.00000, 0.13500, 0.00000, 0.03600)
+[node name="body" type="MeshInstance3D" parent="Pivot/Log" unique_id=1049866691]
+transform = Transform3D(0, 1, 0, 0, 0, -1, -1, 0, 0, 0.135, 0, 0.036)
 mesh = SubResource("Mesh_44")
 surface_material_override/0 = SubResource("Mat_6")
 
-[node name="cut" type="MeshInstance3D" parent="Pivot/Log"]
-transform = Transform3D(0.00000, 1.00000, 0.00000, 0.00000, 0.00000, -1.00000, -1.00000, 0.00000, 0.00000, 0.14200, 0.00000, 0.03600)
+[node name="cut" type="MeshInstance3D" parent="Pivot/Log" unique_id=214312709]
+transform = Transform3D(0, 1, 0, 0, 0, -1, -1, 0, 0, 0.142, 0, 0.036)
 mesh = SubResource("Mesh_45")
 surface_material_override/0 = SubResource("Mat_43")
 
-[node name="rock_1" type="MeshInstance3D" parent="Pivot"]
-transform = Transform3D(0.72326, -0.78643, 0.00000, 0.76126, 0.74718, 0.00000, 0.00000, 0.00000, 0.78000, 0.66000, 0.38000, 0.03627)
+[node name="rock_1" type="MeshInstance3D" parent="Pivot" unique_id=151616017]
+transform = Transform3D(0.72326, -0.78643, 0, 0.76126, 0.74718, 0, 0, 0, 0.78, 0.66, 0.38, 0.03627)
 mesh = SubResource("Mesh_46")
 surface_material_override/0 = SubResource("Mat_47")
 
-[node name="rock_2" type="MeshInstance3D" parent="Pivot"]
-transform = Transform3D(0.32323, -0.95643, 0.00000, 0.93796, 0.32959, 0.00000, 0.00000, 0.00000, 0.78000, -0.68000, 0.10000, 0.02902)
+[node name="rock_2" type="MeshInstance3D" parent="Pivot" unique_id=222753736]
+transform = Transform3D(0.32323, -0.95643, 0, 0.93796, 0.32959, 0, 0, 0, 0.78, -0.68, 0.1, 0.02902)
 mesh = SubResource("Mesh_48")
 surface_material_override/0 = SubResource("Mat_47")
 
-[node name="rock_3" type="MeshInstance3D" parent="Pivot"]
-transform = Transform3D(-0.65737, 0.64431, 0.00000, -0.53708, -0.78862, 0.00000, 0.00000, 0.00000, 0.78000, -0.30000, -0.38000, 0.02660)
+[node name="rock_3" type="MeshInstance3D" parent="Pivot" unique_id=1203247239]
+transform = Transform3D(-0.65737, 0.64431, 0, -0.53708, -0.78862, 0, 0, 0, 0.78, -0.3, -0.38, 0.0266)
 mesh = SubResource("Mesh_49")
 surface_material_override/0 = SubResource("Mat_47")
 
-[node name="Tuft_1" type="Node3D" parent="Pivot"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -0.22000, -0.06000, 0.00000)
+[node name="Tuft_1" type="Node3D" parent="Pivot" unique_id=1884518255]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.22, -0.06, 0)
 
-[node name="blade_1" type="MeshInstance3D" parent="Pivot/Tuft_1"]
-transform = Transform3D(0.99228, 0.12345, 0.01199, 0.00000, 0.09663, -0.99532, -0.12403, 0.98763, 0.09589, -0.00620, -0.00791, 0.03071)
+[node name="blade_1" type="MeshInstance3D" parent="Pivot/Tuft_1" unique_id=1696116715]
+transform = Transform3D(0.99228, 0.12345, 0.01199, 0, 0.09663, -0.99532, -0.12403, 0.98763, 0.09589, -0.0062, -0.00791, 0.03071)
 mesh = SubResource("Mesh_50")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_2" type="MeshInstance3D" parent="Pivot/Tuft_1"]
-transform = Transform3D(0.99644, 0.08141, 0.02210, 0.00000, 0.26195, -0.96508, -0.08435, 0.96164, 0.26102, 0.01259, -0.00606, 0.02157)
+[node name="blade_2" type="MeshInstance3D" parent="Pivot/Tuft_1" unique_id=1913257088]
+transform = Transform3D(0.99644, 0.08141, 0.0221, 0, 0.26195, -0.96508, -0.08435, 0.96164, 0.26102, 0.01259, -0.00606, 0.02157)
 mesh = SubResource("Mesh_51")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_3" type="MeshInstance3D" parent="Pivot/Tuft_1"]
-transform = Transform3D(0.99043, -0.13769, -0.00932, 0.00000, 0.06753, -0.99772, 0.13800, 0.98817, 0.06688, -0.00230, 0.01213, 0.03261)
+[node name="blade_3" type="MeshInstance3D" parent="Pivot/Tuft_1" unique_id=1037887593]
+transform = Transform3D(0.99043, -0.13769, -0.00932, 0, 0.06753, -0.99772, 0.138, 0.98817, 0.06688, -0.0023, 0.01213, 0.03261)
 mesh = SubResource("Mesh_52")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_4" type="MeshInstance3D" parent="Pivot/Tuft_1"]
-transform = Transform3D(0.97904, -0.20323, -0.01361, 0.00000, 0.06682, -0.99776, 0.20368, 0.97685, 0.06542, -0.01578, 0.00465, 0.02111)
+[node name="blade_4" type="MeshInstance3D" parent="Pivot/Tuft_1" unique_id=813082654]
+transform = Transform3D(0.97904, -0.20323, -0.01361, 0, 0.06682, -0.99776, 0.20368, 0.97685, 0.06542, -0.01578, 0.00465, 0.02111)
 mesh = SubResource("Mesh_53")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_5" type="MeshInstance3D" parent="Pivot/Tuft_1"]
-transform = Transform3D(0.99976, 0.02207, 0.00159, 0.00000, 0.07177, -0.99742, -0.02213, 0.99718, 0.07176, -0.00728, -0.01091, 0.02527)
+[node name="blade_5" type="MeshInstance3D" parent="Pivot/Tuft_1" unique_id=1049022694]
+transform = Transform3D(0.99976, 0.02207, 0.00159, 0, 0.07177, -0.99742, -0.02213, 0.99718, 0.07176, -0.00728, -0.01091, 0.02527)
 mesh = SubResource("Mesh_54")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="Tuft_2" type="Node3D" parent="Pivot"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.62000, -0.06000, 0.00000)
+[node name="Tuft_2" type="Node3D" parent="Pivot" unique_id=844748695]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.62, -0.06, 0)
 
-[node name="blade_1" type="MeshInstance3D" parent="Pivot/Tuft_2"]
-transform = Transform3D(0.99000, 0.13720, 0.03275, 0.00000, 0.23220, -0.97267, -0.14106, 0.96294, 0.22988, 0.00352, 0.01140, 0.02403)
+[node name="blade_1" type="MeshInstance3D" parent="Pivot/Tuft_2" unique_id=1323238726]
+transform = Transform3D(0.99, 0.1372, 0.03275, 0, 0.2322, -0.97267, -0.14106, 0.96294, 0.22988, 0.00352, 0.0114, 0.02403)
 mesh = SubResource("Mesh_55")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_2" type="MeshInstance3D" parent="Pivot/Tuft_2"]
-transform = Transform3D(0.97873, -0.20291, 0.03012, 0.00000, -0.14685, -0.98916, 0.20513, 0.96812, -0.14373, -0.00856, -0.00537, 0.01947)
+[node name="blade_2" type="MeshInstance3D" parent="Pivot/Tuft_2" unique_id=2133113279]
+transform = Transform3D(0.97873, -0.20291, 0.03012, 0, -0.14685, -0.98916, 0.20513, 0.96812, -0.14373, -0.00856, -0.00537, 0.01947)
 mesh = SubResource("Mesh_56")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_3" type="MeshInstance3D" parent="Pivot/Tuft_2"]
-transform = Transform3D(0.99166, -0.12554, 0.02907, 0.00000, -0.22562, -0.97422, 0.12886, 0.96609, -0.22374, -0.00104, -0.00290, 0.01948)
+[node name="blade_3" type="MeshInstance3D" parent="Pivot/Tuft_2" unique_id=219699449]
+transform = Transform3D(0.99166, -0.12554, 0.02907, 0, -0.22562, -0.97422, 0.12886, 0.96609, -0.22374, -0.00104, -0.0029, 0.01948)
 mesh = SubResource("Mesh_57")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="Tuft_3" type="Node3D" parent="Pivot"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -0.62000, 0.36000, 0.00000)
+[node name="Tuft_3" type="Node3D" parent="Pivot" unique_id=1953824905]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.62, 0.36, 0)
 
-[node name="blade_1" type="MeshInstance3D" parent="Pivot/Tuft_3"]
-transform = Transform3D(0.99933, -0.03594, -0.00636, 0.00000, 0.17430, -0.98469, 0.03650, 0.98404, 0.17419, -0.00553, 0.01694, 0.02503)
+[node name="blade_1" type="MeshInstance3D" parent="Pivot/Tuft_3" unique_id=19883865]
+transform = Transform3D(0.99933, -0.03594, -0.00636, 0, 0.1743, -0.98469, 0.0365, 0.98404, 0.17419, -0.00553, 0.01694, 0.02503)
 mesh = SubResource("Mesh_58")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_2" type="MeshInstance3D" parent="Pivot/Tuft_3"]
-transform = Transform3D(0.99191, 0.12374, 0.02842, 0.00000, 0.22387, -0.97462, -0.12696, 0.96673, 0.22206, 0.00775, 0.00192, 0.02565)
+[node name="blade_2" type="MeshInstance3D" parent="Pivot/Tuft_3" unique_id=232077176]
+transform = Transform3D(0.99191, 0.12374, 0.02842, 0, 0.22387, -0.97462, -0.12696, 0.96673, 0.22206, 0.00775, 0.00192, 0.02565)
 mesh = SubResource("Mesh_59")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_3" type="MeshInstance3D" parent="Pivot/Tuft_3"]
-transform = Transform3D(0.97037, -0.24099, -0.01748, 0.00000, 0.07233, -0.99738, 0.24163, 0.96783, 0.07018, -0.00413, -0.01115, 0.02525)
+[node name="blade_3" type="MeshInstance3D" parent="Pivot/Tuft_3" unique_id=1099344175]
+transform = Transform3D(0.97037, -0.24099, -0.01748, 0, 0.07233, -0.99738, 0.24163, 0.96783, 0.07018, -0.00413, -0.01115, 0.02525)
 mesh = SubResource("Mesh_60")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="Tuft_4" type="Node3D" parent="Pivot"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.06000, -0.62000, 0.00000)
+[node name="Tuft_4" type="Node3D" parent="Pivot" unique_id=1230866215]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06, -0.62, 0)
 
-[node name="blade_1" type="MeshInstance3D" parent="Pivot/Tuft_4"]
-transform = Transform3D(0.99035, 0.13859, -0.00280, 0.00000, -0.02023, -0.99980, -0.13862, 0.99014, -0.02003, 0.00346, -0.00391, 0.02361)
+[node name="blade_1" type="MeshInstance3D" parent="Pivot/Tuft_4" unique_id=2060184110]
+transform = Transform3D(0.99035, 0.13859, -0.0028, 0, -0.02023, -0.9998, -0.13862, 0.99014, -0.02003, 0.00346, -0.00391, 0.02361)
 mesh = SubResource("Mesh_61")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_2" type="MeshInstance3D" parent="Pivot/Tuft_4"]
-transform = Transform3D(0.99673, 0.07971, -0.01350, 0.00000, -0.16696, -0.98596, -0.08084, 0.98274, -0.16641, 0.00361, -0.00517, 0.02235)
+[node name="blade_2" type="MeshInstance3D" parent="Pivot/Tuft_4" unique_id=436783461]
+transform = Transform3D(0.99673, 0.07971, -0.0135, 0, -0.16696, -0.98596, -0.08084, 0.98274, -0.16641, 0.00361, -0.00517, 0.02235)
 mesh = SubResource("Mesh_62")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_3" type="MeshInstance3D" parent="Pivot/Tuft_4"]
-transform = Transform3D(0.98798, 0.15172, -0.02951, 0.00000, -0.19091, -0.98161, -0.15456, 0.96981, -0.18862, 0.00170, -0.02392, 0.03193)
+[node name="blade_3" type="MeshInstance3D" parent="Pivot/Tuft_4" unique_id=1943423577]
+transform = Transform3D(0.98798, 0.15172, -0.02951, 0, -0.19091, -0.98161, -0.15456, 0.96981, -0.18862, 0.0017, -0.02392, 0.03193)
 mesh = SubResource("Mesh_63")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="Tuft_5" type="Node3D" parent="Pivot"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.66000, -0.34000, 0.00000)
+[node name="Tuft_5" type="Node3D" parent="Pivot" unique_id=1035903503]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.66, -0.34, 0)
 
-[node name="blade_1" type="MeshInstance3D" parent="Pivot/Tuft_5"]
-transform = Transform3D(0.98961, 0.14229, -0.02082, 0.00000, -0.14481, -0.98946, -0.14381, 0.97918, -0.14330, -0.00522, 0.00337, 0.01979)
+[node name="blade_1" type="MeshInstance3D" parent="Pivot/Tuft_5" unique_id=81615233]
+transform = Transform3D(0.98961, 0.14229, -0.02082, 0, -0.14481, -0.98946, -0.14381, 0.97918, -0.1433, -0.00522, 0.00337, 0.01979)
 mesh = SubResource("Mesh_64")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_2" type="MeshInstance3D" parent="Pivot/Tuft_5"]
-transform = Transform3D(0.96605, -0.25810, -0.01160, 0.00000, 0.04491, -0.99899, 0.25837, 0.96507, 0.04339, -0.00711, -0.00599, 0.02175)
+[node name="blade_2" type="MeshInstance3D" parent="Pivot/Tuft_5" unique_id=1332611711]
+transform = Transform3D(0.96605, -0.2581, -0.0116, 0, 0.04491, -0.99899, 0.25837, 0.96507, 0.04339, -0.00711, -0.00599, 0.02175)
 mesh = SubResource("Mesh_65")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_3" type="MeshInstance3D" parent="Pivot/Tuft_5"]
-transform = Transform3D(0.99231, 0.12376, -0.00333, 0.00000, -0.02689, -0.99964, -0.12380, 0.99195, -0.02669, 0.00763, -0.00782, 0.02247)
+[node name="blade_3" type="MeshInstance3D" parent="Pivot/Tuft_5" unique_id=1096742071]
+transform = Transform3D(0.99231, 0.12376, -0.00333, 0, -0.02689, -0.99964, -0.1238, 0.99195, -0.02669, 0.00763, -0.00782, 0.02247)
 mesh = SubResource("Mesh_66")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_4" type="MeshInstance3D" parent="Pivot/Tuft_5"]
-transform = Transform3D(0.97950, -0.20104, -0.01269, 0.00000, 0.06300, -0.99801, 0.20144, 0.97756, 0.06170, -0.01560, 0.01085, 0.02838)
+[node name="blade_4" type="MeshInstance3D" parent="Pivot/Tuft_5" unique_id=688636294]
+transform = Transform3D(0.9795, -0.20104, -0.01269, 0, 0.063, -0.99801, 0.20144, 0.97756, 0.0617, -0.0156, 0.01085, 0.02838)
 mesh = SubResource("Mesh_67")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="Tuft_6" type="Node3D" parent="Pivot"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -0.36000, 0.04000, 0.00000)
+[node name="Tuft_6" type="Node3D" parent="Pivot" unique_id=1611866523]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.36, 0.04, 0)
 
-[node name="blade_1" type="MeshInstance3D" parent="Pivot/Tuft_6"]
-transform = Transform3D(0.97239, 0.22949, -0.04228, 0.00000, -0.18118, -0.98345, -0.23335, 0.95630, -0.17617, 0.00846, -0.00492, 0.02539)
+[node name="blade_1" type="MeshInstance3D" parent="Pivot/Tuft_6" unique_id=1450767740]
+transform = Transform3D(0.97239, 0.22949, -0.04228, 0, -0.18118, -0.98345, -0.23335, 0.9563, -0.17617, 0.00846, -0.00492, 0.02539)
 mesh = SubResource("Mesh_68")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_2" type="MeshInstance3D" parent="Pivot/Tuft_6"]
-transform = Transform3D(0.98367, -0.17587, -0.03834, 0.00000, 0.21297, -0.97706, 0.18000, 0.96110, 0.20949, -0.00420, 0.00739, 0.02869)
+[node name="blade_2" type="MeshInstance3D" parent="Pivot/Tuft_6" unique_id=554669334]
+transform = Transform3D(0.98367, -0.17587, -0.03834, 0, 0.21297, -0.97706, 0.18, 0.9611, 0.20949, -0.0042, 0.00739, 0.02869)
 mesh = SubResource("Mesh_69")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="blade_3" type="MeshInstance3D" parent="Pivot/Tuft_6"]
-transform = Transform3D(0.97319, 0.22656, 0.03966, 0.00000, 0.17242, -0.98502, -0.23000, 0.95861, 0.16780, -0.00025, 0.00143, 0.02589)
+[node name="blade_3" type="MeshInstance3D" parent="Pivot/Tuft_6" unique_id=2007777063]
+transform = Transform3D(0.97319, 0.22656, 0.03966, 0, 0.17242, -0.98502, -0.23, 0.95861, 0.1678, -0.00025, 0.00143, 0.02589)
 mesh = SubResource("Mesh_70")
 surface_material_override/0 = SubResource("Mat_28")
 
-[node name="Mushroom_1" type="Node3D" parent="Pivot"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -0.34000, -0.30000, 0.00000)
+[node name="Mushroom_1" type="Node3D" parent="Pivot" unique_id=1500282684]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.34000003, -0.30000007, 0.033390306)
 
-[node name="stem" type="MeshInstance3D" parent="Pivot/Mushroom_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.01500)
+[node name="stem" type="MeshInstance3D" parent="Pivot/Mushroom_1" unique_id=666056333]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.015)
 mesh = SubResource("Mesh_71")
 surface_material_override/0 = SubResource("Mat_72")
 
-[node name="cap" type="MeshInstance3D" parent="Pivot/Mushroom_1"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.62000, 0.00000, 0.00000, 0.03000)
+[node name="cap" type="MeshInstance3D" parent="Pivot/Mushroom_1" unique_id=932445855]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.62, 0, 0, 0.03)
 mesh = SubResource("Mesh_73")
 surface_material_override/0 = SubResource("Mat_74")
 
-[node name="Mushroom_2" type="Node3D" parent="Pivot"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.20000, -0.14000, 0.00000)
+[node name="Mushroom_2" type="Node3D" parent="Pivot" unique_id=1708725239]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20000002, -0.14000002, 0.0265316)
 
-[node name="stem" type="MeshInstance3D" parent="Pivot/Mushroom_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.01275)
+[node name="stem" type="MeshInstance3D" parent="Pivot/Mushroom_2" unique_id=1984070822]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.01275)
 mesh = SubResource("Mesh_75")
 surface_material_override/0 = SubResource("Mat_72")
 
-[node name="cap" type="MeshInstance3D" parent="Pivot/Mushroom_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.62000, 0.00000, 0.00000, 0.02550)
+[node name="cap" type="MeshInstance3D" parent="Pivot/Mushroom_2" unique_id=763323586]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.62, 0, 0, 0.0255)
 mesh = SubResource("Mesh_76")
+surface_material_override/0 = SubResource("Mat_74")
+
+[node name="Mushroom_3" type="Node3D" parent="Pivot" unique_id=801661365]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.027011812, -0.71216923, 0.026527368)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/Mushroom_3" unique_id=130289975]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.015)
+mesh = SubResource("Mesh_71")
+surface_material_override/0 = SubResource("Mat_72")
+
+[node name="cap" type="MeshInstance3D" parent="Pivot/Mushroom_3" unique_id=1112967309]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.62, 0, 0, 0.03)
+mesh = SubResource("Mesh_73")
 surface_material_override/0 = SubResource("Mat_74")

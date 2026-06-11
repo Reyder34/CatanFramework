@@ -301,22 +301,22 @@ mesh = SubResource("Mesh_9")
 surface_material_override/0 = SubResource("Mat_10")
 
 [node name="neck" type="MeshInstance3D" parent="Pivot/Kiln" unique_id=767398621]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.4925)
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.47189286)
 mesh = SubResource("Mesh_11")
 surface_material_override/0 = SubResource("Mat_8")
 
 [node name="chimney" type="MeshInstance3D" parent="Pivot/Kiln" unique_id=1747493595]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.6525)
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.6318928)
 mesh = SubResource("Mesh_12")
 surface_material_override/0 = SubResource("Mat_6")
 
 [node name="chimney_rim" type="MeshInstance3D" parent="Pivot/Kiln" unique_id=1656277662]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.775)
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.7543928)
 mesh = SubResource("Mesh_13")
 surface_material_override/0 = SubResource("Mat_8")
 
 [node name="chimney_top" type="MeshInstance3D" parent="Pivot/Kiln" unique_id=2029102727]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.795)
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.77439284)
 mesh = SubResource("Mesh_14")
 surface_material_override/0 = SubResource("Mat_15")
 
@@ -665,7 +665,7 @@ surface_material_override/0 = SubResource("Mat_8")
 transform = Transform3D(0.20791, -0.97815, 0, 0.97815, 0.20791, 0, 0, 0, 1, -0.6, 0.1, 0)
 
 [node name="post_1_1" type="MeshInstance3D" parent="Pivot/DryingRack" unique_id=1154977707]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.092, -0.056, 0.07)
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 1.7020376, -0.09200001, -0.056000054, 0.07)
 mesh = SubResource("Mesh_29")
 surface_material_override/0 = SubResource("Mat_30")
 
@@ -675,7 +675,7 @@ mesh = SubResource("Mesh_31")
 surface_material_override/0 = SubResource("Mat_30")
 
 [node name="post_2_1" type="MeshInstance3D" parent="Pivot/DryingRack" unique_id=794975776]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.092, -0.056, 0.07)
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 1.7337852, 0.092, -0.055999994, 0.07)
 mesh = SubResource("Mesh_29")
 surface_material_override/0 = SubResource("Mat_30")
 

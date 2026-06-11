@@ -1,0 +1,183 @@
+[gd_scene format=3 uid="uid://ctxnvuf64mk84"]
+
+[sub_resource type="CylinderMesh" id="Mesh_1"]
+top_radius = 0.52
+bottom_radius = 0.52
+height = 0.115
+radial_segments = 6
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_2"]
+cull_mode = 2
+albedo_color = Color(0.4314, 0.2902, 0.1725, 1)
+roughness = 0.95
+
+[sub_resource type="CylinderMesh" id="Mesh_3"]
+top_radius = 0.52
+bottom_radius = 0.52
+height = 0.055
+radial_segments = 6
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_4"]
+cull_mode = 2
+albedo_color = Color(0.6157, 0.5843, 0.5333, 1)
+roughness = 0.95
+
+[sub_resource type="CylinderMesh" id="Mesh_5"]
+top_radius = 0.18
+bottom_radius = 0.18
+height = 0.008
+radial_segments = 14
+rings = 1
+
+[sub_resource type="SphereMesh" id="Mesh_6"]
+radius = 0.075
+height = 0.15
+radial_segments = 6
+rings = 5
+
+[sub_resource type="StandardMaterial3D" id="Mat_7"]
+cull_mode = 2
+albedo_color = Color(0.6196, 0.6275, 0.6667, 1)
+roughness = 0.92
+
+[sub_resource type="SphereMesh" id="Mesh_8"]
+radius = 0.055
+height = 0.11
+radial_segments = 6
+rings = 5
+
+[sub_resource type="SphereMesh" id="Mesh_9"]
+radius = 0.045
+height = 0.09
+radial_segments = 6
+rings = 5
+
+[sub_resource type="CylinderMesh" id="Mesh_10"]
+top_radius = 0.0
+bottom_radius = 0.0112
+height = 0.04195
+radial_segments = 5
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_11"]
+cull_mode = 2
+albedo_color = Color(0.6196, 0.8314, 0.3059, 1)
+roughness = 0.85
+
+[sub_resource type="CylinderMesh" id="Mesh_12"]
+top_radius = 0.0
+bottom_radius = 0.0112
+height = 0.04358
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_13"]
+top_radius = 0.0
+bottom_radius = 0.0112
+height = 0.05451
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_14"]
+top_radius = 0.0
+bottom_radius = 0.0112
+height = 0.0515
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_15"]
+top_radius = 0.0
+bottom_radius = 0.0098
+height = 0.03742
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_16"]
+top_radius = 0.0
+bottom_radius = 0.0098
+height = 0.03775
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_17"]
+top_radius = 0.0
+bottom_radius = 0.0098
+height = 0.03896
+radial_segments = 5
+rings = 1
+
+[node name="RobberSocle" type="Node3D" unique_id=1436080134]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
+
+[node name="socle_earth" type="MeshInstance3D" parent="." unique_id=769019264]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, -0.05)
+mesh = SubResource("Mesh_1")
+surface_material_override/0 = SubResource("Mat_2")
+
+[node name="socle_top" type="MeshInstance3D" parent="." unique_id=1422547955]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0)
+mesh = SubResource("Mesh_3")
+surface_material_override/0 = SubResource("Mat_4")
+
+[node name="socle_dirt" type="MeshInstance3D" parent="." unique_id=1113426854]
+transform = Transform3D(1.2, 0, 0, 0, 0, -0.9, 0, 1, 0, 0.06, -0.02, 0.004)
+mesh = SubResource("Mesh_5")
+surface_material_override/0 = SubResource("Mat_2")
+
+[node name="socle_stone_1" type="MeshInstance3D" parent="." unique_id=245265578]
+transform = Transform3D(0.18209, 0.96312, 0, -0.94928, 0.18474, 0, 0, 0, 0.78, -0.34, 0.18, 0.03627)
+mesh = SubResource("Mesh_6")
+surface_material_override/0 = SubResource("Mat_7")
+
+[node name="socle_stone_2" type="MeshInstance3D" parent="." unique_id=361084983]
+transform = Transform3D(-0.98563, -0.29836, 0, 0.2732, -1.07643, 0, 0, 0, 0.78, 0.3, -0.24, 0.0266)
+mesh = SubResource("Mesh_8")
+surface_material_override/0 = SubResource("Mat_7")
+
+[node name="socle_stone_3" type="MeshInstance3D" parent="." unique_id=1418132290]
+transform = Transform3D(0.24705, 0.92569, 0, -0.80361, 0.28458, 0, 0, 0, 0.78, 0.34, 0.22, 0.02176)
+mesh = SubResource("Mesh_9")
+surface_material_override/0 = SubResource("Mat_7")
+
+[node name="Socle_Tuft_1" type="Node3D" parent="." unique_id=1284610891]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.2, 0)
+
+[node name="blade_1" type="MeshInstance3D" parent="Socle_Tuft_1" unique_id=1159038675]
+transform = Transform3D(0.99061, 0.13219, -0.0348, 0, -0.25461, -0.96704, -0.13669, 0.95797, -0.25222, 0.00527, -0.00347, 0.0201)
+mesh = SubResource("Mesh_10")
+surface_material_override/0 = SubResource("Mat_11")
+
+[node name="blade_2" type="MeshInstance3D" parent="Socle_Tuft_1" unique_id=1881879935]
+transform = Transform3D(0.99945, -0.03315, -0.00202, 0, 0.06094, -0.99814, 0.03321, 0.99759, 0.06091, 0.00599, -0.00761, 0.02174)
+mesh = SubResource("Mesh_12")
+surface_material_override/0 = SubResource("Mat_11")
+
+[node name="blade_3" type="MeshInstance3D" parent="Socle_Tuft_1" unique_id=1018546688]
+transform = Transform3D(0.99218, -0.12129, -0.02937, 0, 0.23538, -0.9719, 0.12479, 0.96431, 0.23354, -0.00512, 0.01291, 0.02628)
+mesh = SubResource("Mesh_13")
+surface_material_override/0 = SubResource("Mat_11")
+
+[node name="blade_4" type="MeshInstance3D" parent="Socle_Tuft_1" unique_id=1744585694]
+transform = Transform3D(0.97567, -0.21752, 0.02755, 0, -0.12566, -0.99207, 0.21926, 0.96793, -0.1226, -0.01632, -0.0018, 0.02493)
+mesh = SubResource("Mesh_14")
+surface_material_override/0 = SubResource("Mat_11")
+
+[node name="Socle_Tuft_2" type="Node3D" parent="." unique_id=623491573]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16, 0.34, 0)
+
+[node name="blade_1" type="MeshInstance3D" parent="Socle_Tuft_2" unique_id=992402352]
+transform = Transform3D(0.96208, 0.26997, -0.03891, 0, -0.14264, -0.98977, -0.27276, 0.95224, -0.13723, 0.00688, 0.00125, 0.01781)
+mesh = SubResource("Mesh_15")
+surface_material_override/0 = SubResource("Mat_11")
+
+[node name="blade_2" type="MeshInstance3D" parent="Socle_Tuft_2" unique_id=363754008]
+transform = Transform3D(0.9719, 0.23202, -0.03975, 0, -0.16888, -0.98564, -0.2354, 0.95794, -0.16414, 0.00419, -0.00361, 0.01808)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_11")
+
+[node name="blade_3" type="MeshInstance3D" parent="Socle_Tuft_2" unique_id=3358236]
+transform = Transform3D(0.97927, 0.20197, -0.01512, 0, -0.07466, -0.99721, -0.20254, 0.97654, -0.07311, -0.00011, -0.00419, 0.01902)
+mesh = SubResource("Mesh_17")
+surface_material_override/0 = SubResource("Mat_11")
