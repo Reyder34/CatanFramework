@@ -129,6 +129,7 @@ func _process(delta: float) -> void:
 	_cam.position = Vector3(cos(_angle) * 14.0, 6.0, sin(_angle) * 14.0)  # plus bas = angle plus serré
 	_cam.look_at(Vector3.ZERO, Vector3.UP)
 	_apply_day_night()
+	Weather.apply_sky(_sky_mat)   # météo -> ciel (nuages/pluie/neige/tempête/éclair)
 
 # Même logique que main.gd : soleil orienté selon l'arc du cycle, lune la nuit, ambiance.
 func _apply_day_night() -> void:

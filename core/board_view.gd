@@ -4,6 +4,9 @@ extends RefCounted
 const WATER_RADIUS := 4
 const WATER_COLOR := Color(0.15, 0.4, 0.7)
 
+# Surcouche météo (neige/mouillé) posée sur toutes les tuiles ; pilotée par des params globaux (Weather).
+const TILE_WEATHER_SHADER := "res://ui/shader/tile_weather.gdshader"
+
 # Tuiles 3D (modèles fournis par un mod). Le .glb des tuiles Catan a un hex de rayon
 # ≈0.99 ; on remet sa rotation à plat pour aligner les 6 sommets sur le plateau.
 const TILE_MODEL_Y_DEG := 0.0      # si les tuiles semblent tournées de 30° : 30 ou -30
@@ -15,6 +18,8 @@ var board: Board
 var tile_nodes: Dictionary = {}
 var vertex_nodes: Dictionary = {}
 var edge_nodes: Dictionary = {}
+
+var _weather_overlay: ShaderMaterial = null   # matériau de surcouche météo partagé (chargé une fois)
 
 var on_tile_click: Callable
 var on_vertex_click: Callable
@@ -124,6 +129,7 @@ func _create_tile(parent: Node3D, q: int, r: int, resource: String, number: int)
 			mat.albedo_texture = tex
 			mat.albedo_color = Color.WHITE  # ne pas teinter l'image
 		mesh_inst.material_override = mat
+		mesh_inst.material_overlay = _weather_overlay_material()
 		body.add_child(mesh_inst)
 
 	var col := CollisionShape3D.new()
@@ -164,6 +170,28 @@ func _add_tile_model(body: Node3D, scene: PackedScene) -> void:
 		model.rotation = Vector3(0, deg_to_rad(TILE_MODEL_Y_DEG + 90), 0)
 		model.scale = Vector3.ONE * (HexMath.HEX_SIZE / 0.99)
 	body.add_child(model)
+	_apply_weather_overlay(model)
+
+# Matériau de surcouche météo partagé (chargé une fois). Le shader lit des params globaux que
+# l'autoload Weather met à jour -> neige sur le dessus quand il neige, voile mouillé quand il pleut.
+func _weather_overlay_material() -> ShaderMaterial:
+	if _weather_overlay == null:
+		var sh = load(TILE_WEATHER_SHADER)
+		if sh != null:
+			_weather_overlay = ShaderMaterial.new()
+			_weather_overlay.shader = sh
+	return _weather_overlay
+
+# Pose la surcouche météo sur tous les MeshInstance3D d'un modèle de tuile (sans toucher au matériau de base).
+func _apply_weather_overlay(root: Node) -> void:
+	var mat := _weather_overlay_material()
+	if mat == null:
+		return
+	var meshes := root.find_children("*", "MeshInstance3D", true, false)
+	if root is MeshInstance3D:
+		meshes.append(root)
+	for m in meshes:
+		(m as MeshInstance3D).material_overlay = mat
 
 func _register_vertices(parent: Node3D, q: int, r: int) -> void:
 	for i in 6:

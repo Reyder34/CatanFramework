@@ -43,29 +43,86 @@ height = 0.05
 [sub_resource type="BoxMesh" id="BoxMesh_uk0nx"]
 size = Vector3(0.05, 0.3, 0.05)
 
-[sub_resource type="Curve" id="Curve_eh2vw"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+[sub_resource type="Curve" id="Curve_alpha"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(0.6, 0.75), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTex_alpha"]
+curve = SubResource("Curve_alpha")
+
+[sub_resource type="Curve" id="Curve_scale"]
+_data = [Vector2(0, 0.4), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="CurveTexture" id="CurveTexture_iv5pv"]
-curve = SubResource("Curve_eh2vw")
+[sub_resource type="CurveTexture" id="CurveTex_scale"]
+curve = SubResource("Curve_scale")
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ircr3"]
-gravity = Vector3(0, 9, 0)
-scale_min = 0.59999996
-scale_max = 1.1999999
-scale_curve = SubResource("CurveTexture_iv5pv")
-color = Color(0.09803922, 0.08627451, 0.07058824, 1)
+[sub_resource type="ParticleProcessMaterial" id="PPM_smoke"]
+emission_shape = 1
+emission_sphere_radius = 0.015
+angle_min = -180.0
+angle_max = 180.0
+direction = Vector3(0, 1, 0)
+spread = 10.0
+initial_velocity_min = 0.08
+initial_velocity_max = 0.18
+angular_velocity_min = -20.0
+angular_velocity_max = 20.0
+gravity = Vector3(0, 0.13, 0)
+scale_min = 0.45
+scale_max = 0.9
+scale_curve = SubResource("CurveTex_scale")
+color = Color(0.55, 0.55, 0.58, 0.6)
+alpha_curve = SubResource("CurveTex_alpha")
+turbulence_enabled = true
+turbulence_noise_strength = 0.2
+turbulence_noise_scale = 1.4
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.06
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ys8i3"]
+[sub_resource type="Gradient" id="Grad_smoke"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.5, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradTex_smoke"]
+gradient = SubResource("Grad_smoke")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_smoke"]
 transparency = 1
 shading_mode = 0
-albedo_color = Color(1, 1, 1, 0.59607846)
+vertex_color_use_as_albedo = true
+albedo_texture = SubResource("GradTex_smoke")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
 
-[sub_resource type="SphereMesh" id="SphereMesh_hsedy"]
-material = SubResource("StandardMaterial3D_ys8i3")
-radius = 0.025
-height = 0.025
+[sub_resource type="QuadMesh" id="Quad_smoke"]
+material = SubResource("Mat_smoke")
+size = Vector2(0.07, 0.07)
+
+[sub_resource type="GDScript" id="GDScript_smoke_night"]
+script/source = "extends GPUParticles3D
+# Fumée de cheminée : émet la NUIT. Le vent (Weather.wind_vector()) la fait dériver horizontalement.
+
+var _rise := 0.0
+
+func _ready() -> void:
+	if process_material != null:
+		_rise = process_material.gravity.y
+	DayNight.cycle_changed.connect(_refresh)
+	_refresh()
+
+func _refresh() -> void:
+	emitting = DayNight.day_factor < 0.5
+	if process_material != null:
+		var w := Weather.wind_vector()
+		process_material.gravity = Vector3(w.x, _rise, w.z)
+"
 
 [sub_resource type="BoxMesh" id="BoxMesh_8kdog"]
 size = Vector3(0.03, 0.26, 0.03)
@@ -86,7 +143,7 @@ transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
 [node name="Corp" type="Node3D" parent="." unique_id=1831503617]
 
 [node name="maison" type="CSGMesh3D" parent="Corp" unique_id=915377543]
-transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0.10161313, 0)
+transform = Transform3D(0.99999976, 0, 0, 0, 0.99999976, 0, 0, 0, 0.99999976, 0, 0.10161311, 0)
 mesh = SubResource("BoxMesh_oa2yk")
 
 [node name="subhouse" type="CSGMesh3D" parent="Corp/maison" unique_id=1665044321]
@@ -156,13 +213,12 @@ mesh = SubResource("BoxMesh_uk0nx")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="Corp/maison/cheminee" unique_id=365549311]
 transform = Transform3D(0.9999999, 0, 0, 0, 0.9999999, 0, 0, 0, 0.9999999, 0, 0.027068406, 0)
-amount_ratio = 0.5701
-lifetime = 0.8
-speed_scale = 0.17
-explosiveness = 0.85
-randomness = 0.2
-process_material = SubResource("ParticleProcessMaterial_ircr3")
-draw_pass_1 = SubResource("SphereMesh_hsedy")
+amount = 14
+lifetime = 2.5
+randomness = 0.4
+process_material = SubResource("PPM_smoke")
+draw_pass_1 = SubResource("Quad_smoke")
+script = SubResource("GDScript_smoke_night")
 
 [node name="sub_cheminee" type="CSGMesh3D" parent="Corp/maison" unique_id=24036417]
 transform = Transform3D(0.99999976, 0, 0, 0, 0.99999976, 0, 0, 0, 0.99999976, -0.058014315, 0.08031327, -0.05447828)

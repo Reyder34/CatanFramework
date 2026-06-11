@@ -29,6 +29,9 @@ LampLights="*res://scripts/lamp_lights.gd"
 FpsCounter="*res://scripts/fps_counter.gd"
 Music="*res://scripts/music.gd"
 MusicBanner="*res://scripts/music_banner.gd"
+Weather="*res://scripts/weather.gd"
+WindSway="*res://scripts/wind_sway.gd"
+WeatherDebug="*res://scripts/weather_debug.gd"
 
 [gui]
 
@@ -45,6 +48,14 @@ day_night_factor={
 "value": 1.0
 }
 day_night_time={
+"type": "float",
+"value": 0.0
+}
+weather_snow={
+"type": "float",
+"value": 0.0
+}
+weather_wet={
 "type": "float",
 "value": 0.0
 }

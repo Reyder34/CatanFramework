@@ -22,6 +22,7 @@ func _ready() -> void:
 	# Seed partagée (réseau) -> plateau + ports identiques chez tous les joueurs.
 	if GameConfig.game_seed != 0:
 		seed(GameConfig.game_seed)
+	Weather.set_seed(GameConfig.game_seed)  # météo SYNCHRONISÉE (même seed partagé chez tous)
 	registry = GameRegistry.new()
 	registry.setup_ui($UI/HUD)
 	$UI/HUD.theme = load("res://ui/theme.tres")  # thème partagé -> tous les pop-ups héritent
@@ -592,6 +593,7 @@ func _connect_broadcast_signals() -> void:
 
 func _process(_delta: float) -> void:
 	_apply_day_night()
+	Weather.apply_sky(_sky_mat)   # météo -> ciel (nuages/pluie/neige/tempête/éclair)
 	if _snapshot_dirty and GameConfig.is_multiplayer and _authoritative():
 		_snapshot_dirty = false
 		_send_snapshot_to_clients(_build_snapshot())
