@@ -1,0 +1,297 @@
+[gd_scene load_steps=29 format=3]
+
+[sub_resource type="CylinderMesh" id="Mesh_1"]
+top_radius = 0.11600
+bottom_radius = 0.17000
+height = 0.29000
+radial_segments = 14
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_2"]
+albedo_color = Color(0.3059, 0.2784, 0.4039, 1)
+cull_mode = 2
+roughness = 0.850
+
+[sub_resource type="SphereMesh" id="Mesh_3"]
+radius = 0.13800
+height = 0.27600
+radial_segments = 16
+rings = 8
+
+[sub_resource type="CylinderMesh" id="Mesh_4"]
+top_radius = 0.11800
+bottom_radius = 0.15000
+height = 0.04400
+radial_segments = 14
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_5"]
+albedo_color = Color(0.4314, 0.4000, 0.5647, 1)
+cull_mode = 2
+roughness = 0.850
+
+[sub_resource type="SphereMesh" id="Mesh_6"]
+radius = 0.10000
+height = 0.20000
+radial_segments = 16
+rings = 8
+
+[sub_resource type="StandardMaterial3D" id="Mat_7"]
+albedo_color = Color(0.2275, 0.2039, 0.3137, 1)
+cull_mode = 2
+roughness = 0.850
+
+[sub_resource type="CylinderMesh" id="Mesh_8"]
+top_radius = 0.0
+bottom_radius = 0.09000
+height = 0.14000
+radial_segments = 12
+rings = 1
+
+[sub_resource type="SphereMesh" id="Mesh_9"]
+radius = 0.05800
+height = 0.11600
+radial_segments = 16
+rings = 8
+
+[sub_resource type="StandardMaterial3D" id="Mat_10"]
+albedo_color = Color(0.1647, 0.1412, 0.1255, 1)
+cull_mode = 2
+roughness = 1.000
+
+[sub_resource type="BoxMesh" id="Mesh_11"]
+size = Vector3(0.05200, 0.08200, 0.03800)
+
+[sub_resource type="SphereMesh" id="Mesh_12"]
+radius = 0.08800
+height = 0.17600
+radial_segments = 16
+rings = 8
+
+[sub_resource type="StandardMaterial3D" id="Mat_13"]
+albedo_color = Color(0.5412, 0.3529, 0.2039, 1)
+cull_mode = 2
+roughness = 0.820
+
+[sub_resource type="SphereMesh" id="Mesh_14"]
+radius = 0.07200
+height = 0.14400
+radial_segments = 16
+rings = 8
+
+[sub_resource type="StandardMaterial3D" id="Mat_15"]
+albedo_color = Color(0.3608, 0.2314, 0.1333, 1)
+cull_mode = 2
+roughness = 0.820
+
+[sub_resource type="CylinderMesh" id="Mesh_16"]
+top_radius = 0.01400
+bottom_radius = 0.01400
+height = 0.56000
+radial_segments = 8
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_17"]
+albedo_color = Color(0.4784, 0.3294, 0.1882, 1)
+cull_mode = 2
+roughness = 0.850
+
+[sub_resource type="SphereMesh" id="Mesh_18"]
+radius = 0.02400
+height = 0.04800
+radial_segments = 16
+rings = 8
+
+[sub_resource type="SphereMesh" id="Mesh_19"]
+radius = 0.03000
+height = 0.06000
+radial_segments = 16
+rings = 8
+
+[sub_resource type="BoxMesh" id="Mesh_20"]
+size = Vector3(0.05800, 0.05800, 0.08200)
+
+[sub_resource type="StandardMaterial3D" id="Mat_21"]
+albedo_color = Color(1.0000, 0.7608, 0.2431, 1)
+cull_mode = 2
+roughness = 0.250
+emission_enabled = true
+emission = Color(1.0000, 0.7200, 0.2200, 1)
+emission_energy_multiplier = 2.200
+
+[sub_resource type="CylinderMesh" id="Mesh_22"]
+top_radius = 0.0
+bottom_radius = 0.04400
+height = 0.03400
+radial_segments = 8
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_23"]
+albedo_color = Color(0.3529, 0.3373, 0.3765, 1)
+cull_mode = 2
+roughness = 0.550
+metallic = 0.55
+
+[sub_resource type="BoxMesh" id="Mesh_24"]
+size = Vector3(0.06400, 0.06400, 0.01400)
+
+[sub_resource type="BoxMesh" id="Mesh_25"]
+size = Vector3(0.00800, 0.00800, 0.08200)
+
+[sub_resource type="CylinderMesh" id="Mesh_26"]
+top_radius = 0.01100
+bottom_radius = 0.02000
+height = 0.11500
+radial_segments = 6
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_27"]
+top_radius = 0.01200
+bottom_radius = 0.01200
+height = 0.04400
+radial_segments = 6
+rings = 1
+
+[sub_resource type="BoxMesh" id="Mesh_28"]
+size = Vector3(0.04000, 0.01400, 0.01200)
+
+[node name="Robber" type="Node3D"]
+
+[node name="Pivot" type="Node3D" parent="."]
+transform = Transform3D(0.86603, -0.5, 0, 0, 0, 1, -0.5, -0.86603, 0, 0, 0.1, 0)
+
+[node name="Robber" type="Node3D" parent="Pivot"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="cloak_skirt" type="MeshInstance3D" parent="Pivot/Robber"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.14500)
+mesh = SubResource("Mesh_1")
+surface_material_override/0 = SubResource("Mat_2")
+
+[node name="cloak_torso" type="MeshInstance3D" parent="Pivot/Robber"]
+transform = Transform3D(1.04000, 0.00000, 0.00000, 0.00000, 0.96000, 0.00000, 0.00000, 0.00000, 0.88000, 0.00000, 0.00000, 0.30000)
+mesh = SubResource("Mesh_3")
+surface_material_override/0 = SubResource("Mat_2")
+
+[node name="collar" type="MeshInstance3D" parent="Pivot/Robber"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.30800)
+mesh = SubResource("Mesh_4")
+surface_material_override/0 = SubResource("Mat_5")
+
+[node name="Hood" type="Node3D" parent="Pivot/Robber"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hood_dome" type="MeshInstance3D" parent="Pivot/Robber/Hood"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.01000, 0.41000)
+mesh = SubResource("Mesh_6")
+surface_material_override/0 = SubResource("Mat_7")
+
+[node name="hood_peak" type="MeshInstance3D" parent="Pivot/Robber/Hood"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, -0.25882, -0.96593, 0.00000, 0.96593, -0.25882, 0.00000, -0.00612, 0.49761)
+mesh = SubResource("Mesh_8")
+surface_material_override/0 = SubResource("Mat_7")
+
+[node name="face" type="MeshInstance3D" parent="Pivot/Robber/Hood"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.55000, 0.00000, 0.00000, 0.00000, 1.05000, 0.00000, -0.07200, 0.39800)
+mesh = SubResource("Mesh_9")
+surface_material_override/0 = SubResource("Mat_10")
+
+[node name="Boots" type="Node3D" parent="Pivot/Robber"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="boot_l" type="MeshInstance3D" parent="Pivot/Robber/Boots"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -0.05000, -0.09000, 0.01900)
+mesh = SubResource("Mesh_11")
+surface_material_override/0 = SubResource("Mat_10")
+
+[node name="boot_r" type="MeshInstance3D" parent="Pivot/Robber/Boots"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.05000, -0.09000, 0.01900)
+mesh = SubResource("Mesh_11")
+surface_material_override/0 = SubResource("Mat_10")
+
+[node name="Bag" type="Node3D" parent="Pivot/Robber"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="sack" type="MeshInstance3D" parent="Pivot/Robber/Bag"]
+transform = Transform3D(1.05000, 0.00000, 0.00000, 0.00000, 0.82000, 0.00000, 0.00000, 0.00000, 1.08000, 0.00000, 0.12000, 0.32000)
+mesh = SubResource("Mesh_12")
+surface_material_override/0 = SubResource("Mat_13")
+
+[node name="flap" type="MeshInstance3D" parent="Pivot/Robber/Bag"]
+transform = Transform3D(1.05000, 0.00000, 0.00000, 0.00000, 0.55000, 0.00000, 0.00000, 0.00000, 0.92000, 0.00000, 0.14000, 0.37200)
+mesh = SubResource("Mesh_14")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ArmStaff" type="Node3D" parent="Pivot/Robber"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="staff" type="MeshInstance3D" parent="Pivot/Robber/ArmStaff"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.17600, -0.03900, 0.56000)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="staff_knob" type="MeshInstance3D" parent="Pivot/Robber/ArmStaff"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.17600, -0.04400, 0.56600)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="hand" type="MeshInstance3D" parent="Pivot/Robber/ArmStaff"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.17600, -0.03600, 0.34000)
+mesh = SubResource("Mesh_19")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="Lantern" type="Node3D" parent="Pivot/Robber/ArmStaff"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="glow" type="MeshInstance3D" parent="Pivot/Robber/ArmStaff/Lantern"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.17600, -0.15000, 0.45200)
+mesh = SubResource("Mesh_20")
+surface_material_override/0 = SubResource("Mat_21")
+
+[node name="cap_top" type="MeshInstance3D" parent="Pivot/Robber/ArmStaff/Lantern"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.17600, -0.15000, 0.51000)
+mesh = SubResource("Mesh_22")
+surface_material_override/0 = SubResource("Mat_23")
+
+[node name="cap_bottom" type="MeshInstance3D" parent="Pivot/Robber/ArmStaff/Lantern"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.17600, -0.15000, 0.40400)
+mesh = SubResource("Mesh_24")
+surface_material_override/0 = SubResource("Mat_23")
+
+[node name="cage_1_1" type="MeshInstance3D" parent="Pivot/Robber/ArmStaff/Lantern"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.14900, -0.17700, 0.45200)
+mesh = SubResource("Mesh_25")
+surface_material_override/0 = SubResource("Mat_23")
+
+[node name="cage_1_2" type="MeshInstance3D" parent="Pivot/Robber/ArmStaff/Lantern"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.14900, -0.12300, 0.45200)
+mesh = SubResource("Mesh_25")
+surface_material_override/0 = SubResource("Mat_23")
+
+[node name="cage_2_1" type="MeshInstance3D" parent="Pivot/Robber/ArmStaff/Lantern"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.20300, -0.17700, 0.45200)
+mesh = SubResource("Mesh_25")
+surface_material_override/0 = SubResource("Mat_23")
+
+[node name="cage_2_2" type="MeshInstance3D" parent="Pivot/Robber/ArmStaff/Lantern"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.20300, -0.12300, 0.45200)
+mesh = SubResource("Mesh_25")
+surface_material_override/0 = SubResource("Mat_23")
+
+[node name="Dagger" type="Node3D" parent="Pivot/Robber"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="sheath" type="MeshInstance3D" parent="Pivot/Robber/Dagger"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, -0.30902, -0.95106, 0.00000, 0.95106, -0.30902, -0.15000, -0.03777, 0.20469)
+mesh = SubResource("Mesh_26")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="hilt" type="MeshInstance3D" parent="Pivot/Robber/Dagger"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, -0.30902, -0.95106, 0.00000, 0.95106, -0.30902, -0.15600, -0.04680, 0.27092)
+mesh = SubResource("Mesh_27")
+surface_material_override/0 = SubResource("Mat_23")
+
+[node name="guard" type="MeshInstance3D" parent="Pivot/Robber/Dagger"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -0.15200, -0.03000, 0.24700)
+mesh = SubResource("Mesh_28")
+surface_material_override/0 = SubResource("Mat_23")

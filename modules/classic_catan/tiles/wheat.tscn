@@ -1,0 +1,2784 @@
+[gd_scene load_steps=121 format=3]
+
+[sub_resource type="CylinderMesh" id="Mesh_1"]
+top_radius = 1.00000
+bottom_radius = 1.00000
+height = 0.13500
+radial_segments = 6
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_2"]
+albedo_color = Color(0.6039, 0.4314, 0.1176, 1)
+cull_mode = 2
+roughness = 0.950
+
+[sub_resource type="CylinderMesh" id="Mesh_3"]
+top_radius = 1.00000
+bottom_radius = 1.00000
+height = 0.06200
+radial_segments = 6
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_4"]
+albedo_color = Color(0.8784, 0.6510, 0.1529, 1)
+cull_mode = 2
+roughness = 0.900
+
+[sub_resource type="BoxMesh" id="Mesh_5"]
+size = Vector3(0.12341, 0.12500, 0.01200)
+
+[sub_resource type="StandardMaterial3D" id="Mat_6"]
+albedo_color = Color(0.6627, 0.4667, 0.1843, 1)
+cull_mode = 2
+roughness = 0.900
+
+[sub_resource type="BoxMesh" id="Mesh_7"]
+size = Vector3(0.16760, 0.12500, 0.01200)
+
+[sub_resource type="BoxMesh" id="Mesh_8"]
+size = Vector3(0.11846, 0.12500, 0.01200)
+
+[sub_resource type="BoxMesh" id="Mesh_9"]
+size = Vector3(0.12158, 0.12500, 0.01200)
+
+[sub_resource type="BoxMesh" id="Mesh_10"]
+size = Vector3(0.15434, 0.12500, 0.01200)
+
+[sub_resource type="CylinderMesh" id="Mesh_11"]
+top_radius = 0.06350
+bottom_radius = 0.06350
+height = 0.01200
+radial_segments = 10
+rings = 1
+
+[sub_resource type="BoxMesh" id="Mesh_12"]
+size = Vector3(0.14032, 0.12500, 0.01200)
+
+[sub_resource type="BoxMesh" id="Mesh_13"]
+size = Vector3(0.12031, 0.12500, 0.01200)
+
+[sub_resource type="CylinderMesh" id="Mesh_14"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12347
+radial_segments = 5
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_15"]
+albedo_color = Color(0.7176, 0.6039, 0.2000, 1)
+cull_mode = 2
+roughness = 0.880
+
+[sub_resource type="SphereMesh" id="Mesh_16"]
+radius = 0.01750
+height = 0.03500
+radial_segments = 6
+rings = 4
+
+[sub_resource type="StandardMaterial3D" id="Mat_17"]
+albedo_color = Color(0.9490, 0.7608, 0.2000, 1)
+cull_mode = 2
+roughness = 0.820
+
+[sub_resource type="CylinderMesh" id="Mesh_18"]
+top_radius = 0.0
+bottom_radius = 0.00620
+height = 0.02600
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_19"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12893
+radial_segments = 5
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_20"]
+albedo_color = Color(0.8784, 0.6471, 0.1294, 1)
+cull_mode = 2
+roughness = 0.820
+
+[sub_resource type="CylinderMesh" id="Mesh_21"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11856
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_22"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.15318
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_23"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11282
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_24"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12766
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_25"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12452
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_26"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14184
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_27"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13961
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_28"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12243
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_29"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13576
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_30"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13172
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_31"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12353
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_32"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12947
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_33"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13834
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_34"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11202
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_35"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12375
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_36"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14437
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_37"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11545
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_38"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12199
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_39"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.10960
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_40"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13741
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_41"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11878
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_42"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14729
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_43"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13524
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_44"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12835
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_45"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11741
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_46"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14034
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_47"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11548
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_48"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12131
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_49"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11053
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_50"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13699
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_51"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14391
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_52"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12178
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_53"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11246
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_54"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11881
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_55"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14978
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_56"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14896
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_57"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12114
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_58"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11083
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_59"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13567
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_60"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14599
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_61"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13751
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_62"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12138
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_63"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.15095
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_64"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11214
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_65"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11542
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_66"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.10949
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_67"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11654
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_68"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13037
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_69"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14379
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_70"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.15131
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_71"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13673
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_72"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.15384
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_73"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12422
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_74"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11614
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_75"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12119
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_76"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12765
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_77"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13498
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_78"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12294
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_79"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11382
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_80"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12758
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_81"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11602
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_82"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11815
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_83"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11086
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_84"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11216
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_85"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.10934
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_86"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12359
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_87"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13586
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_88"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.15005
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_89"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12980
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_90"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11812
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_91"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12185
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_92"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13566
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_93"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.15273
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_94"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11153
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_95"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13385
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_96"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.15079
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_97"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11141
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_98"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12084
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_99"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14998
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_100"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14946
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_101"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11472
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_102"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12841
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_103"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13031
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_104"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12711
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_105"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.15467
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_106"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11876
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_107"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11417
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_108"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14216
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_109"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14211
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_110"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.15137
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_111"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13186
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_112"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13672
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_113"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.14849
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_114"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11339
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_115"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.11155
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_116"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.13791
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_117"]
+top_radius = 0.00580
+bottom_radius = 0.00580
+height = 0.12195
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_118"]
+top_radius = 0.00720
+bottom_radius = 0.00720
+height = 0.18500
+radial_segments = 5
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_119"]
+top_radius = 0.04800
+bottom_radius = 0.04800
+height = 0.02400
+radial_segments = 12
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_120"]
+albedo_color = Color(0.4588, 0.3098, 0.1804, 1)
+cull_mode = 2
+roughness = 0.820
+
+[node name="Wheat" type="Node3D"]
+
+[node name="Pivot" type="Node3D" parent="."]
+transform = Transform3D(0.86603, -0.5, 0, 0, 0, 1, -0.5, -0.86603, 0, 0, 0.1, 0)
+
+[node name="base_earth" type="MeshInstance3D" parent="Pivot"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, -0.06000)
+mesh = SubResource("Mesh_1")
+surface_material_override/0 = SubResource("Mat_2")
+
+[node name="base_top" type="MeshInstance3D" parent="Pivot"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000)
+mesh = SubResource("Mesh_3")
+surface_material_override/0 = SubResource("Mat_4")
+
+[node name="Path" type="Node3D" parent="Pivot"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="seg_1" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.91616, -0.40082, 0.00000, 0.40082, 0.91616, 0.00000, 0.00000, 0.00000, 1.00000, -0.66667, -0.37667, 0.00600)
+mesh = SubResource("Mesh_5")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_2" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.91616, -0.40082, 0.00000, 0.40082, 0.91616, 0.00000, 0.00000, 0.00000, 1.00000, -0.56000, -0.33000, 0.00600)
+mesh = SubResource("Mesh_5")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_3" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.91616, -0.40082, 0.00000, 0.40082, 0.91616, 0.00000, 0.00000, 0.00000, 1.00000, -0.45333, -0.28333, 0.00600)
+mesh = SubResource("Mesh_5")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_4" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.94868, 0.31623, 0.00000, -0.31623, 0.94868, 0.00000, 0.00000, 0.00000, 1.00000, -0.32500, -0.28500, 0.00600)
+mesh = SubResource("Mesh_7")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_5" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.94868, 0.31623, 0.00000, -0.31623, 0.94868, 0.00000, 0.00000, 0.00000, 1.00000, -0.17500, -0.33500, 0.00600)
+mesh = SubResource("Mesh_7")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_6" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.95448, -0.29827, 0.00000, 0.29827, 0.95448, 0.00000, 0.00000, 0.00000, 1.00000, -0.04667, -0.34333, 0.00600)
+mesh = SubResource("Mesh_8")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_7" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.95448, -0.29827, 0.00000, 0.29827, 0.95448, 0.00000, 0.00000, 0.00000, 1.00000, 0.06000, -0.31000, 0.00600)
+mesh = SubResource("Mesh_8")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_8" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.95448, -0.29827, 0.00000, 0.29827, 0.95448, 0.00000, 0.00000, 0.00000, 1.00000, 0.16667, -0.27667, 0.00600)
+mesh = SubResource("Mesh_8")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_9" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.81373, -0.58124, 0.00000, 0.58124, 0.81373, 0.00000, 0.00000, 0.00000, 1.00000, 0.26667, -0.22667, 0.00600)
+mesh = SubResource("Mesh_9")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_10" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.81373, -0.58124, 0.00000, 0.58124, 0.81373, 0.00000, 0.00000, 0.00000, 1.00000, 0.36000, -0.16000, 0.00600)
+mesh = SubResource("Mesh_9")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_11" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.81373, -0.58124, 0.00000, 0.58124, 0.81373, 0.00000, 0.00000, 0.00000, 1.00000, 0.45333, -0.09333, 0.00600)
+mesh = SubResource("Mesh_9")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_12" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.27472, -0.96152, 0.00000, 0.96152, 0.27472, 0.00000, 0.00000, 0.00000, 1.00000, 0.52000, 0.01000, 0.00600)
+mesh = SubResource("Mesh_10")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_13" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.27472, -0.96152, 0.00000, 0.96152, 0.27472, 0.00000, 0.00000, 0.00000, 1.00000, 0.56000, 0.15000, 0.00600)
+mesh = SubResource("Mesh_10")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="joint_14" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, -0.40000, -0.26000, 0.00600)
+mesh = SubResource("Mesh_11")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="joint_15" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, -0.10000, -0.36000, 0.00600)
+mesh = SubResource("Mesh_11")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="joint_16" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.22000, -0.26000, 0.00600)
+mesh = SubResource("Mesh_11")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="joint_17" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.50000, -0.06000, 0.00600)
+mesh = SubResource("Mesh_11")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_18" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.18885, -0.98201, 0.00000, 0.98201, 0.18885, 0.00000, 0.00000, 0.00000, 1.00000, 0.23250, -0.19500, 0.00600)
+mesh = SubResource("Mesh_12")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_19" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.18885, -0.98201, 0.00000, 0.98201, 0.18885, 0.00000, 0.00000, 0.00000, 1.00000, 0.25750, -0.06500, 0.00600)
+mesh = SubResource("Mesh_12")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_20" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.13216, -0.99123, 0.00000, 0.99123, 0.13216, 0.00000, 0.00000, 0.00000, 1.00000, 0.27750, 0.05625, 0.00600)
+mesh = SubResource("Mesh_13")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="seg_21" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(0.13216, -0.99123, 0.00000, 0.99123, 0.13216, 0.00000, 0.00000, 0.00000, 1.00000, 0.29250, 0.16875, 0.00600)
+mesh = SubResource("Mesh_13")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="joint_22" type="MeshInstance3D" parent="Pivot/Path"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.27000, 0.00000, 0.00600)
+mesh = SubResource("Mesh_11")
+surface_material_override/0 = SubResource("Mat_6")
+
+[node name="WheatField" type="Node3D" parent="Pivot"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="Stalk_1" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99624, -0.00173, -0.08659, 0.00000, 0.99980, -0.01999, 0.08661, 0.01992, 0.99604, -0.84010, -0.08257, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06173)
+mesh = SubResource("Mesh_14")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15147)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19447)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_2" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99926, -0.00065, 0.03841, 0.00000, 0.99986, 0.01698, -0.03841, -0.01697, 0.99912, -0.72138, -0.16297, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06446)
+mesh = SubResource("Mesh_19")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15693)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19993)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_3" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99855, 0.00056, 0.05381, 0.00000, 0.99995, -0.01034, -0.05381, 0.01032, 0.99850, -0.73990, -0.04482, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05928)
+mesh = SubResource("Mesh_21")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14656)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18956)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_4" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99983, 0.00011, -0.01818, 0.00000, 0.99998, 0.00627, 0.01818, -0.00626, 0.99982, -0.71633, 0.05093, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07659)
+mesh = SubResource("Mesh_22")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.18118)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.22418)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_5" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99993, 0.00015, 0.01162, 0.00000, 0.99992, -0.01256, -0.01162, 0.01256, 0.99985, -0.72860, 0.22885, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05641)
+mesh = SubResource("Mesh_23")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14082)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18382)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_6" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99978, -0.00024, -0.02078, 0.00000, 0.99993, -0.01166, 0.02078, 0.01166, 0.99972, -0.58431, -0.45149, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06383)
+mesh = SubResource("Mesh_24")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15566)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19866)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_7" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99972, -0.00155, -0.02375, 0.00000, 0.99786, -0.06532, 0.02381, 0.06530, 0.99758, -0.57967, -0.18978, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_7"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06226)
+mesh = SubResource("Mesh_25")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_7"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15252)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_7"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19552)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_8" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99976, 0.00205, -0.02194, 0.00000, 0.99567, 0.09299, 0.02204, -0.09296, 0.99543, -0.57789, -0.05816, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_8"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07092)
+mesh = SubResource("Mesh_26")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_8"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16984)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_8"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21284)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_9" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99986, 0.00059, 0.01671, 0.00000, 0.99937, -0.03553, -0.01672, 0.03552, 0.99923, -0.59023, 0.08347, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_9"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06981)
+mesh = SubResource("Mesh_27")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_9"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16761)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_9"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21061)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_10" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99502, -0.00138, 0.09964, 0.00000, 0.99990, 0.01385, -0.09965, -0.01378, 0.99493, -0.61399, 0.20256, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_10"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06122)
+mesh = SubResource("Mesh_28")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_10"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15043)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_10"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19343)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_11" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99697, 0.00695, 0.07742, 0.00000, 0.99599, -0.08946, -0.07774, 0.08919, 0.99298, -0.59816, 0.34230, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_11"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06788)
+mesh = SubResource("Mesh_29")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_11"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16376)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_11"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20676)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_12" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99636, -0.00316, -0.08518, 0.00000, 0.99931, -0.03710, 0.08524, 0.03696, 0.99567, -0.60899, 0.50806, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_12"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06586)
+mesh = SubResource("Mesh_30")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_12"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15972)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_12"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20272)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_13" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99854, 0.00223, 0.05403, 0.00000, 0.99915, -0.04129, -0.05408, 0.04123, 0.99769, -0.45725, -0.74792, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_13"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06176)
+mesh = SubResource("Mesh_31")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_13"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15153)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_13"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19453)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_14" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99933, -0.00320, 0.03643, 0.00000, 0.99617, 0.08740, -0.03657, -0.08734, 0.99551, -0.44603, -0.57595, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_14"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06473)
+mesh = SubResource("Mesh_32")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_14"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15747)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_14"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20047)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_15" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99999, 0.00023, -0.00469, 0.00000, 0.99883, 0.04835, 0.00469, -0.04835, 0.99882, -0.45140, -0.46740, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_15"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06917)
+mesh = SubResource("Mesh_33")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_15"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16634)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_15"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20934)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_16" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99852, -0.00084, 0.05433, 0.00000, 0.99988, 0.01541, -0.05434, -0.01539, 0.99840, -0.47164, -0.06962, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_16"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05601)
+mesh = SubResource("Mesh_34")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_16"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14002)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_16"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18302)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_17" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(1.00000, -0.00013, -0.00238, 0.00000, 0.99856, -0.05363, 0.00238, 0.05363, 0.99856, -0.47827, 0.05822, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_17"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06187)
+mesh = SubResource("Mesh_35")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_17"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15175)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_17"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19475)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_18" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99951, -0.00156, -0.03119, 0.00000, 0.99875, -0.05003, 0.03123, 0.05001, 0.99826, -0.45062, 0.22225, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_18"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07218)
+mesh = SubResource("Mesh_36")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_18"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17237)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_18"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21537)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_19" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99961, -0.00033, 0.02796, 0.00000, 0.99993, 0.01173, -0.02796, -0.01173, 0.99954, -0.46374, 0.34935, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_19"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05772)
+mesh = SubResource("Mesh_37")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_19"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14345)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_19"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18645)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_20" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99551, -0.00873, -0.09430, 0.00000, 0.99574, -0.09221, 0.09470, 0.09180, 0.99126, -0.48172, 0.46542, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_20"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06099)
+mesh = SubResource("Mesh_38")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_20"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14999)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_20"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19299)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_21" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99773, 0.00056, -0.06736, 0.00000, 0.99997, 0.00837, 0.06736, -0.00835, 0.99769, -0.48010, 0.61846, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_21"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05480)
+mesh = SubResource("Mesh_39")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_21"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.13760)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_21"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18060)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_22" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99986, 0.00031, -0.01648, 0.00000, 0.99982, 0.01874, 0.01648, -0.01873, 0.99969, -0.44245, 0.73604, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_22"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06871)
+mesh = SubResource("Mesh_40")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_22"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16541)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_22"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20841)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_23" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99702, 0.00699, 0.07685, 0.00000, 0.99589, -0.09055, -0.07716, 0.09028, 0.99292, -0.31898, -0.71367, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_23"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05939)
+mesh = SubResource("Mesh_41")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_23"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14678)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_23"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18978)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_24" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99521, 0.00811, 0.09747, 0.00000, 0.99656, -0.08292, -0.09781, 0.08253, 0.99178, -0.33609, -0.62305, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_24"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07364)
+mesh = SubResource("Mesh_42")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_24"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17529)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_24"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21829)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_25" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99977, 0.00195, 0.02148, 0.00000, 0.99591, -0.09036, -0.02157, 0.09034, 0.99568, -0.31504, -0.44930, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_25"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06762)
+mesh = SubResource("Mesh_43")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_25"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16324)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_25"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20624)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_26" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99869, 0.00359, 0.05096, 0.00000, 0.99753, -0.07024, -0.05108, 0.07015, 0.99623, -0.31155, -0.17836, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_26"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06418)
+mesh = SubResource("Mesh_44")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_26"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15635)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_26"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19935)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_27" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99994, 0.00041, -0.01049, 0.00000, 0.99923, 0.03921, 0.01050, -0.03920, 0.99918, -0.35035, -0.07707, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_27"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05871)
+mesh = SubResource("Mesh_45")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_27"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14541)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_27"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18841)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_28" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99981, -0.00137, -0.01930, 0.00000, 0.99750, -0.07064, 0.01935, 0.07063, 0.99732, -0.33829, 0.10392, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_28"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07017)
+mesh = SubResource("Mesh_46")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_28"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16834)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_28"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21134)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_29" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99931, 0.00223, 0.03719, 0.00000, 0.99821, -0.05986, -0.03726, 0.05982, 0.99751, -0.30778, 0.19973, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_29"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05774)
+mesh = SubResource("Mesh_47")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_29"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14348)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_29"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18648)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_30" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99726, -0.00300, -0.07396, 0.00000, 0.99918, -0.04047, 0.07402, 0.04036, 0.99644, -0.33895, 0.37635, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_30"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06065)
+mesh = SubResource("Mesh_48")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_30"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14931)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_30"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19231)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_31" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99760, 0.00069, 0.06927, 0.00000, 0.99995, -0.01002, -0.06927, 0.00999, 0.99755, -0.34794, 0.48596, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_31"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05526)
+mesh = SubResource("Mesh_49")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_31"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.13853)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_31"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18153)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_32" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99967, -0.00096, 0.02576, 0.00000, 0.99930, 0.03743, -0.02578, -0.03742, 0.99897, -0.33854, 0.63588, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_32"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06850)
+mesh = SubResource("Mesh_50")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_32"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16499)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_32"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20799)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_33" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99884, 0.00130, 0.04805, 0.00000, 0.99963, -0.02713, -0.04807, 0.02710, 0.99848, -0.30326, 0.74258, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_33"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07195)
+mesh = SubResource("Mesh_51")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_33"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17191)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_33"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21491)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_34" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99741, -0.00044, 0.07191, 0.00000, 0.99998, 0.00614, -0.07192, -0.00613, 0.99739, -0.20772, -0.71615, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_34"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06089)
+mesh = SubResource("Mesh_52")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_34"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14978)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_34"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19278)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_35" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99895, 0.00257, -0.04569, 0.00000, 0.99843, 0.05607, 0.04576, -0.05601, 0.99738, -0.20272, -0.60667, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_35"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05623)
+mesh = SubResource("Mesh_53")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_35"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14046)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_35"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18346)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_36" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99643, 0.00403, 0.08431, 0.00000, 0.99886, -0.04774, -0.08441, 0.04757, 0.99530, -0.21622, -0.46205, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_36"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05940)
+mesh = SubResource("Mesh_54")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_36"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14681)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_36"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18981)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_37" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99814, -0.00031, 0.06088, 0.00000, 0.99999, 0.00517, -0.06088, -0.00516, 0.99813, -0.21549, -0.21251, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_37"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07489)
+mesh = SubResource("Mesh_55")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_37"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17778)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_37"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.22078)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_38" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99999, -0.00043, 0.00432, 0.00000, 0.99512, 0.09869, -0.00434, -0.09869, 0.99511, -0.18431, -0.03308, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_38"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07448)
+mesh = SubResource("Mesh_56")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_38"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17696)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_38"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21996)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_39" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99998, -0.00038, -0.00608, 0.00000, 0.99805, -0.06249, 0.00609, 0.06249, 0.99803, -0.17440, 0.05439, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_39"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06057)
+mesh = SubResource("Mesh_57")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_39"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14914)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_39"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19214)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_40" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99760, 0.00149, -0.06925, 0.00000, 0.99977, 0.02156, 0.06927, -0.02151, 0.99737, -0.16189, 0.20419, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_40"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05541)
+mesh = SubResource("Mesh_58")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_40"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.13883)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_40"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18183)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_41" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99938, -0.00104, -0.03525, 0.00000, 0.99957, -0.02942, 0.03527, 0.02940, 0.99895, -0.18593, 0.37721, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_41"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06783)
+mesh = SubResource("Mesh_59")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_41"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16367)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_41"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20667)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_42" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99818, -0.00061, -0.06033, 0.00000, 0.99995, -0.01009, 0.06033, 0.01008, 0.99813, -0.17487, 0.49036, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_42"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07299)
+mesh = SubResource("Mesh_60")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_42"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17399)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_42"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21699)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_43" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99734, -0.00462, -0.07277, 0.00000, 0.99799, -0.06335, 0.07292, 0.06318, 0.99533, -0.19054, 0.59996, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_43"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06875)
+mesh = SubResource("Mesh_61")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_43"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16551)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_43"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20851)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_44" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99997, -0.00021, 0.00834, 0.00000, 0.99967, 0.02554, -0.00834, -0.02554, 0.99964, -0.17598, 0.74918, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_44"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06069)
+mesh = SubResource("Mesh_62")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_44"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14938)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_44"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19238)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_45" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99944, 0.00305, -0.03337, 0.00000, 0.99585, 0.09102, 0.03351, -0.09097, 0.99529, -0.07458, -0.70905, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_45"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07548)
+mesh = SubResource("Mesh_63")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_45"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17895)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_45"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.22195)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_46" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(1.00000, 0.00017, -0.00259, 0.00000, 0.99784, 0.06570, 0.00259, -0.06570, 0.99784, -0.05683, -0.56970, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_46"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05607)
+mesh = SubResource("Mesh_64")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_46"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14014)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_46"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18314)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_47" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99536, -0.00282, 0.09623, 0.00000, 0.99957, 0.02927, -0.09627, -0.02914, 0.99493, -0.04027, -0.46374, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_47"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05771)
+mesh = SubResource("Mesh_65")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_47"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14342)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_47"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18642)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_48" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99772, -0.00501, -0.06730, 0.00000, 0.99724, -0.07419, 0.06749, 0.07402, 0.99497, -0.06634, -0.17312, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_48"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05474)
+mesh = SubResource("Mesh_66")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_48"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.13749)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_48"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18049)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_49" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99907, 0.00311, -0.04297, 0.00000, 0.99740, 0.07211, 0.04308, -0.07205, 0.99647, -0.04529, -0.05453, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_49"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05827)
+mesh = SubResource("Mesh_67")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_49"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14454)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_49"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18754)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_50" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99985, -0.00050, 0.01736, 0.00000, 0.99959, 0.02869, -0.01737, -0.02869, 0.99944, -0.07201, 0.05781, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_50"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06519)
+mesh = SubResource("Mesh_68")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_50"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15837)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_50"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20137)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_51" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99982, 0.00093, -0.01907, 0.00000, 0.99881, 0.04881, 0.01909, -0.04880, 0.99863, -0.08297, 0.20487, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_51"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07189)
+mesh = SubResource("Mesh_69")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_51"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17179)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_51"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21479)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_52" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99889, -0.00179, 0.04714, 0.00000, 0.99928, 0.03789, -0.04718, -0.03784, 0.99817, -0.06060, 0.37323, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_52"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07566)
+mesh = SubResource("Mesh_70")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_52"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17931)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_52"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.22231)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_53" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99749, -0.00616, -0.07049, 0.00000, 0.99621, -0.08701, 0.07076, 0.08679, 0.99371, -0.07663, 0.48127, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_53"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06837)
+mesh = SubResource("Mesh_71")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_53"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16473)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_53"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20773)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_54" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99725, -0.00290, -0.07410, 0.00000, 0.99923, -0.03914, 0.07416, 0.03904, 0.99648, -0.05647, 0.59790, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_54"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07692)
+mesh = SubResource("Mesh_72")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_54"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.18184)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_54"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.22484)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_55" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99564, -0.00816, -0.09290, 0.00000, 0.99617, -0.08748, 0.09326, 0.08710, 0.99182, -0.07881, 0.73056, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_55"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06211)
+mesh = SubResource("Mesh_73")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_55"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15222)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_55"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19522)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_56" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99984, -0.00111, -0.01775, 0.00000, 0.99804, -0.06253, 0.01778, 0.06252, 0.99789, 0.09072, -0.70017, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_56"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05807)
+mesh = SubResource("Mesh_74")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_56"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14414)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_56"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18714)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_57" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99608, -0.00083, 0.08844, 0.00000, 0.99996, 0.00941, -0.08844, -0.00938, 0.99604, 0.10351, -0.56548, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_57"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06060)
+mesh = SubResource("Mesh_75")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_57"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14919)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_57"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19219)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_58" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99868, -0.00128, 0.05129, 0.00000, 0.99969, 0.02504, -0.05130, -0.02501, 0.99837, 0.07237, -0.43359, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_58"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06383)
+mesh = SubResource("Mesh_76")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_58"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15565)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_58"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19865)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_59" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99817, 0.00208, 0.06039, 0.00000, 0.99941, -0.03437, -0.06043, 0.03431, 0.99758, 0.05366, -0.03976, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_59"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06749)
+mesh = SubResource("Mesh_77")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_59"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16298)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_59"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20598)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_60" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99968, -0.00131, -0.02513, 0.00000, 0.99864, -0.05211, 0.02516, 0.05210, 0.99832, 0.06403, 0.06667, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_60"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06147)
+mesh = SubResource("Mesh_78")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_60"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15094)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_60"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19394)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_61" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99869, 0.00202, 0.05123, 0.00000, 0.99922, -0.03942, -0.05127, 0.03936, 0.99791, 0.08818, 0.19619, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_61"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05691)
+mesh = SubResource("Mesh_79")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_61"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14182)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_61"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18482)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_62" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99878, -0.00077, -0.04929, 0.00000, 0.99988, -0.01559, 0.04930, 0.01557, 0.99866, 0.08816, 0.32204, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_62"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06379)
+mesh = SubResource("Mesh_80")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_62"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15558)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_62"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19858)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_63" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99647, -0.00347, -0.08382, 0.00000, 0.99915, -0.04130, 0.08390, 0.04116, 0.99562, 0.08657, 0.49039, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_63"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05801)
+mesh = SubResource("Mesh_81")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_63"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14402)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_63"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18702)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_64" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99909, -0.00419, -0.04246, 0.00000, 0.99517, -0.09814, 0.04267, 0.09805, 0.99427, 0.06214, 0.60521, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_64"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05908)
+mesh = SubResource("Mesh_82")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_64"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14615)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_64"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18915)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_65" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99979, 0.00009, 0.02026, 0.00000, 0.99999, -0.00424, -0.02026, 0.00424, 0.99979, 0.10944, 0.78200, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_65"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05543)
+mesh = SubResource("Mesh_83")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_65"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.13886)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_65"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18186)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_66" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99636, -0.00799, 0.08491, 0.00000, 0.99560, 0.09369, -0.08528, -0.09335, 0.99197, 0.19715, -0.74000, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_66"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05608)
+mesh = SubResource("Mesh_84")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_66"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14016)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_66"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18316)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_67" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99576, -0.00469, 0.09190, 0.00000, 0.99870, 0.05097, -0.09202, -0.05076, 0.99446, 0.19729, -0.58249, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_67"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05467)
+mesh = SubResource("Mesh_85")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_67"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.13734)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_67"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18034)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_68" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99842, 0.00529, -0.05588, 0.00000, 0.99555, 0.09427, 0.05613, -0.09412, 0.99398, 0.22316, -0.48441, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_68"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06180)
+mesh = SubResource("Mesh_86")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_68"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15159)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_68"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19459)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_69" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99799, 0.00573, 0.06312, 0.00000, 0.99591, -0.09032, -0.06338, 0.09014, 0.99391, 0.19102, 0.47062, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_69"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06793)
+mesh = SubResource("Mesh_87")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_69"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16386)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_69"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20686)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_70" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99725, 0.00641, -0.07384, 0.00000, 0.99625, 0.08652, 0.07412, -0.08628, 0.99351, 0.21613, 0.59091, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_70"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07503)
+mesh = SubResource("Mesh_88")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_70"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17805)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_70"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.22105)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_71" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99568, 0.00599, -0.09261, 0.00000, 0.99791, 0.06454, 0.09281, -0.06427, 0.99361, 0.23373, 0.77219, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_71"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06490)
+mesh = SubResource("Mesh_89")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_71"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15780)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_71"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20080)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_72" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(1.00000, 0.00002, 0.00051, 0.00000, 0.99910, -0.04248, -0.00051, 0.04248, 0.99910, 0.32049, -0.73344, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_72"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05906)
+mesh = SubResource("Mesh_90")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_72"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14612)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_72"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18912)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_73" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(1.00000, 0.00007, 0.00080, 0.00000, 0.99615, -0.08771, -0.00080, 0.08771, 0.99615, 0.37380, -0.60599, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_73"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06093)
+mesh = SubResource("Mesh_91")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_73"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14985)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_73"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19285)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_74" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(1.00000, -0.00020, 0.00224, 0.00000, 0.99603, 0.08898, -0.00225, -0.08898, 0.99603, 0.32275, -0.43057, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_74"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06783)
+mesh = SubResource("Mesh_92")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_74"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16366)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_74"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20666)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_75" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99758, 0.00522, -0.06940, 0.00000, 0.99719, 0.07494, 0.06960, -0.07475, 0.99477, 0.34612, -0.29792, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_75"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07637)
+mesh = SubResource("Mesh_93")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_75"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.18073)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_75"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.22373)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_76" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99949, -0.00046, 0.03204, 0.00000, 0.99990, 0.01424, -0.03205, -0.01424, 0.99938, 0.37851, 0.48734, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_76"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05577)
+mesh = SubResource("Mesh_94")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_76"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.13953)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_76"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18253)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_77" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(1.00000, -0.00002, 0.00074, 0.00000, 0.99972, 0.02370, -0.00074, -0.02370, 0.99972, 0.33516, 0.59110, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_77"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06693)
+mesh = SubResource("Mesh_95")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_77"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16185)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_77"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20485)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_78" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(1.00000, -0.00013, -0.00140, 0.00000, 0.99577, -0.09189, 0.00140, 0.09189, 0.99577, 0.35941, 0.73539, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_78"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07539)
+mesh = SubResource("Mesh_96")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_78"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17879)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_78"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.22179)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_79" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99996, 0.00051, 0.00835, 0.00000, 0.99811, -0.06141, -0.00837, 0.06141, 0.99808, 0.49116, -0.70445, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_79"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05570)
+mesh = SubResource("Mesh_97")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_79"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.13941)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_79"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18241)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_80" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99676, -0.00198, -0.08037, 0.00000, 0.99970, -0.02462, 0.08040, 0.02455, 0.99646, 0.47602, -0.62084, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_80"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06042)
+mesh = SubResource("Mesh_98")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_80"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14884)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_80"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19184)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_81" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99793, -0.00394, -0.06424, 0.00000, 0.99812, -0.06128, 0.06436, 0.06116, 0.99605, 0.51274, -0.43115, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_81"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07499)
+mesh = SubResource("Mesh_99")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_81"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17798)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_81"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.22098)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_82" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99999, 0.00010, 0.00426, 0.00000, 0.99970, -0.02438, -0.00426, 0.02438, 0.99969, 0.46716, -0.30286, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_82"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07473)
+mesh = SubResource("Mesh_100")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_82"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17746)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_82"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.22046)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_83" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99819, -0.00447, 0.06003, 0.00000, 0.99724, 0.07429, -0.06020, -0.07416, 0.99543, 0.48617, -0.20256, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_83"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05736)
+mesh = SubResource("Mesh_101")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_83"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14272)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_83"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18572)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_84" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99827, 0.00083, -0.05884, 0.00000, 0.99990, 0.01415, 0.05884, -0.01413, 0.99817, 0.46632, 0.22000, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_84"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06420)
+mesh = SubResource("Mesh_102")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_84"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15641)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_84"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19941)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_85" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99871, -0.00410, -0.05054, 0.00000, 0.99673, -0.08080, 0.05071, 0.08069, 0.99545, 0.47237, 0.34395, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_85"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06515)
+mesh = SubResource("Mesh_103")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_85"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15831)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_85"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20131)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_86" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99716, 0.00008, 0.07537, 0.00000, 1.00000, -0.00103, -0.07537, 0.00103, 0.99715, 0.47356, 0.50867, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_86"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06355)
+mesh = SubResource("Mesh_104")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_86"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15511)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_86"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19811)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_87" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99921, 0.00374, -0.03964, 0.00000, 0.99557, 0.09404, 0.03982, -0.09397, 0.99478, 0.46066, 0.59821, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_87"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07734)
+mesh = SubResource("Mesh_105")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_87"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.18267)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_87"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.22567)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_88" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99998, 0.00046, -0.00559, 0.00000, 0.99658, 0.08263, 0.00561, -0.08263, 0.99656, 0.45591, 0.73468, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_88"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05938)
+mesh = SubResource("Mesh_106")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_88"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14676)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_88"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18976)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_89" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99858, 0.00068, 0.05326, 0.00000, 0.99992, -0.01271, -0.05326, 0.01269, 0.99850, 0.61340, -0.45935, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_89"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05709)
+mesh = SubResource("Mesh_107")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_89"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14217)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_89"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18517)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_90" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99986, 0.00026, -0.01702, 0.00000, 0.99988, 0.01525, 0.01702, -0.01525, 0.99974, 0.60542, -0.29549, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_90"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07108)
+mesh = SubResource("Mesh_108")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_90"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17016)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_90"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21316)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_91" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99722, 0.00024, 0.07457, 0.00000, 0.99999, -0.00327, -0.07457, 0.00326, 0.99721, 0.60054, -0.18162, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_91"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07106)
+mesh = SubResource("Mesh_109")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_91"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17011)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_91"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21311)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_92" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99924, -0.00143, 0.03902, 0.00000, 0.99932, 0.03674, -0.03904, -0.03671, 0.99856, 0.61789, -0.06792, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_92"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07569)
+mesh = SubResource("Mesh_110")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_92"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17937)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_92"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.22237)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_93" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99995, -0.00088, 0.00974, 0.00000, 0.99594, 0.08998, -0.00978, -0.08998, 0.99590, 0.62630, 0.32443, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_93"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06593)
+mesh = SubResource("Mesh_111")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_93"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.15986)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_93"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20286)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_94" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99619, 0.00562, 0.08702, 0.00000, 0.99792, -0.06443, -0.08720, 0.06418, 0.99412, 0.61208, 0.47328, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_94"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06836)
+mesh = SubResource("Mesh_112")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_94"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16472)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_94"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20772)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_95" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99983, -0.00163, 0.01840, 0.00000, 0.99611, 0.08809, -0.01847, -0.08807, 0.99594, 0.75796, -0.17538, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_95"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07424)
+mesh = SubResource("Mesh_113")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_95"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.17649)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_95"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.21949)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_96" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99987, 0.00122, 0.01636, 0.00000, 0.99721, -0.07463, -0.01641, 0.07462, 0.99708, 0.75259, -0.03883, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_96"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05670)
+mesh = SubResource("Mesh_114")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_96"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14139)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_96"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18439)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_20")
+
+[node name="Stalk_97" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99816, -0.00261, -0.06051, 0.00000, 0.99907, -0.04309, 0.06057, 0.04301, 0.99724, 0.77223, 0.10215, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_97"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.05577)
+mesh = SubResource("Mesh_115")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_97"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.13955)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_97"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.18255)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_98" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99525, -0.00839, -0.09694, 0.00000, 0.99628, -0.08618, 0.09730, 0.08577, 0.99155, 0.74449, 0.22048, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_98"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06895)
+mesh = SubResource("Mesh_116")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_98"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.16591)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_98"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.20891)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Stalk_99" type="Node3D" parent="Pivot/WheatField"]
+transform = Transform3D(0.99782, -0.00492, 0.06585, 0.00000, 0.99722, 0.07445, -0.06603, -0.07429, 0.99505, 0.88912, -0.02719, 0.00000)
+
+[node name="stem" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_99"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.06098)
+mesh = SubResource("Mesh_117")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="ear" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_99"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 2.20000, 0.00000, 0.00000, 0.14995)
+mesh = SubResource("Mesh_16")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="tip" type="MeshInstance3D" parent="Pivot/WheatField/Stalk_99"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.19295)
+mesh = SubResource("Mesh_18")
+surface_material_override/0 = SubResource("Mat_17")
+
+[node name="Sheaf" type="Node3D" parent="Pivot"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.30000, 0.27000, 0.00000)
+
+[node name="stalk_1" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.97599, 0.21780, -0.00296, 0.00000, -0.01360, -0.99991, -0.21782, 0.97590, -0.01327, 0.05408, -0.00336, 0.09027)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="stalk_2" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.98065, 0.19483, 0.01913, 0.00000, 0.09770, -0.99522, -0.19577, 0.97596, 0.09581, 0.04847, 0.02416, 0.09028)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="stalk_3" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.99297, 0.11634, 0.02180, 0.00000, 0.18421, -0.98289, -0.11837, 0.97598, 0.18291, 0.02910, 0.04567, 0.09028)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="stalk_4" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.99999, 0.00407, 0.00091, 0.00000, 0.21819, -0.97591, -0.00417, 0.97590, 0.21819, 0.00102, 0.05418, 0.09027)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="stalk_5" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.99568, -0.09105, -0.01840, 0.00000, 0.19805, -0.98019, 0.09289, 0.97595, 0.19719, -0.02280, 0.04913, 0.09028)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="stalk_6" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.98845, -0.14965, -0.02398, 0.00000, 0.15824, -0.98740, 0.15156, 0.97599, 0.15641, -0.03736, 0.03920, 0.09028)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="stalk_7" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.97733, -0.21144, -0.01136, 0.00000, 0.05363, -0.99856, 0.21174, 0.97592, 0.05242, -0.05253, 0.01325, 0.09027)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="stalk_8" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.97726, -0.21175, 0.01111, 0.00000, -0.05240, -0.99863, 0.21204, 0.97592, -0.05121, -0.05261, -0.01295, 0.09027)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="stalk_9" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.98937, -0.14343, 0.02383, 0.00000, -0.16391, -0.98648, 0.14540, 0.97599, -0.16217, -0.03582, -0.04061, 0.09028)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="stalk_10" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.99519, -0.09606, 0.01916, 0.00000, -0.19564, -0.98068, 0.09795, 0.97596, -0.19470, -0.02405, -0.04853, 0.09028)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="stalk_11" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.99963, 0.02673, -0.00593, 0.00000, -0.21656, -0.97627, -0.02738, 0.97590, -0.21648, 0.00671, -0.05377, 0.09027)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="stalk_12" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.98981, 0.14041, -0.02371, 0.00000, -0.16651, -0.98604, -0.14240, 0.97599, -0.16481, 0.03507, -0.04126, 0.09028)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="stalk_13" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(0.98155, 0.19011, -0.02036, 0.00000, -0.10651, -0.99431, -0.19120, 0.97597, -0.10454, 0.04732, -0.02634, 0.09028)
+mesh = SubResource("Mesh_118")
+surface_material_override/0 = SubResource("Mat_15")
+
+[node name="band" type="MeshInstance3D" parent="Pivot/Sheaf"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.07200)
+mesh = SubResource("Mesh_119")
+surface_material_override/0 = SubResource("Mat_120")
