@@ -25,27 +25,20 @@ float hash13(vec3 p) {
 	return fract((p.x + p.y) * p.z);
 }
 
-// Petits "ploc" de pluie : pour chaque cellule de la grille, un anneau concentrique nait a un instant
-// pseudo-aleatoire, s'agrandit puis s'estompe. On balaie la cellule + ses voisines pour que les
-// anneaux puissent deborder d'une cellule sur l'autre.
+// Un "ploc" de pluie par cellule de la grille : un anneau concentrique nait a un instant pseudo-aleatoire,
+// s'agrandit puis s'estompe. PERF : une seule cellule (pas de boucle 3x3) -> ~9x moins de hash par fragment.
+// Le centre est confine a [0.3, 0.7] et le rayon max (0.25) garde l'anneau DANS la cellule (pas de debordement).
 float rain_ripples(vec2 p, float t) {
-	float acc = 0.0;
-	vec2 cell = floor(p);
-	for (int y = -1; y <= 1; y++) {
-		for (int x = -1; x <= 1; x++) {
-			vec2 c = cell + vec2(float(x), float(y));
-			float seed = hash13(vec3(c, 7.0));
-			float cycle = t * ripple_speed + seed;
-			float prog = fract(cycle);                                       // 0..1 : age de l'anneau
-			vec2 center = c + vec2(hash13(vec3(c, 1.0)), hash13(vec3(c, 2.0)));
-			float d = length(p - center);
-			float ring = smoothstep(0.07, 0.0, abs(d - prog * 0.25));        // anneau fin qui grandit
-			float fade = 1.0 - prog;                                         // s'estompe en grandissant
-			float active = step(0.4, hash13(vec3(c, floor(cycle) + 3.0)));   // rythme irregulier (ploc... ploc..)
-			acc += ring * fade * active;
-		}
-	}
-	return clamp(acc, 0.0, 1.0);
+	vec2 c = floor(p);
+	float seed = hash13(vec3(c, 7.0));
+	float cycle = t * ripple_speed + seed;
+	float prog = fract(cycle);                                       // 0..1 : age de l'anneau
+	vec2 center = c + 0.3 + 0.4 * vec2(hash13(vec3(c, 1.0)), hash13(vec3(c, 2.0)));
+	float d = length(p - center);
+	float ring = smoothstep(0.07, 0.0, abs(d - prog * 0.25));        // anneau fin qui grandit
+	float fade = 1.0 - prog;                                         // s'estompe en grandissant
+	float active = step(0.4, hash13(vec3(c, floor(cycle) + 3.0)));   // rythme irregulier (ploc... ploc..)
+	return clamp(ring * fade * active, 0.0, 1.0);
 }
 
 void fragment() {

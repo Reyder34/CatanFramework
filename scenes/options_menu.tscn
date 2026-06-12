@@ -239,6 +239,104 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="LampRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000020]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LampLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/LampRow" unique_id=720000021]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Lumière / lanternes"
+
+[node name="LampToggle" type="CheckButton" parent="Dim/Center/Panel/Margin/VBox/LampRow" unique_id=720000022]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WindRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000023]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="WindLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/WindRow" unique_id=720000024]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Animation du vent"
+
+[node name="WindToggle" type="CheckButton" parent="Dim/Center/Panel/Margin/VBox/WindRow" unique_id=720000025]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SmokeRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000026]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SmokeLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/SmokeRow" unique_id=720000027]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Fumées"
+
+[node name="SmokeToggle" type="CheckButton" parent="Dim/Center/Panel/Margin/VBox/SmokeRow" unique_id=720000028]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ReflectRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000029]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ReflectLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/ReflectRow" unique_id=720000030]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Réflexions"
+
+[node name="ReflectToggle" type="CheckButton" parent="Dim/Center/Panel/Margin/VBox/ReflectRow" unique_id=720000031]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ShadowRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000032]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ShadowLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/ShadowRow" unique_id=720000033]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Ombres"
+
+[node name="ShadowToggle" type="CheckButton" parent="Dim/Center/Panel/Margin/VBox/ShadowRow" unique_id=720000034]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MsaaRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000035]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="MsaaLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/MsaaRow" unique_id=720000036]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Anticrénelage"
+
+[node name="MsaaOption" type="OptionButton" parent="Dim/Center/Panel/Margin/VBox/MsaaRow" unique_id=720000037]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ScaleRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000038]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ScaleLabel" type="Label" parent="Dim/Center/Panel/Margin/VBox/ScaleRow" unique_id=720000039]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Échelle de rendu"
+
+[node name="ScaleOption" type="OptionButton" parent="Dim/Center/Panel/Margin/VBox/ScaleRow" unique_id=720000040]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="DayNightRow" type="HBoxContainer" parent="Dim/Center/Panel/Margin/VBox" unique_id=720000006]
 layout_mode = 2
 theme_override_constants/separation = 12

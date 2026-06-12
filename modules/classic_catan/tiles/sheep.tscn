@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cixhxnv3aerkk"]
 
-[ext_resource type="Script" uid="uid://vt6gypkodjvp" path="res://modules/classic_catan/tiles/sheep_animator.gd" id="Script_sheep_anim"]
+[ext_resource type="Script" uid="uid://db0aaxvxtpg1b" path="res://modules/classic_catan/tiles/sheep_animator.gd" id="Script_sheep_anim"]
 
 [sub_resource type="CylinderMesh" id="Mesh_1"]
 top_radius = 1.0

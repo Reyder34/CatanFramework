@@ -23,6 +23,13 @@ extends CanvasLayer
 
 # Graphismes : preset de qualité (Low/Medium/Ultra) + toggle cycle jour/nuit.
 @onready var _gfx: OptionButton = %GfxPreset
+@onready var _lamp: CheckButton = %LampToggle
+@onready var _wind: CheckButton = %WindToggle
+@onready var _smoke: CheckButton = %SmokeToggle
+@onready var _reflect: CheckButton = %ReflectToggle
+@onready var _shadows: CheckButton = %ShadowToggle
+@onready var _msaa: OptionButton = %MsaaOption
+@onready var _scale: OptionButton = %ScaleOption
 @onready var _daynight: CheckButton = %DayNightToggle
 @onready var _fps_toggle: CheckButton = %FpsToggle
 @onready var _quit_game_btn: Button = %QuitGameBtn
@@ -37,6 +44,11 @@ const RESOLUTIONS := [
 # Caps proposés (l'index du menu -> la valeur ; 0 = illimité).
 const FPS_VALUES := [0, 30, 60, 120, 144, 240]
 const FPS_LABELS := ["Illimité", "30", "60", "120", "144", "240"]
+# Anticrénelage (index -> Viewport.MSAA_*) et échelle de rendu (index -> facteur).
+const MSAA_VALUES := [Viewport.MSAA_DISABLED, Viewport.MSAA_2X, Viewport.MSAA_4X, Viewport.MSAA_8X]
+const MSAA_LABELS := ["Désactivé", "2×", "4×", "8×"]
+const SCALE_VALUES := [0.5, 0.75, 1.0, 1.25, 1.5]
+const SCALE_LABELS := ["50 %", "75 %", "100 %", "125 %", "150 %"]
 
 func _ready() -> void:
 	layer = 128  # au-dessus du HUD et de tout le reste
@@ -75,13 +87,30 @@ func _ready() -> void:
 	_fps.selected = maxi(FPS_VALUES.find(Settings.max_fps), 0)
 	_fps.item_selected.connect(func(i: int) -> void: Settings.set_max_fps(FPS_VALUES[i]))
 
-	# Graphismes : preset (l'ordre Low/Medium/Ultra = enum GFX_LOW/MEDIUM/ULTRA = 0/1/2).
+	# Graphismes : preset (l'ordre Low/Medium/Ultra/Custom = enum 0/1/2/3).
 	_gfx.clear()
 	_gfx.add_item("Low")
 	_gfx.add_item("Medium")
 	_gfx.add_item("Ultra")
+	_gfx.add_item("Custom")
 	_gfx.selected = Settings.graphics_preset
-	_gfx.item_selected.connect(func(i: int) -> void: Settings.set_graphics_preset(i))
+	_gfx.item_selected.connect(_on_preset_selected)
+	# Options individuelles (modifiables une à une -> passe le preset en « Custom »).
+	_wire_gfx_toggle(_lamp, "lamp")
+	_wire_gfx_toggle(_wind, "wind")
+	_wire_gfx_toggle(_smoke, "smoke")
+	_wire_gfx_toggle(_reflect, "reflections")
+	_wire_gfx_toggle(_shadows, "shadows")
+	# Anticrénelage + échelle de rendu (listes déroulantes -> aussi « Custom » au changement).
+	_msaa.clear()
+	for label in MSAA_LABELS:
+		_msaa.add_item(label)
+	_msaa.item_selected.connect(_on_msaa_selected)
+	_scale.clear()
+	for label in SCALE_LABELS:
+		_scale.add_item(label)
+	_scale.item_selected.connect(_on_scale_selected)
+	_refresh_gfx_toggles()
 	# Cycle jour/nuit (décoché = toujours midi).
 	_daynight.button_pressed = Settings.day_night_enabled
 	_daynight.toggled.connect(func(on: bool) -> void: Settings.set_day_night_enabled(on))
@@ -113,6 +142,48 @@ func _on_display_selected(i: int) -> void:
 # La résolution n'a de sens qu'en Fenêtré (0) : plein écran / sans bordure = taille de l'écran.
 func _update_res_enabled() -> void:
 	_res.disabled = Settings.display_mode != 0
+
+# --- Graphismes : preset <-> options individuelles ---
+
+func _on_preset_selected(i: int) -> void:
+	Settings.set_graphics_preset(i)
+	_refresh_gfx_toggles()   # un preset recalcule les options -> on reflète l'état sur les cases
+
+func _wire_gfx_toggle(toggle: CheckButton, option: String) -> void:
+	toggle.toggled.connect(_on_gfx_toggle.bind(option))
+
+func _on_gfx_toggle(on: bool, option: String) -> void:
+	Settings.set_gfx_option(option, on)
+	_gfx.selected = Settings.graphics_preset   # le preset est passé en « Custom » -> l'afficher
+
+func _on_msaa_selected(i: int) -> void:
+	Settings.set_msaa(MSAA_VALUES[i])
+	_gfx.selected = Settings.graphics_preset   # -> « Custom »
+
+func _on_scale_selected(i: int) -> void:
+	Settings.set_render_scale(SCALE_VALUES[i])
+	_gfx.selected = Settings.graphics_preset   # -> « Custom »
+
+# Reflète l'état courant de Settings sur toutes les options (sans déclencher leurs signaux).
+func _refresh_gfx_toggles() -> void:
+	_lamp.set_pressed_no_signal(Settings.lamp_lights_enabled)
+	_wind.set_pressed_no_signal(Settings.wind_anim_enabled)
+	_smoke.set_pressed_no_signal(Settings.smoke_enabled)
+	_reflect.set_pressed_no_signal(Settings.reflections_enabled)
+	_shadows.set_pressed_no_signal(Settings.shadows_enabled)
+	_msaa.selected = maxi(MSAA_VALUES.find(Settings.msaa_3d), 0)
+	_scale.selected = _closest_index(SCALE_VALUES, Settings.render_scale)
+
+# Index de la valeur la plus proche de v (l'échelle issue d'un preset peut ne pas tomber pile sur un item).
+func _closest_index(values: Array, v: float) -> int:
+	var best := 0
+	var best_d := INF
+	for i in values.size():
+		var d: float = absf(float(values[i]) - v)
+		if d < best_d:
+			best_d = d
+			best = i
+	return best
 
 func _on_slider(v: float) -> void:
 	Settings.set_master_volume(v)

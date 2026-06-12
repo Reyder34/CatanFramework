@@ -28,8 +28,9 @@ var bus_volumes := DEFAULT_BUS_VOLUMES.duplicate()
 # pour se ré-appliquer.
 signal graphics_changed
 
-# 3 presets de qualité. Chacun déduit les réglages détaillés ci-dessous (_recompute_quality).
-enum { GFX_LOW, GFX_MEDIUM, GFX_ULTRA }
+# 3 presets de qualité + CUSTOM (on choisit chaque option). LOW/MEDIUM/ULTRA déduisent tous les
+# réglages détaillés (_recompute_quality) ; CUSTOM les laisse tels quels.
+enum { GFX_LOW, GFX_MEDIUM, GFX_ULTRA, GFX_CUSTOM }
 var graphics_preset: int = GFX_MEDIUM
 # Toggle indépendant : false -> cycle figé à MIDI (lumières via DayNight + ciel via les scènes).
 var day_night_enabled: bool = true
@@ -41,6 +42,12 @@ var glow_enabled: bool = true          # bloom des ampoules (Environment.glow)
 var shadows_enabled: bool = true       # ombres du soleil (DirectionalLight3D.shadow)
 var msaa_3d: int = Viewport.MSAA_2X    # anticrénelage 3D
 var render_scale: float = 1.0          # échelle de rendu 3D (< 1 = plus rapide, plus flou)
+
+# Options graphiques individuelles (toggles du menu ; réglables une à une en preset CUSTOM).
+# lamp_lights_enabled ci-dessus est aussi une option (« Lumière / lanternes »).
+var wind_anim_enabled: bool = true     # animation du vent (WindSway : nœuds « AV »)
+var smoke_enabled: bool = true         # fumées (fours / cheminées)
+var reflections_enabled: bool = false  # réflexions écran (Environment.ssr)
 
 func _ready() -> void:
 	_load()
@@ -81,9 +88,35 @@ func set_max_fps(v: int) -> void:
 	_save()
 
 func set_graphics_preset(p: int) -> void:
-	graphics_preset = clampi(p, GFX_LOW, GFX_ULTRA)
-	_recompute_quality()
+	graphics_preset = clampi(p, GFX_LOW, GFX_CUSTOM)
+	_recompute_quality()  # no-op si CUSTOM (garde les options individuelles)
 	graphics_changed.emit()  # LampLight + scènes 3D (main/menu) se ré-appliquent
+	_save()
+
+# Bascule UNE option graphique -> passe le preset en CUSTOM (sinon un preset l'écraserait ensuite).
+func set_gfx_option(option: String, on: bool) -> void:
+	match option:
+		"lamp": lamp_lights_enabled = on
+		"wind": wind_anim_enabled = on
+		"smoke": smoke_enabled = on
+		"reflections": reflections_enabled = on
+		"shadows": shadows_enabled = on
+		_: return
+	graphics_preset = GFX_CUSTOM
+	graphics_changed.emit()
+	_save()
+
+# MSAA (0/2×/4×/8× = Viewport.MSAA_*) et échelle de rendu : valeurs non-booléennes -> setters dédiés.
+func set_msaa(value: int) -> void:
+	msaa_3d = clampi(value, Viewport.MSAA_DISABLED, Viewport.MSAA_8X)
+	graphics_preset = GFX_CUSTOM
+	graphics_changed.emit()
+	_save()
+
+func set_render_scale(value: float) -> void:
+	render_scale = clampf(value, 0.5, 2.0)
+	graphics_preset = GFX_CUSTOM
+	graphics_changed.emit()
 	_save()
 
 func set_day_night_enabled(b: bool) -> void:
@@ -120,21 +153,32 @@ func _apply_bus_volume(bus: String, linear: float) -> void:
 
 # Déduit les réglages détaillés du preset choisi. LOW = perf max (mais on garde les modèles).
 func _recompute_quality() -> void:
+	if graphics_preset == GFX_CUSTOM:
+		return  # CUSTOM : on garde les options individuelles choisies par le joueur
 	match graphics_preset:
 		GFX_LOW:
 			lamp_lights_enabled = false
+			wind_anim_enabled = false
+			smoke_enabled = false
+			reflections_enabled = false
 			glow_enabled = false
 			shadows_enabled = false
 			msaa_3d = Viewport.MSAA_DISABLED
-			render_scale = 0.8
+			render_scale = 0.75
 		GFX_ULTRA:
 			lamp_lights_enabled = true
+			wind_anim_enabled = true
+			smoke_enabled = true
+			reflections_enabled = true
 			glow_enabled = true
 			shadows_enabled = true
 			msaa_3d = Viewport.MSAA_4X
 			render_scale = 1.0
 		_:  # GFX_MEDIUM
 			lamp_lights_enabled = true
+			wind_anim_enabled = true
+			smoke_enabled = true
+			reflections_enabled = false
 			glow_enabled = true
 			shadows_enabled = true
 			msaa_3d = Viewport.MSAA_2X
@@ -145,6 +189,7 @@ func _recompute_quality() -> void:
 func apply_world(env: Environment, sun: Light3D, viewport: Viewport) -> void:
 	if env != null:
 		env.glow_enabled = glow_enabled
+		env.ssr_enabled = reflections_enabled   # réflexions écran (surfaces brillantes, eau)
 	if sun != null:
 		sun.shadow_enabled = shadows_enabled
 	if viewport != null:
@@ -216,9 +261,18 @@ func _load() -> void:
 		maxi(int(cfg.get_value("video", "res_w", 1280)), 320),
 		maxi(int(cfg.get_value("video", "res_h", 720)), 240))
 	max_fps = maxi(int(cfg.get_value("video", "max_fps", 0)), 0)
-	graphics_preset = clampi(int(cfg.get_value("graphics", "preset", GFX_MEDIUM)), GFX_LOW, GFX_ULTRA)
+	graphics_preset = clampi(int(cfg.get_value("graphics", "preset", GFX_MEDIUM)), GFX_LOW, GFX_CUSTOM)
 	day_night_enabled = bool(cfg.get_value("graphics", "day_night", true))
 	show_fps = bool(cfg.get_value("graphics", "show_fps", false))
+	# Options individuelles (utiles en CUSTOM ; sinon recalculées par le preset juste après dans _ready).
+	lamp_lights_enabled = bool(cfg.get_value("graphics", "lamp", true))
+	wind_anim_enabled = bool(cfg.get_value("graphics", "wind", true))
+	smoke_enabled = bool(cfg.get_value("graphics", "smoke", true))
+	reflections_enabled = bool(cfg.get_value("graphics", "reflections", false))
+	shadows_enabled = bool(cfg.get_value("graphics", "shadows", true))
+	glow_enabled = bool(cfg.get_value("graphics", "glow", true))
+	msaa_3d = clampi(int(cfg.get_value("graphics", "msaa", Viewport.MSAA_2X)), Viewport.MSAA_DISABLED, Viewport.MSAA_8X)
+	render_scale = clampf(float(cfg.get_value("graphics", "render_scale", 1.0)), 0.5, 2.0)
 
 func _save() -> void:
 	var cfg := ConfigFile.new()
@@ -232,4 +286,12 @@ func _save() -> void:
 	cfg.set_value("graphics", "preset", graphics_preset)
 	cfg.set_value("graphics", "day_night", day_night_enabled)
 	cfg.set_value("graphics", "show_fps", show_fps)
+	cfg.set_value("graphics", "lamp", lamp_lights_enabled)
+	cfg.set_value("graphics", "wind", wind_anim_enabled)
+	cfg.set_value("graphics", "smoke", smoke_enabled)
+	cfg.set_value("graphics", "reflections", reflections_enabled)
+	cfg.set_value("graphics", "shadows", shadows_enabled)
+	cfg.set_value("graphics", "glow", glow_enabled)
+	cfg.set_value("graphics", "msaa", msaa_3d)
+	cfg.set_value("graphics", "render_scale", render_scale)
 	cfg.save(SAVE_PATH)

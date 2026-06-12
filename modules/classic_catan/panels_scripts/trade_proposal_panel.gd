@@ -27,7 +27,7 @@ func _ready() -> void:
 func show_panel(params: Dictionary) -> void:
 	registry = params["registry"]
 	proposer = params["proposer"]
-	title_label.text = "Joueur %d propose un échange" % proposer.id
+	title_label.text = "%s propose un échange" % proposer.label()
 	_build_resource_buttons(offer_buttons, offer, offer_stacks, true)
 	_build_resource_buttons(demand_buttons, demand, demand_stacks, false)
 	_update_propose_state()

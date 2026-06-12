@@ -814,9 +814,8 @@ func _action_roll_dice() -> void:
 	# Mémorise les 2 dés dans un marqueur plateau -> synchronisé à tous (snapshot) et
 	# ré-émis (marker_changed) chez chaque client, qui met à jour le panneau de dés.
 	_board.set_marker(DICE_MARKER, Vector2(roll_ctx.die1, roll_ctx.die2))
-	if _board.tiles_by_number.has(roll_ctx.result):
-		for coords in _board.tiles_by_number[roll_ctx.result]:
-			_flash_tile(coords)
+	# Le flash des tuiles qui produisent est déclenché par _on_dice_marker (via ce marqueur synchronisé)
+	# -> l'hôte ET les clients flashent. (Ici, on est sur l'autorité uniquement.)
 	_state.current_player().set_data(ROLLED_KEY, true)
 
 # Fin de tour automatique quand le timer du core expire (event générique "turn_timeout").
@@ -850,6 +849,12 @@ func _on_dice_marker(marker_id: String, value: Vector2) -> void:
 		return
 	if _registry.ui != null:
 		_registry.ui.show_persistent("dice_panel", {"d1": int(value.x), "d2": int(value.y)})
+	# Flash des tuiles qui produisent : ICI (et non dans _action_roll_dice) car le marqueur DICE est
+	# synchronisé -> l'hôte ET les clients flashent (les clients ne lancent jamais l'action elle-même).
+	var result := int(value.x) + int(value.y)
+	if _board != null and _board.tiles_by_number.has(result):
+		for coords in _board.tiles_by_number[result]:
+			_flash_tile(coords)
 
 func _action_propose_trade() -> void:
 	var proposer := _state.current_player()

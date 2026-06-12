@@ -166,7 +166,7 @@ func _ready() -> void:
 	_refresh()
 
 func _refresh() -> void:
-	emitting = DayNight.day_factor >= 0.5
+	emitting = Settings.smoke_enabled and DayNight.day_factor >= 0.5
 	if process_material != null:
 		var w := Weather.wind_vector()
 		process_material.gravity = Vector3(w.x, _rise, w.z)

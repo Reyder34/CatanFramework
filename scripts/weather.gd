@@ -22,7 +22,6 @@ var temperature := 0.5
 var state := "clear"
 
 const WIND_PUSH := 0.4         # poussée horizontale max de la fumée (à vent = 1)
-const EPOCH := 1735689600.0    # 2025-01-01 : retranché pour garder le temps petit (précision)
 const F := [0.0262, 0.0698, 0.1698]   # fréquences des octaves (~ périodes 240 / 90 / 37 s)
 const AMP := [0.32, 0.13, 0.05]
 const DIR_ROT := 0.015         # vitesse de rotation de la direction du vent (rad/s)
@@ -34,6 +33,7 @@ var _last_sec := -1
 var debug_override := false   # panneau debug (F8) : fige les valeurs et les pilote à la main
 var _cloud_phase := 0.0   # phase de défilement météo des nuages (intégrée -> aucun à-coup vers 0.70)
 var _rain_phase := 0.0    # idem pour la chute de pluie
+var _t0_ms := 0           # base de temps MONOTONE (ms) : remise à 0 au lancement -> sync multi (pas l'horloge système)
 
 func _ready() -> void:
 	set_seed(0)   # défaut (menu) : aléatoire ; le jeu re-seedera via main.gd
@@ -47,6 +47,7 @@ func set_seed(s: int) -> void:
 	_ph = []
 	for ch in 4:
 		_ph.append([_rng.randf() * TAU, _rng.randf() * TAU, _rng.randf() * TAU])
+	_t0_ms = Time.get_ticks_msec()   # remet l'horloge météo à 0 (lancement) -> départ identique partout
 	_update(_now())
 
 func _process(delta: float) -> void:
@@ -64,7 +65,17 @@ func _process(delta: float) -> void:
 	RenderingServer.global_shader_parameter_set(&"weather_wet", clampf(sky_rain() + sky_storm(), 0.0, 1.0) * (1.0 - sky_snow()))
 
 func _now() -> float:
-	return Time.get_unix_time_from_system() - EPOCH
+	return float(Time.get_ticks_msec() - _t0_ms) / 1000.0
+
+# Temps écoulé (s) depuis le lancement. Le HOST le met dans le snapshot pour resynchroniser les clients.
+func elapsed() -> float:
+	return _now()
+
+# Cale l'horloge météo sur `t` (s) — appelé par les clients à l'application d'un snapshot (host -> clients)
+# pour que la météo reste synchronisée malgré les horloges machines différentes (et au rejoin).
+func set_time(t: float) -> void:
+	_t0_ms = Time.get_ticks_msec() - int(t * 1000.0)
+	_update(_now())
 
 func _update(t: float) -> void:
 	if not debug_override:   # en pilotage manuel (debug), on ne recalcule pas les valeurs
@@ -116,6 +127,12 @@ func sky_snow() -> float:
 
 func sky_storm() -> float:
 	return smoothstep(0.68, 0.78, wind) * smoothstep(0.68, 0.78, humidity) * (1.0 - sky_snow())
+
+# Y a-t-il de la neige ou du mouillé à montrer sur les tuiles ? Sinon main.gd/menu_background retirent
+# la surcouche des cases (perf : par temps clair, pas une seule passe transparente sur le plateau).
+func overlay_active() -> bool:
+	var wet := clampf(sky_rain() + sky_storm(), 0.0, 1.0) * (1.0 - sky_snow())
+	return sky_snow() > 0.02 or wet > 0.02
 
 # Pose les uniformes météo sur un matériau de ciel (appelé chaque frame par main.gd / menu_background).
 func apply_sky(mat: ShaderMaterial) -> void:

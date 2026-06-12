@@ -130,6 +130,8 @@ func _process(delta: float) -> void:
 	_cam.look_at(Vector3.ZERO, Vector3.UP)
 	_apply_day_night()
 	Weather.apply_sky(_sky_mat)   # météo -> ciel (nuages/pluie/neige/tempête/éclair)
+	if board_view != null:
+		board_view.set_weather_overlay(Weather.overlay_active())   # surcouche tuiles seulement s'il neige/pleut
 
 # Même logique que main.gd : soleil orienté selon l'arc du cycle, lune la nuit, ambiance.
 func _apply_day_night() -> void:

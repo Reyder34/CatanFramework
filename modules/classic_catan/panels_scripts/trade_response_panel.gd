@@ -26,7 +26,7 @@ func show_panel(params: Dictionary) -> void:
 	var proposer: Player = params["proposer"]
 	var offer: Dictionary = params["offer"]
 	var demand: Dictionary = params["demand"]
-	title_label.text = "Joueur %d (à toi: J%d) propose:" % [proposer.id, responder.id]
+	title_label.text = "%s te propose :" % proposer.label()
 	offer_label.text = "Il offre: " + _format_resources(offer)
 	demand_label.text = "Il demande: " + _format_resources(demand)
 	# Si le répondant n'a pas les ressources demandées, désactive Accepter

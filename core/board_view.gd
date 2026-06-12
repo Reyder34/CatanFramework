@@ -6,6 +6,7 @@ const WATER_COLOR := Color(0.15, 0.4, 0.7)
 
 # Surcouche météo (neige/mouillé) posée sur toutes les tuiles ; pilotée par des params globaux (Weather).
 const TILE_WEATHER_SHADER := "res://ui/shader/tile_weather.gdshader"
+const OVERLAY_MIN_VOLUME := 0.001   # on ignore les meshes plus petits que ça (épis, barreaux…) : perf météo
 
 # Tuiles 3D (modèles fournis par un mod). Le .glb des tuiles Catan a un hex de rayon
 # ≈0.99 ; on remet sa rotation à plat pour aligner les 6 sommets sur le plateau.
@@ -20,6 +21,9 @@ var vertex_nodes: Dictionary = {}
 var edge_nodes: Dictionary = {}
 
 var _weather_overlay: ShaderMaterial = null   # matériau de surcouche météo partagé (chargé une fois)
+var _overlay_meshes: Array = []               # tous les meshes de tuiles qui peuvent recevoir la surcouche
+var _overlay_on := false                       # la surcouche n'est posée QUE s'il neige/pleut (perf : sinon des
+                                               # milliers de passes transparentes seraient triées chaque frame)
 
 var on_tile_click: Callable
 var on_vertex_click: Callable
@@ -129,7 +133,7 @@ func _create_tile(parent: Node3D, q: int, r: int, resource: String, number: int)
 			mat.albedo_texture = tex
 			mat.albedo_color = Color.WHITE  # ne pas teinter l'image
 		mesh_inst.material_override = mat
-		mesh_inst.material_overlay = _weather_overlay_material()
+		_register_overlay_mesh(mesh_inst)
 		body.add_child(mesh_inst)
 
 	var col := CollisionShape3D.new()
@@ -182,16 +186,46 @@ func _weather_overlay_material() -> ShaderMaterial:
 			_weather_overlay.shader = sh
 	return _weather_overlay
 
-# Pose la surcouche météo sur tous les MeshInstance3D d'un modèle de tuile (sans toucher au matériau de base).
+# Recense tous les MeshInstance3D d'un modèle de tuile comme pouvant recevoir la surcouche météo.
 func _apply_weather_overlay(root: Node) -> void:
-	var mat := _weather_overlay_material()
-	if mat == null:
+	if _weather_overlay_material() == null:
 		return
 	var meshes := root.find_children("*", "MeshInstance3D", true, false)
 	if root is MeshInstance3D:
 		meshes.append(root)
 	for m in meshes:
-		(m as MeshInstance3D).material_overlay = mat
+		_register_overlay_mesh(m as MeshInstance3D)
+
+# Enregistre un mesh ; la surcouche n'est posée que si elle est active (il neige/pleut).
+func _register_overlay_mesh(mi: MeshInstance3D) -> void:
+	if _weather_overlay_material() == null:
+		return
+	# Perf : la surcouche (passe transparente + ploc de pluie) coûte PAR mesh. On ignore les meshes
+	# minuscules (épis de blé, barreaux de clôture, petits décors) où la neige/pluie n'est pas visible
+	# mais qui forment l'écrasante majorité des passes -> gros pics GPU sous la météo.
+	var m := mi.mesh
+	if m != null:
+		var sz := m.get_aabb().size
+		if sz.x * sz.y * sz.z < OVERLAY_MIN_VOLUME:
+			return
+	_overlay_meshes.append(mi)
+	mi.material_overlay = _weather_overlay if _overlay_on else null
+
+# Active/désactive la surcouche météo sur TOUTES les tuiles d'un coup. Appelé par main.gd/menu_background
+# selon Weather.overlay_active() : par temps clair la surcouche est retirée -> aucune passe transparente.
+func set_weather_overlay(on: bool) -> void:
+	if on == _overlay_on:
+		return
+	_overlay_on = on
+	var mat: ShaderMaterial = _weather_overlay if on else null
+	for m in _overlay_meshes:
+		if is_instance_valid(m):
+			(m as MeshInstance3D).material_overlay = mat
+
+# Surcouche que les tuiles doivent porter MAINTENANT (matériau météo si neige/pluie, sinon null).
+# Sert à RESTAURER la surcouche après un flash de tuile (le flash réutilise le même slot material_overlay).
+func active_weather_overlay() -> ShaderMaterial:
+	return _weather_overlay if _overlay_on else null
 
 func _register_vertices(parent: Node3D, q: int, r: int) -> void:
 	for i in 6:

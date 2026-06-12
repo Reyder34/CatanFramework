@@ -13,6 +13,7 @@ const SWAY_FREQ := 1.7      # vitesse d'oscillation (rad/s)
 const PHASE_STEP := 1.7     # décalage de phase entre enfants -> ondulation organique (pas en bloc)
 
 var _targets: Array = []    # [{ node, rest(basis), pinv(basis), phase }]
+var _reset_done := false    # vrai quand l'animation est coupée (Settings) et les nœuds remis au repos
 
 func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
@@ -49,6 +50,16 @@ func _register(av: Node) -> void:
 func _process(_delta: float) -> void:
 	if _targets.is_empty():
 		return
+	# Réglage graphique « Animation du vent » : si coupé, on remet tout au repos UNE fois puis on idle.
+	if not Settings.wind_anim_enabled:
+		if not _reset_done:
+			for tg in _targets:
+				var n = tg["node"]
+				if is_instance_valid(n):
+					(n as Node3D).transform.basis = tg["rest"]
+			_reset_done = true
+		return
+	_reset_done = false
 	var wv := Weather.wind_vector()
 	var dir := Vector3(wv.x, 0.0, wv.z)
 	var l := dir.length()

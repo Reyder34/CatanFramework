@@ -151,17 +151,19 @@ func _input(event: InputEvent) -> void:
 		_toggle_clean_view()  # masque HUD + numéros/ratios pour les screenshots
 		return
 	# Échap : menu d'options, accessible à tout moment.
-	# Exception : si un mode construction est actif, Échap l'annule d'abord (cancel_build, même touche).
+	# Exception : Échap annule d'abord TON mode construction (cancel_build, même touche) — mais SEULEMENT
+	# à ton tour. build_mode_id est SYNCHRONISÉ : hors de ton tour il reflète le joueur ACTIF, donc on
+	# ouvre quand même le menu (sinon il était bloqué quand un autre joueur construisait).
 	if event.keycode == KEY_ESCAPE and not event.echo:
 		if has_node("OptionsMenu"):
 			return  # overlay déjà ouvert : il gère lui-même sa fermeture
-		if state.build_mode_id == "":
+		if state.build_mode_id == "" or not _can_local_act():
 			var opt := OPTIONS_MENU.instantiate()
 			add_child(opt)
 			opt.set_game(self)  # affiche le bouton "Quitter la partie"
 			get_viewport().set_input_as_handled()
 			return
-		# sinon : laisser l'action cancel_build s'exécuter (flux normal ci-dessous)
+		# sinon (ton tour + ton propre mode construction) : laisser cancel_build s'exécuter
 	if state.phase == GameState.Phase.GAME_OVER:
 		return
 	if not _can_local_act():
@@ -431,6 +433,7 @@ func _build_snapshot() -> Dictionary:
 		"build_mode": state.build_mode_id,
 		"players": pdata,
 		"log": game_log.duplicate(),
+		"weather_time": Weather.elapsed(),   # temps météo du host -> les clients s'y calent (sync + rejoin)
 	}
 
 # === SAUVEGARDE / REPRISE ===
@@ -497,6 +500,7 @@ func _apply_snapshot(snap: Dictionary) -> void:
 	# Incrémental: ne rafraîchir QUE les cases changées (sinon on ré-instancie tous les
 	# modèles 3D de bâtiments + re-rend les 126 sommets/arêtes à CHAQUE snapshot -> gros
 	# à-coups pendant les actions).
+	Weather.set_time(snap.get("weather_time", Weather.elapsed()))   # cale l'horloge météo sur celle du host
 	var new_v: Dictionary = snap["vertex_state"]
 	var new_e: Dictionary = snap["edge_state"]
 	var new_m: Dictionary = snap["markers"]
@@ -594,6 +598,8 @@ func _connect_broadcast_signals() -> void:
 func _process(_delta: float) -> void:
 	_apply_day_night()
 	Weather.apply_sky(_sky_mat)   # météo -> ciel (nuages/pluie/neige/tempête/éclair)
+	if board_view != null:
+		board_view.set_weather_overlay(Weather.overlay_active())   # surcouche tuiles seulement s'il neige/pleut
 	if _snapshot_dirty and GameConfig.is_multiplayer and _authoritative():
 		_snapshot_dirty = false
 		_send_snapshot_to_clients(_build_snapshot())
@@ -671,9 +677,12 @@ func _flash_tile_handler(ctx: Dictionary) -> void:
 	for mi in meshes:
 		mi.material_overlay = overlay
 	await get_tree().create_timer(0.4).timeout
+	# Restaure la surcouche météo (et non null) : sinon le flash effaçait la neige/pluie de la tuile,
+	# et de plus en plus de cases la perdaient au fil des productions.
+	var restore: Material = board_view.active_weather_overlay()
 	for mi in meshes:
 		if is_instance_valid(mi):
-			mi.material_overlay = null
+			mi.material_overlay = restore
 
 # Tous les MeshInstance3D sous un nœud (récursif) : flashe une tuile quel que soit son
 # rendu (cylindre procédural ou modèle 3D avec décor).
