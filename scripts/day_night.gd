@@ -26,13 +26,14 @@ var sun_energy: float = SUN_ENERGY
 var moon_energy: float = 0.0
 var ambient_color: Color = DAY_AMBIENT
 var ambient_energy: float = 0.3
+var debug_time_override := false   # panneau debug (F9) : fige l'heure pour tester (ciel + soleil + lampes)
 
 func _ready() -> void:
 	_recompute()
 
 func _process(_delta: float) -> void:
 	# Miroir du ciel : même base de temps que sky.gdshader (fract(TIME / cycle_duration)).
-	if not paused and cycle_seconds > 0.0:
+	if not paused and not debug_time_override and cycle_seconds > 0.0:
 		time_of_day = fposmod(Time.get_ticks_msec() / 1000.0 / cycle_seconds, 1.0)
 	_recompute()
 
@@ -60,6 +61,8 @@ func _recompute() -> void:
 	# Globals shader (ciel + anims de modèles 3D).
 	RenderingServer.global_shader_parameter_set(&"day_night_time", time_of_day)
 	RenderingServer.global_shader_parameter_set(&"day_night_factor", day_factor)
+	# Heure figée (debug) -> le ciel la lit ; -1 = cycle auto (le ciel reprend TIME).
+	RenderingServer.global_shader_parameter_set(&"dn_time_override", time_of_day if debug_time_override else -1.0)
 	cycle_changed.emit()
 
 # Active/désactive le cycle. Désactivé -> FIGÉ À MIDI (time_of_day=0), utilisé par le réglage
@@ -69,3 +72,12 @@ func set_running(running: bool) -> void:
 	if not running:
 		time_of_day = 0.0  # midi
 		_recompute()
+
+# Debug (F9) : fige l'heure du cycle (ciel + soleil + lampes) à `t` (0..1, 0=midi, .25=coucher, .5=minuit).
+func set_debug_time(t: float) -> void:
+	debug_time_override = true
+	time_of_day = fposmod(t, 1.0)
+	_recompute()
+
+func clear_debug_time() -> void:
+	debug_time_override = false   # _process reprend l'avance auto ; _recompute remet dn_time_override à -1

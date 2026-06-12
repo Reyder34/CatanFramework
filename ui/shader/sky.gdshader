@@ -1,5 +1,8 @@
 shader_type canvas_item;
 
+// Debug (F9) : si >= 0, FIGE l'heure du ciel a cette valeur (0..1) ; < 0 = cycle auto via TIME. Pilote par DayNight.
+global uniform float dn_time_override;
+
 group_uniforms Option_Visualisation;
 uniform bool enable_sun_moon = true; 
 
@@ -65,6 +68,7 @@ float noise(vec2 p) {
 
 void fragment() {
     float time_of_day = fract(TIME / cycle_duration);
+    if (dn_time_override >= 0.0) time_of_day = dn_time_override;   // debug (F9) : heure figee pour tester
 
     float total_weather_cover = clamp(meteo_nuageux + meteo_pluie + meteo_neige + meteo_tempete, 0.0, 1.0);
     float storm_intensity = clamp(meteo_pluie + meteo_tempete, 0.0, 1.0);

@@ -150,20 +150,15 @@ func _input(event: InputEvent) -> void:
 	if event.keycode == KEY_F12:
 		_toggle_clean_view()  # masque HUD + numéros/ratios pour les screenshots
 		return
-	# Échap : menu d'options, accessible à tout moment.
-	# Exception : Échap annule d'abord TON mode construction (cancel_build, même touche) — mais SEULEMENT
-	# à ton tour. build_mode_id est SYNCHRONISÉ : hors de ton tour il reflète le joueur ACTIF, donc on
-	# ouvre quand même le menu (sinon il était bloqué quand un autre joueur construisait).
+	# Échap : ouvre le menu d'options, à TOUT moment (plus d'action « annuler » sur cette touche).
 	if event.keycode == KEY_ESCAPE and not event.echo:
 		if has_node("OptionsMenu"):
 			return  # overlay déjà ouvert : il gère lui-même sa fermeture
-		if state.build_mode_id == "" or not _can_local_act():
-			var opt := OPTIONS_MENU.instantiate()
-			add_child(opt)
-			opt.set_game(self)  # affiche le bouton "Quitter la partie"
-			get_viewport().set_input_as_handled()
-			return
-		# sinon (ton tour + ton propre mode construction) : laisser cancel_build s'exécuter
+		var opt := OPTIONS_MENU.instantiate()
+		add_child(opt)
+		opt.set_game(self)  # affiche le bouton "Quitter la partie"
+		get_viewport().set_input_as_handled()
+		return
 	if state.phase == GameState.Phase.GAME_OVER:
 		return
 	if not _can_local_act():

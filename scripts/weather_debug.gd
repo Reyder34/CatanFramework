@@ -14,6 +14,9 @@ var _wind_val: Label
 var _humid_val: Label
 var _temp_val: Label
 var _state_lbl: Label
+var _time_chk: CheckBox
+var _time: HSlider
+var _time_val: Label
 
 func _ready() -> void:
 	if not OS.is_debug_build():   # rien en build release
@@ -43,6 +46,11 @@ func _process(_dt: float) -> void:
 	_state_lbl.text = "État : %s\nnuageux %.2f   pluie %.2f\nneige %.2f   tempête %.2f\néclair %.2f" % [
 		Weather.state, Weather.sky_cloudy(), Weather.sky_rain(),
 		Weather.sky_snow(), Weather.sky_storm(), Weather._lightning]
+	# Heure : en auto le slider suit le cycle ; en manuel il est piloté à la main.
+	if not DayNight.debug_time_override:
+		_time.set_value_no_signal(fposmod(DayNight.time_of_day * 24.0 + 12.0, 24.0))
+	var tmin := int(round(_time.value * 60.0)) % 1440
+	_time_val.text = "%02d:%02d" % [tmin / 60, tmin % 60]
 
 func _build_ui() -> void:
 	_panel = PanelContainer.new()
@@ -89,6 +97,31 @@ func _build_ui() -> void:
 	hint.text = "Décoche \"Pilotage manuel\" pour reprendre la météo auto."
 	hint.modulate = Color(1, 1, 1, 0.55)
 	vb.add_child(hint)
+
+	# --- Heure du jour (cycle jour/nuit) : pour tester toutes les heures (ciel + soleil + lampes) ---
+	_time_chk = CheckBox.new()
+	_time_chk.text = "Heure manuelle"
+	_time_chk.toggled.connect(_on_time_override)
+	vb.add_child(_time_chk)
+	var thb := HBoxContainer.new()
+	vb.add_child(thb)
+	var tlbl := Label.new()
+	tlbl.text = "Heure"
+	tlbl.custom_minimum_size = Vector2(88, 0)
+	thb.add_child(tlbl)
+	_time = HSlider.new()
+	_time.min_value = 0.0
+	_time.max_value = 24.0
+	_time.step = 0.25
+	_time.editable = false
+	_time.custom_minimum_size = Vector2(170, 0)
+	_time.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_time.value_changed.connect(_on_time_slider)
+	thb.add_child(_time)
+	_time_val = Label.new()
+	_time_val.text = "12:00"
+	_time_val.custom_minimum_size = Vector2(42, 0)
+	thb.add_child(_time_val)
 
 	_on_override(false)   # départ en auto : sliders verrouillés
 
@@ -144,3 +177,18 @@ func _on_humid(v: float) -> void:
 func _on_temp(v: float) -> void:
 	if Weather.debug_override:
 		Weather.temperature = v
+
+func _on_time_override(on: bool) -> void:
+	_time.editable = on
+	if on:
+		_apply_time()
+	else:
+		DayNight.clear_debug_time()
+
+func _on_time_slider(_v: float) -> void:
+	if _time_chk.button_pressed:
+		_apply_time()
+
+# Heure du slider (0..24 h) -> time_of_day (0=midi, .25=coucher, .5=minuit, .75=lever).
+func _apply_time() -> void:
+	DayNight.set_debug_time(fposmod((_time.value - 12.0) / 24.0, 1.0))

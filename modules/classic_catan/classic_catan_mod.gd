@@ -696,15 +696,6 @@ func _register_actions(reg: GameRegistry) -> void:
 			and _state.current_player().get_data(ROLLED_KEY, false)
 	reg.register_action(next_turn)
 	
-	# === Action: Annuler build mode ===
-	var cancel := GameAction.new()
-	cancel.id = "cancel_build"
-	cancel.label = "Annuler"
-	cancel.hotkey = KEY_ESCAPE
-	cancel.category = "game"
-	cancel.callback = _action_cancel_build
-	reg.register_action(cancel)
-	
 	# === Actions: sélection de bâtiment (une par bâtiment) ===
 	# On les déclare ici car les bâtiments avec hotkey sont des décisions
 	# de ce mod (Catan). Un autre mod pourrait remapper.
@@ -832,13 +823,6 @@ func _action_next_player() -> void:
 	p.set_data(ROLLED_KEY, false)  # le prochain joueur devra relancer
 	_state.next_player()
 	
-func _action_cancel_build() -> void:
-	if _state.sub_phase == SP_FREE_ROAD:
-		_free_roads_remaining = 0
-		_state.sub_phase = ""
-		return
-	_state.build_mode_id = ""
-
 func _flash_tile(coords: Vector2) -> void:
 	_registry.emit("flash_tile", {"coords": coords})
 

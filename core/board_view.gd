@@ -184,6 +184,9 @@ func _weather_overlay_material() -> ShaderMaterial:
 		if sh != null:
 			_weather_overlay = ShaderMaterial.new()
 			_weather_overlay.shader = sh
+			# Dessine la surcouche AVANT le contour des numéros (Label3D, priorité -1) : sinon cette passe
+			# transparente passe par-dessus le contour et le « mange » (même fix que l'eau, render_priority).
+			_weather_overlay.render_priority = -10
 	return _weather_overlay
 
 # Recense tous les MeshInstance3D d'un modèle de tuile comme pouvant recevoir la surcouche météo.

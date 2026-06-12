@@ -51,6 +51,10 @@ day_night_time={
 "type": "float",
 "value": 0.0
 }
+dn_time_override={
+"type": "float",
+"value": -1.0
+}
 weather_snow={
 "type": "float",
 "value": 0.0
