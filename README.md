@@ -11,37 +11,8 @@ Un moteur de jeu de plateau **modable** où le **core** ne gère que les **tours
 >
 > **3 couches :** `core/` (moteur agnostique) · `scripts/` (l'app : assemble, réseau, HUD) · `modules/` (le jeu). Un mod = une classe `extends GameMod` **auto-détectée** (rien à enregistrer dans une liste).
 
----
-## 1. Compte rendu — état du projet
 
-### Ce qui est fait
-- **Core agnostique** : tours, victoire par seuil, bus d'événements, registre générique, chargeur de mods, **son « à toi de jouer »**. Aucun mot « bois / colonie / voleur / dés » en dur dans le core.
-- **Jeu de base complet** (modules) : ressources, colonie/route/ville, placement initial (snake), lancer de dés + production, voleur sur 7 (défausse / déplacement / vol), **échanges joueur↔joueur (1-à-1 ou « à tous » en même temps)** et banque, **ports** (2:1 / 3:1), cartes développement (chevalier, monopole, invention, construction de routes, point de victoire), **plus longue route** et **plus grande armée**.
-- **UI = scènes Godot éditables** : menu (`scenes/main_menu.tscn`) et HUD (`scenes/hud.tscn`) sont des scènes + un **thème partagé** (`ui/theme.tres`) → tout est restylable par un designer dans l'éditeur. **Tous les panneaux** (HUD **et** pop-ups : échange, banque, défausse, vol…) sont **déplaçables** (barre de titre) et **redimensionnables** (poignée), positions/tailles mémorisées (**F1** = réinitialiser). **Journal** d'événements, **ventilation des points** au clic sur un joueur, **icônes/textures de ressources** moddables.
-- **Génération de carte moddable** : taille réglable au lobby + mods de map (`balanced_map`, `island_map`) qui ne dépendent de rien.
-- **Modèles 3D** : point d'extension pour donner un mesh/scène à n'importe quel bâtiment (sinon primitive par défaut).
-- **Multijoueur** P2P (un joueur héberge, pas de serveur dédié) : hôte autoritaire, **snapshot incrémental** (ne rafraîchit que ce qui change), jusqu'à **10 joueurs**, pseudos affichés, défausse simultanée.
-- **Timer de tour** (core, optionnel, réglé au lobby/solo) : décompte, **pause sur pop-up**, **passe le tour à 0** ; UI déplaçable/redim.
-- **Banque finie** (19 de chaque ressource, règle officielle) : gains plafonnés + distribution stricte, **panneau de stock toujours visible**.
-- **Menu en 4 écrans** (Accueil / Solo / Multijoueur / Salon) : en multi, l'**hôte règle mods + timer + taille** et **tout le monde le voit en direct**.
-- **Modèles 3D** : tuiles (hex), bâtiments et pion voleur (`.glb`), + **panneau de dés** persistant ; teinte joueur configurable.
-
-### Conformité aux règles de Catan classique
-**Respecté fidèlement** : plateau **19 tuiles** (4 bois / 3 brique / 4 mouton / 4 blé / 3 minerai / 1 désert) + **18 jetons** (2 et 12 ×1, 3→11 ×2, pas de 7) · setup en **serpent** (2 colonies + 2 routes, 2ᵉ colonie = ressources adjacentes) · **coûts & PV exacts** (route 1 bois+1 brique ; colonie 1/1/1/1 = 1 PV ; ville 2 blé+3 minerai = 2 PV) · règle de **distance** · production (colonie ×1, ville ×2) · **voleur posé sur le désert**, bloque sa tuile · **7** = défausse de la moitié (>7 cartes), déplacement + vol d'un voisin · cartes dev (**deck 25** = 14 chevalier / 5 PV / 2 monopole / 2 invention / 2 routes ; coût minerai+blé+mouton ; **injouable le tour de l'achat**) · chevalier → voleur + vol · **plus grande armée** (≥3) et **plus longue route** (≥5) à +2 PV, transférables · banque **4:1** + ports **3:1 / 2:1** (sur les **2 coins** de l'arête côtière) · **victoire à 10 PV**.
-
-**Toutes ces règles sont appliquées**, y compris : banque **19**, **1 carte dev par tour**, **distribution stricte** (pénurie + plusieurs joueurs → personne), **PV des cartes cachés** aux adversaires. Seule simplification assumée : les données de cartes transitent dans le snapshot réseau (l'UI ne les révèle pas, mais **pas d'anti-triche** — choix volontaire).
-
-### Limites connues / pistes
-- Cartes dev : leurs **types ne sont jamais affichés** aux adversaires et leurs **PV cachés** ne comptent pas dans le score visible des autres ; les données transitent quand même dans le snapshot (pas d'anti-triche, assumé).
-- **Déconnexions** en cours de partie non gérées proprement (**F5** = forcer une resynchro depuis l'hôte).
-- La **disposition/forme** du plateau est moddable (`set_map_generator`), mais la **géométrie hexagonale** elle-même (rendu, voisinage) reste dans le core ; la rendre carrée/triangulaire serait un refactor (point d'extension non fait).
-
-### Lancer le jeu
-Ouvre le projet dans Godot 4.3 et lance (F5). Le menu propose **Solo**, **Héberger** et **Rejoindre** (IP, défaut `127.0.0.1`, port `24545`). Pour tester le réseau en local : *Déboguer → Exécuter plusieurs instances → 2 instances*.
-
----
-
-## 2. Architecture
+## 1. Architecture
 
 Trois couches :
 
@@ -84,7 +55,7 @@ Trois couches :
 
 ---
 
-## 3. Tutoriel — créer un mod
+## 2. Tutoriel — créer un mod
 
 On va créer un mod **« Temples »** qui ajoute un bâtiment *Temple* valant **3 points de victoire**. Ça montre l'essentiel : déclarer un bâtiment, l'action de sélection, et brancher le mod. **Aucun code du core ni de `classic_catan` n'est modifié.**
 
@@ -171,7 +142,7 @@ Le jeu **scanne automatiquement** tous les `class_name … extends GameMod`. Dè
 
 ---
 
-## 4. Référence rapide de l'API
+## 3. Référence rapide de l'API
 
 ### `GameMod` (à étendre)
 `mod_id`, `mod_name`, `description`, `version`, `author`, `depends_on: Array[String]`, `conflicts_with: Array[String]`, `provides: Array[String]`, et **`func register(reg: GameRegistry)`**.
@@ -223,7 +194,7 @@ player.add_effect(eff)   # apparaît dans les Trophées du HUD + compte dans les
 
 ---
 
-## 5. Points avancés
+## 4. Points avancés
 
 ### Modèles 3D
 Deux façons de donner un visuel custom à un bâtiment :
